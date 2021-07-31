@@ -1,0 +1,148 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
+
+
+namespace Analyzer {
+    public class Benchmark {
+        static Queue<Submission> q = new Queue<Submission>();
+        static Dictionary<string, int> emailNums = new Dictionary<string, int>();
+        static Dictionary<string, int> authorNums = new Dictionary<string, int>();
+
+
+        public static void run() {
+            for (; ; Thread.Sleep(CommonCfg.PollIntervalInMillisecond)) {
+                while (testSubmission(pop())) { }
+            }
+
+            //Util.run("git", "pull origin gh-pages");
+            //Util.Json.save(CommonCfg.RankPath, page.rank);
+            //page.generate();
+        }
+
+        public static void push(Submission s) {
+            q.Enqueue(s);
+            Util.tryInc(emailNums, s.email);
+            Util.tryInc(authorNums, s.author);
+        }
+
+        static Submission pop() {
+            if (!EmailFetcher.fetch()) { return null; }
+            Submission s;
+            do {
+                s = q.Dequeue();
+                Util.tryDec(emailNums, s.email);
+                Util.tryDec(authorNums, s.author);
+            } while (emailNums.ContainsKey(s.email) || authorNums.ContainsKey(s.author));
+            return s;
+        }
+
+
+        static bool testSubmission(Submission s) {
+            if (s == null) { return false; }
+
+            Problem problem = BenchmarkCfg.rank.problems[s.problem];
+            Check check = BenchmarkCfg.Checkers[s.problem];
+
+            string logPath = Path.Combine(s.problem, CommonCfg.LogFilePrefix + s.date.Substring(0, 4) + CommonCfg.LogFileExt);
+            foreach (var dataset in problem.datasets) {
+                foreach (var instance in dataset.instances) {
+                    Instance i = instance.Value;
+                    string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
+                    if (i.data == null) { i.data = File.ReadAllLines(inputPath); }
+                    List<Statistic> statistics = testInstance(s.exePath, i.secTimeout, i.data, check, i.repeat);
+
+                    List<string> lines = new List<string>(statistics.Count);
+                    foreach (var line in statistics) {
+                        lines.Add(s.author.ToString() + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
+                            + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
+                            + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
+                    }
+                    lock (logPath) {
+                        if (!File.Exists(logPath)) { File.AppendText(BenchmarkCfg.LogHeaders[s.problem] + Environment.NewLine); }
+                        File.AppendAllLines(logPath, lines);
+                    }
+
+                    Result bestResult = new Result { obj = problem.worstObjValue(), author = s.author, date = s.date };
+                    foreach (var statistic in statistics) {
+                        if (statistic.obj >= bestResult.obj) { continue; }
+                        bestResult.obj = statistic.obj;
+                        bestResult.duration = statistic.duration;
+                    }
+                    i.results.Add(bestResult);
+
+                    if (i.results.Count <= CommonCfg.MaxResultsCountPerInstance) { continue; }
+                    i.results.Remove(problem.minimize ? i.results.Max : i.results.Min);
+                }
+            }
+
+            Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
+            return true;
+        }
+
+        static List<Statistic> testInstance(string exePath, long secTimeout, string[] input, Check check, int repeat) {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = exePath;
+            psi.WorkingDirectory = Environment.CurrentDirectory;
+            psi.UseShellExecute = false;
+            psi.RedirectStandardInput = true;
+            psi.RedirectStandardOutput = true;
+            psi.RedirectStandardError = true;
+
+            int seed = 0;
+            long msTimeout = secTimeout * 1000;
+            List<Statistic> statistics = new List<Statistic>(repeat);
+            for (int i = 0; i < repeat; ++i) {
+                Statistic statistic = new Statistic();
+                statistic.seed = (seed = nextSeed(seed));
+                psi.Arguments = secTimeout.ToString() + " " + statistic.seed.ToString();
+
+                Stopwatch sw = new Stopwatch();
+                StringBuilder output = new StringBuilder();
+
+                Process p = new Process();
+                p.StartInfo = psi;
+                p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
+                p.OutputDataReceived += (s, l) => { lock (output) { output.AppendLine(l.Data); } };
+                try {
+                    p.Start();
+
+                    p.BeginErrorReadLine();
+                    p.BeginOutputReadLine();
+                    foreach (var line in input) { p.StandardInput.WriteLine(line); }
+                    p.StandardInput.Flush();
+
+                    sw.Start();
+                    while (!p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
+                        && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
+                        && (sw.ElapsedMilliseconds < msTimeout)) { }
+                    sw.Stop();
+
+                    if (p.HasExited) {
+                        p.WaitForExit();
+                    } else {
+                        try { p.Kill(); } catch (Exception) { }
+                    }
+
+                    statistic.duration = sw.ElapsedMilliseconds / 1000.0;
+                    check(input, output.ToString(), statistic);
+                    // EXTEND[szx][0]: save the solution to file if the record is refreshed.
+                    ////Util.run("git", "add " + filePath);
+                    statistics.Add(statistic);
+                } catch (Exception e) {
+                    Util.log("[error] test instance fail due to " + e.ToString());
+                }
+            }
+
+            return statistics;
+        }
+
+
+        static int nextSeed(int seed) {
+            return ((seed * BenchmarkCfg.RandSeedMul) + BenchmarkCfg.RandSeedInc) & 0xffff;
+        }
+    }
+}
