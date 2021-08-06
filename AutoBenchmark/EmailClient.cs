@@ -83,10 +83,10 @@ namespace Analyzer {
             }
 
             if (s.exePath != null) {
-                Benchmark.push(s); // EXTEND[szx][1]: reply "your submission has been received".
+                Benchmark.push(s); // EXT[szx][1]: reply "your submission has been received".
                 return true;
             }
-            Util.log("[error] no executable found"); // EXTEND[szx][1]: reply "no executable found in your submission".
+            Util.log("[error] no executable found"); // EXT[szx][1]: reply "no executable found in your submission".
             return false;
         }
 

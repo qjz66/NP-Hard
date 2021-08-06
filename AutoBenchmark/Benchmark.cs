@@ -17,6 +17,12 @@ namespace Analyzer {
 
 
         public static void run() {
+            try {
+                foreach (var problem in BenchmarkCfg.rank.problems) {
+                    Directory.CreateDirectory(Path.Combine(problem.Key, CommonCfg.SolutionSubDir));
+                }
+            } catch (Exception) { }
+
             for (; ; Thread.Sleep(CommonCfg.PollIntervalInMillisecond)) {
                 while (testSubmission(pop())) { }
             }
@@ -78,7 +84,7 @@ namespace Analyzer {
                         }
                         lock (logPath) {
                             if (!File.Exists(logPath)) { File.AppendText(BenchmarkCfg.LogHeaders[s.problem] + Environment.NewLine); }
-                            File.AppendAllLines(logPath, lines);
+                            File.AppendAllLines(logPath, lines, CommonCfg.DefaultEncoding);
                         }
 
                         Result bestResult = new Result { obj = problem.worstObjValue(), author = s.author, date = s.date };
@@ -91,9 +97,9 @@ namespace Analyzer {
 
                         if (i.results.Count <= CommonCfg.MaxResultsCountPerInstance) { continue; }
                         i.results.Remove(problem.minimize ? i.results.Max : i.results.Min);
-                    } // EXTEND[szx][2]: stop testing next dataset if the results are poor.
+                    } // EXT[szx][2]: stop testing next dataset if the results are poor.
                 });
-            }
+            } // EXT[szx][3]: reply the test result.
 
             Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
             return true;

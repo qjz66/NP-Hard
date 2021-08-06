@@ -46,7 +46,7 @@ namespace Analyzer {
                 }
             } catch (Exception) { }
 
-            bool feasible = (conflictNum == 0) || (nodeColors.Count == nodeNum);
+            bool feasible = (conflictNum == 0) && (nodeColors.Count == nodeNum);
             statistic.obj = feasible ? colors.Count : Problem.MaxObjValue;
             statistic.info = conflictNum.ToString();
         }
@@ -116,7 +116,7 @@ namespace Analyzer {
                 }
             } catch (Exception) { }
 
-            bool feasible = (uncoveredItemNum == 0) || (pickedSets.Count == centerNum);
+            bool feasible = (uncoveredItemNum == 0) && (pickedSets.Count == centerNum);
             statistic.obj = feasible ? rank : Problem.MaxObjValue;
             statistic.info = pickedSets.Count.ToString() + BenchmarkCfg.LogDelim + uncoveredItemNum.ToString();
         }
@@ -225,7 +225,8 @@ namespace Analyzer {
                 makespan = earliestFinishTimes.Max();
             } catch (Exception) { }
 
-            statistic.obj = (restJobNum == 0) ? makespan : Problem.MaxObjValue;
+            bool feasible = (restJobNum == 0);
+            statistic.obj = feasible ? makespan : Problem.MaxObjValue;
             statistic.info = restJobNum.ToString();
         }
 
@@ -273,7 +274,7 @@ namespace Analyzer {
                 }
             } catch (Exception) { }
 
-            bool feasible = (brokenPathNum == 0) || (brokenPathNum == 0);
+            bool feasible = (brokenPathNum == 0) && (brokenPathNum == 0);
             statistic.obj = feasible ? colors.Count : Problem.MaxObjValue;
             statistic.info = brokenPathNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString();
         }
