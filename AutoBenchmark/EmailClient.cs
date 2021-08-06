@@ -83,7 +83,11 @@ namespace Analyzer {
             }
 
             if (s.exePath != null) {
-                Benchmark.push(s); // EXT[szx][1]: reply "your submission has been received".
+                Benchmark.push(s);
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Your submission has been received.")
+                    .Append("There are ").Append(Benchmark.queueSize).AppendLine(" submissions in queue.");
+                StdSmtp.send(s.email, "Re: " + msg.Subject, sb.ToString());
                 return true;
             }
             Util.log("[error] no executable found"); // EXT[szx][1]: reply "no executable found in your submission".
@@ -91,28 +95,30 @@ namespace Analyzer {
         }
 
         static ImapClient createImapClient() {
-            return new ImapClient(EmailCfg.ExqqMail.Imap, EmailCfg.ImapSslPort, EmailCfg.Username, EmailCfg.Password, AuthMethod.Login, true);
+            return new ImapClient(EmailCfg.ImapAddr, EmailCfg.ImapSslPort, EmailCfg.Username, EmailCfg.Password, AuthMethod.Login, true);
         }
     }
 
 
     public class StdSmtp {
         public static void send(string toAddress, string subject, string body) {
-            using (SmtpClient client = new SmtpClient(EmailCfg.HustMail.Smtp)) {
+            using (SmtpClient client = new SmtpClient(EmailCfg.SmtpAddr)) {
                 //client.Port = EmailCfg.SmtpSslPort;
                 //client.EnableSsl = true;
+                //client.UseDefaultCredentials = false;
                 client.Credentials = new NetworkCredential(EmailCfg.Username, EmailCfg.Password);
 
-                using (MailMessage message = new MailMessage()) {
-                    message.From = new MailAddress(EmailCfg.MyAddress);
-                    message.To.Add(toAddress);
-                    message.CC.Add(EmailCfg.CcAddress);
-                    message.SubjectEncoding = Encoding.UTF8;
-                    message.Subject = subject;
-                    message.BodyEncoding = Encoding.UTF8;
-                    message.Body = body;
+                using (MailMessage msg = new MailMessage()) {
+                    msg.From = new MailAddress(EmailCfg.MyAddress);
+                    msg.To.Add(toAddress);
+                    //msg.CC.Add(EmailCfg.CcAddress);
+                    //msg.SubjectEncoding = Encoding.UTF8;
+                    msg.Subject = subject;
+                    //msg.BodyEncoding = Encoding.UTF8;
+                    msg.IsBodyHtml = false;
+                    msg.Body = body;
 
-                    client.Send(message);
+                    try { client.Send(msg); } catch (Exception e) { Util.log(e.ToString()); }
                 }
             }
         }

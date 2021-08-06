@@ -52,6 +52,10 @@ namespace Analyzer {
             public const string Smtp = "smtp.exmail.qq.com";
         }
 
+        public const string Pop3Addr = ExqqMail.Pop3;
+        public const string ImapAddr = ExqqMail.Imap;
+        public const string SmtpAddr = ExqqMail.Smtp;
+
         // https://docs.microsoft.com/zh-cn/dotnet/api/system.text.regularexpressions.regex
         public const string SubjectRegex = @"^Challenge20.*-.*$";
         public const string SubjectFilter = "Challenge20";
@@ -59,7 +63,7 @@ namespace Analyzer {
 
         public const string MyAddress = "szx@duhe.tech";
         //public const string ToAddress = "";
-        public const string CcAddress = "";
+        //public const string CcAddress = "";
 
         public const string Username = MyAddress;
         public const string Password = ""; // TODO[szx][0]: do not commit this.

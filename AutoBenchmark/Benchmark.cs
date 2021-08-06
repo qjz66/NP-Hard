@@ -38,6 +38,10 @@ namespace Analyzer {
             Util.tryInc(authorNums, s.author);
         }
 
+        public static int queueSize {
+            get { return q.Count; }
+        }
+
         static Submission pop() {
             if (!EmailFetcher.fetch()) { return null; }
             Submission s;
