@@ -6,6 +6,7 @@ using System.Linq;
 namespace Analyzer {
     public delegate void Check(string[] input, string output, Statistic statistic);
 
+
     public class Checker {
         static readonly char[] InlineDelimiters = new char[] { ' ', '\t' };
         static readonly char[] LineDelimiters = new char[] { '\r', '\n' };

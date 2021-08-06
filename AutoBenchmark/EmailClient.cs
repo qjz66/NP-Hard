@@ -26,13 +26,13 @@ namespace Analyzer {
             Util.log("[info] query unseen emails");
             using (ImapClient client = createImapClient()) {
                 bool updated = false;
-                IEnumerable<uint> uids = client.Search(SearchCondition.Unseen()); // .And(SearchCondition.Subject(EmailCfg.SubjectFilter))
+                IEnumerable<uint> uids = client.Search(SearchCondition.Unseen());
                 foreach (var uid in uids) {
                     MailMessage msg = client.GetMessage(uid, FetchOptions.Normal, false);
                     if (msg.Subject.StartsWith(EmailCfg.SubjectFilter)) {
                         Util.log("[info] handle " + msg.Subject);
                         updated |= handleMessage(msg);
-                        //client.AddMessageFlags(uid, null, MessageFlag.Seen);
+                        client.AddMessageFlags(uid, null, MessageFlag.Seen);
                         //client.DeleteMessage(uid);
                     } else {
                         Util.log("[info] ignore " + msg.Subject);
@@ -82,8 +82,11 @@ namespace Analyzer {
                 return false;
             }
 
-            if (s.exePath != null) { Benchmark.push(s); return true; }
-            Util.log("[error] no executable found");
+            if (s.exePath != null) {
+                Benchmark.push(s); // EXTEND[szx][1]: reply "your submission has been received".
+                return true;
+            }
+            Util.log("[error] no executable found"); // EXTEND[szx][1]: reply "no executable found in your submission".
             return false;
         }
 

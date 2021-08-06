@@ -7,6 +7,9 @@ using System.Threading;
 
 
 namespace Analyzer {
+    delegate void SaveOutput(string output, double obj);
+
+
     public class Benchmark {
         static Queue<Submission> q = new Queue<Submission>();
         static Dictionary<string, int> emailNums = new Dictionary<string, int>();
@@ -49,41 +52,54 @@ namespace Analyzer {
 
             string logPath = Path.Combine(s.problem, CommonCfg.LogFilePrefix + s.date.Substring(0, 4) + CommonCfg.LogFileExt);
             foreach (var dataset in problem.datasets) {
-                foreach (var instance in dataset.instances) {
-                    Instance i = instance.Value;
-                    string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
-                    if (i.data == null) { i.data = File.ReadAllLines(inputPath); }
-                    List<Statistic> statistics = testInstance(s.exePath, i.secTimeout, i.data, check, i.repeat);
+                Util.scrambleForTasks(BenchmarkCfg.ParallelBenchmarkNum, (isTaskTaken) => {
+                    foreach (var instance in dataset.instances) {
+                        if (isTaskTaken()) { continue; }
 
-                    List<string> lines = new List<string>(statistics.Count);
-                    foreach (var line in statistics) {
-                        lines.Add(s.author.ToString() + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
-                            + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
-                            + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
-                    }
-                    lock (logPath) {
-                        if (!File.Exists(logPath)) { File.AppendText(BenchmarkCfg.LogHeaders[s.problem] + Environment.NewLine); }
-                        File.AppendAllLines(logPath, lines);
-                    }
+                        Instance i = instance.Value;
+                        string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
+                        if (i.data == null) { i.data = File.ReadAllLines(inputPath); }
+                        List<Statistic> statistics = testInstance(s.exePath, i.secTimeout, i.data, check, i.repeat, (output, obj) => {
+                            if (problem.minimize) {
+                                if ((obj >= Problem.MaxObjValue) || ((i.results.Count > 0) && (obj >= i.results.Min.obj))) { return; }
+                            } else {
+                                if ((obj <= Problem.MinObjValue) || ((i.results.Count > 0) && (obj <= i.results.Max.obj))) { return; }
+                            }
+                            string slnPath = Path.Combine(s.problem, CommonCfg.SolutionSubDir, instance.Key + obj);
+                            File.WriteAllText(slnPath, output); // save the solution if the record is refreshed.
+                            //Util.run("git", "add " + filePath);
+                        });
 
-                    Result bestResult = new Result { obj = problem.worstObjValue(), author = s.author, date = s.date };
-                    foreach (var statistic in statistics) {
-                        if (statistic.obj >= bestResult.obj) { continue; }
-                        bestResult.obj = statistic.obj;
-                        bestResult.duration = statistic.duration;
-                    }
-                    i.results.Add(bestResult);
+                        List<string> lines = new List<string>(statistics.Count);
+                        foreach (var line in statistics) {
+                            lines.Add(s.author.ToString() + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
+                                + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
+                                + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
+                        }
+                        lock (logPath) {
+                            if (!File.Exists(logPath)) { File.AppendText(BenchmarkCfg.LogHeaders[s.problem] + Environment.NewLine); }
+                            File.AppendAllLines(logPath, lines);
+                        }
 
-                    if (i.results.Count <= CommonCfg.MaxResultsCountPerInstance) { continue; }
-                    i.results.Remove(problem.minimize ? i.results.Max : i.results.Min);
-                }
+                        Result bestResult = new Result { obj = problem.worstObjValue(), author = s.author, date = s.date };
+                        foreach (var statistic in statistics) {
+                            if (statistic.obj >= bestResult.obj) { continue; }
+                            bestResult.obj = statistic.obj;
+                            bestResult.duration = statistic.duration;
+                        }
+                        i.results.Add(bestResult);
+
+                        if (i.results.Count <= CommonCfg.MaxResultsCountPerInstance) { continue; }
+                        i.results.Remove(problem.minimize ? i.results.Max : i.results.Min);
+                    } // EXTEND[szx][2]: stop testing next dataset if the results are poor.
+                });
             }
 
             Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
             return true;
         }
 
-        static List<Statistic> testInstance(string exePath, long secTimeout, string[] input, Check check, int repeat) {
+        static List<Statistic> testInstance(string exePath, long secTimeout, string[] input, Check check, int repeat, SaveOutput saveOutput) {
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = exePath;
             psi.WorkingDirectory = Environment.CurrentDirectory;
@@ -129,8 +145,7 @@ namespace Analyzer {
 
                     statistic.duration = sw.ElapsedMilliseconds / 1000.0;
                     check(input, output.ToString(), statistic);
-                    // EXTEND[szx][0]: save the solution to file if the record is refreshed.
-                    ////Util.run("git", "add " + filePath);
+                    saveOutput(output.ToString(), statistic.obj);
                     statistics.Add(statistic);
                 } catch (Exception e) {
                     Util.log("[error] test instance fail due to " + e.ToString());

@@ -6,6 +6,7 @@ namespace Analyzer {
     public class CommonCfg {
         public const string SolverSubDir = "Solver";
         public const string InstanceSubDir = "Instance";
+        public const string SolutionSubDir = "Solution";
         public const string LogFilePrefix = "Log";
         public const string LogFileExt = ".tsv";
 
@@ -75,6 +76,8 @@ namespace Analyzer {
     public class BenchmarkCfg {
         public const int MillisecondCheckInterval = 1000;
         public const long ByteMemoryLimit = 1024 * 1024 * 1024;
+
+        public static readonly int ParallelBenchmarkNum = Math.Min(5, Environment.ProcessorCount);
 
         public const int RandSeedInc = 2011; // TODO[szx][0]: do not commit this.
         public const int RandSeedMul = 2111; // TODO[szx][0]: do not commit this.

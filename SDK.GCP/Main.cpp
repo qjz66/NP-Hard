@@ -26,6 +26,6 @@ int main(int argc, char *argv[]) {
 	solveGraphColoring(nc, gc, secTimeout, randSeed);
 
 	cerr << "save output." << endl;
-	for (NodeId n = 0; n < gc.nodeNum; ++n) { cout << nc[n] << ' '; }
+	for (NodeId n = 0; n < gc.nodeNum; ++n) { cout << nc[n] << endl; }
 	return 0;
 }

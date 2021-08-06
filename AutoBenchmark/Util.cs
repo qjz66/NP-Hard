@@ -6,25 +6,46 @@ using System.Linq;
 using System.Net.Mail;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading;
 
 
 namespace Analyzer {
     public static class Util {
-        public class OppositeComparer<T> : IComparer<T> {
-            public static OppositeComparer<T> Default { get { return oppositeComparer; } }
-
-            public int Compare(T x, T y) { return -Comparer<T>.Default.Compare(x, y); }
-
-            protected static OppositeComparer<T> oppositeComparer = new OppositeComparer<T>();
+        public static void log(string msg) { // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
+            Console.WriteLine($"{friendlyDateTime()} {msg}");
         }
 
+        #region String
         public static string toString(this MemoryStream ms) {
             ms.Position = 0;
-            using (StreamReader sr = new StreamReader(ms)) {
-                return sr.ReadToEnd();
-            }
+            using (StreamReader sr = new StreamReader(ms)) { return sr.ReadToEnd(); }
         }
 
+        public static string removeSuffix(this string str, string suffix) {
+            return (str.EndsWith(suffix) ? str.Substring(0, str.Length - suffix.Length) : str);
+        }
+
+        public static string quote(this string str) { return "\"" + str + "\""; }
+
+        public static string subStr(this string str, int beginIndex, int endIndex) {
+            return str.Substring(beginIndex, endIndex - beginIndex);
+        }
+
+
+        public static void save(this Attachment attachment, string filePath) {
+            using (FileStream fs = File.Create(filePath)) {
+                attachment.ContentStream.CopyTo(fs);
+            }
+        }
+        public static string toString(this Attachment attachment) {
+            using (MemoryStream ms = new MemoryStream()) {
+                attachment.ContentStream.CopyTo(ms);
+                return ms.toString();
+            }
+        }
+        #endregion String
+
+        #region Serialization
         public static class Json {
             public static void save<T>(string path, T obj) {
                 using (FileStream fs = File.Open(path,
@@ -64,13 +85,9 @@ namespace Analyzer {
                 }
             }
         }
+        #endregion Serialization
 
-        public const string IntRegex = @"[+-]?\d+";
-        public const string DoubleRegex = @"[+-]?(\d+\.?\d*)|(\d*\.?\d+)";
-
-        public static readonly char[] LineEndings = { '\r', '\n' };
-
-
+        #region FileSystem
         public delegate void ManipulateFile(FileInfo file);
         public delegate bool ManipulateDir(DirectoryInfo dir); // return false if there is no need to look into it.
 
@@ -95,7 +112,14 @@ namespace Analyzer {
             return fileList;
         }
 
+        public static void moveFile(string sourceFileName, string destFileName) {
+            if (!File.Exists(sourceFileName)) { return; }
+            if (File.Exists(destFileName)) { File.Delete(destFileName); }
+            File.Move(sourceFileName, destFileName);
+        }
+        #endregion FileSystem
 
+        #region Process
         // [Blocking][NoWindow][InterceptOutput]
         public static string runRead(string fileName, string arguments = "") {
             ProcessStartInfo psi = new ProcessStartInfo(fileName, arguments);
@@ -129,47 +153,51 @@ namespace Analyzer {
         public static Process runUIAsync(string fileName, string arguments = "") {
             return Process.Start(fileName, arguments);
         }
+        #endregion Process
 
+        #region Thread
+        public delegate bool IsTaskTaken();
+        public delegate void UserTask(IsTaskTaken isTaskTaken);
 
-        public static string removeSuffix(this string str, string suffix) {
-            return (str.EndsWith(suffix) ? str.Substring(0, str.Length - suffix.Length) : str);
-        }
-
-
-        public static void save(this Attachment attachment, string filePath) {
-            using (FileStream fs = File.Create(filePath)) {
-                attachment.ContentStream.CopyTo(fs);
+        /// <summary> workers scramble for tasks. </summary>
+        /// <remarks>call `isTaskTaken` in `userTask` to avoid repeating.</remarks>
+        /// <example>
+        /// HashSet<int> s = new HashSet<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        /// Util.TaskTaker.run(4, (isTaskTaken) => {
+        ///     foreach (var i in s) {
+        ///         if (isTaskTaken()) { continue; }
+        ///         Console.WriteLine(i);
+        ///         Thread.Sleep(2000);
+        ///     }
+        /// });
+        /// </example>
+        public static void scrambleForTasks(int workerNum, UserTask userTask) {
+            Thread[] workers = new Thread[workerNum];
+            int gt = 0; // global task index.
+            for (int w = 0; w < workerNum; ++w) {
+                workers[w] = new Thread(() => {
+                    int t = 0; // local task index.
+                    userTask(() => {
+                        if (t < gt) { ++t; return true; }
+                        int ogt = gt; // old global task index.
+                        return ogt != Interlocked.CompareExchange(ref gt, ogt + 1, t++);
+                    });
+                });
+                workers[w].Start();
             }
+            for (int w = 0; w < workerNum; ++w) { workers[w].Join(); }
         }
-        public static string toString(this Attachment attachment) {
-            using (MemoryStream ms = new MemoryStream()) {
-                attachment.ContentStream.CopyTo(ms);
-                return ms.toString();
-            }
-        }
+        #endregion Thread
 
-
-        public static void moveFile(string sourceFileName, string destFileName) {
-            if (!File.Exists(sourceFileName)) { return; }
-            if (File.Exists(destFileName)) { File.Delete(destFileName); }
-            File.Move(sourceFileName, destFileName);
-        }
-
-
-        public static string quote(this string str) { return "\"" + str + "\""; }
-
+        #region DateTime
         // https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
         public static string compactDateTime(DateTime dt) { return dt.ToString("yyyyMMddHHmmss"); }
         public static string compactDateTime() { return compactDateTime(DateTime.Now); }
         public static string friendlyDateTime(DateTime dt) { return dt.ToString("yyyy-MM-dd HH:mm:ss.fff"); }
         public static string friendlyDateTime() { return friendlyDateTime(DateTime.Now); }
+        #endregion DateTime
 
-
-        public static void log(string msg) { // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
-            Console.WriteLine($"{friendlyDateTime()} {msg}");
-        }
-
-
+        #region Container
         public static void pop<T>(this List<T> l) { l.RemoveAt(l.Count - 1); }
 
         public static void tryInc<TKey>(IDictionary<TKey, int> dictionary, TKey key) {
@@ -179,9 +207,14 @@ namespace Analyzer {
         public static void tryDec<TKey>(IDictionary<TKey, int> dictionary, TKey key) {
             if (--dictionary[key] <= 0) { dictionary.Remove(key); }
         }
+        #endregion Container
 
-        public static string subStr(this string str, int beginIndex, int endIndex) {
-            return str.Substring(beginIndex, endIndex - beginIndex);
+        public class OppositeComparer<T> : IComparer<T> {
+            public static OppositeComparer<T> Default { get { return oppositeComparer; } }
+
+            public int Compare(T x, T y) { return -Comparer<T>.Default.Compare(x, y); }
+
+            protected static OppositeComparer<T> oppositeComparer = new OppositeComparer<T>();
         }
     }
 }

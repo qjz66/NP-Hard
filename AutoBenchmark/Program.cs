@@ -5,7 +5,6 @@ using System.IO;
 namespace Analyzer {
     class Program {
         static void Main(string[] args) {
-            Console.WriteLine(Directory.GetCurrentDirectory());
             if (!File.Exists(CommonCfg.RankPath)) { generateRank(); }
             Benchmark.run();
         }
