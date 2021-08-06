@@ -83,8 +83,8 @@ namespace Analyzer {
                                 + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
                         }
                         lock (logPath) {
-                            if (!File.Exists(logPath)) { File.AppendText(BenchmarkCfg.LogHeaders[s.problem] + Environment.NewLine); }
-                            File.AppendAllLines(logPath, lines, CommonCfg.DefaultEncoding);
+                            if (!File.Exists(logPath)) { Util.appendText(logPath, BenchmarkCfg.LogHeaders[s.problem] + Environment.NewLine); }
+                            Util.appendLines(logPath, lines);
                         }
 
                         Result bestResult = new Result { obj = problem.worstObjValue(), author = s.author, date = s.date };

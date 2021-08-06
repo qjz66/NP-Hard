@@ -46,6 +46,24 @@ namespace Analyzer {
         #endregion String
 
         #region Serialization
+        public static Encoding getEncoding(int codePage = 936) {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            return Encoding.GetEncoding(codePage);
+        }
+
+        public static void appendText(string path, string contents) {
+            File.AppendAllText(path, contents, CommonCfg.DefaultEncoding);
+        }
+        public static void appendLines(string path, IEnumerable<string> contents) {
+            File.AppendAllLines(path, contents, CommonCfg.DefaultEncoding);
+        }
+        public static void writeText(string path, string contents) {
+            File.WriteAllText(path, contents, CommonCfg.DefaultEncoding);
+        }
+        public static void writeLines(string path, IEnumerable<string> contents) {
+            File.WriteAllLines(path, contents, CommonCfg.DefaultEncoding);
+        }
+
         public static class Json {
             public static void save<T>(string path, T obj) {
                 using (FileStream fs = File.Open(path,

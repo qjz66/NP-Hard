@@ -25,7 +25,7 @@ class Solver { // sample solver: assign colors randomly (the solution can be inf
 	bool isTimeout() { return endTime < Clock::now(); }
 
 public:
-	void solve(NodeColors& output, const GraphColoring& input, long long secTimeout, int seed) {
+	void solve(NodeColors& output, GraphColoring& input, long long secTimeout, int seed) {
 		initRand(seed);
 		initTimer(secTimeout);
 
@@ -43,7 +43,7 @@ public:
 };
 
 // solver.
-void solveGraphColoring(NodeColors& output, const GraphColoring& input, long long secTimeout, int seed) {
+void solveGraphColoring(NodeColors& output, GraphColoring& input, long long secTimeout, int seed) {
 	// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
 	Solver().solve(output, input, secTimeout, seed);
 }

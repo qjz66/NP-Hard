@@ -8,7 +8,7 @@ using namespace std;
 using namespace szx;
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 	cerr << "load environment." << endl;
 	long long secTimeout = atoll(argv[1]);
 	int randSeed = atoi(argv[2]);
@@ -26,6 +26,6 @@ int main(int argc, char *argv[]) {
 	solveGraphColoring(nc, gc, secTimeout, randSeed);
 
 	cerr << "save output." << endl;
-	for (NodeId n = 0; n < gc.nodeNum; ++n) { cout << nc[n] << endl; }
+	for (auto c = nc.begin(); c != nc.end(); ++c) { cout << *c << endl; }
 	return 0;
 }

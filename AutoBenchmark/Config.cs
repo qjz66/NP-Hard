@@ -22,7 +22,7 @@ namespace Analyzer {
 
         public static readonly HashSet<string> ZipFileExts = new HashSet<string> { ".7z", ".gz", ".tar", ".rar", ".zip", ".bz2", ".iso", ".xz" };
 
-        public static readonly Encoding DefaultEncoding = Encoding.GetEncoding(936);
+        public static readonly Encoding DefaultEncoding = Util.getEncoding(936);
     }
 
     public class EmailCfg {

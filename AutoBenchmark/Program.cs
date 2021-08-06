@@ -13,7 +13,7 @@ namespace Analyzer {
             if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.Coloring)) {
                 BenchmarkCfg.rank.problems.Add(ProblemName.Coloring, generateColoring());
             }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.Coloring)) {
+            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.PCenter)) {
                 BenchmarkCfg.rank.problems.Add(ProblemName.PCenter, generatePCenter());
             }
             if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.Jobshop)) {
