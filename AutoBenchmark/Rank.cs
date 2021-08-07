@@ -13,6 +13,9 @@ namespace Analyzer {
     public class Problem {
         public const double MaxObjValue = 1E9;
 
+        public double normalizeObj(double obj) { return minimize ? obj : -obj; }
+        public double restoreObj(double obj) { return minimize ? obj : -obj; }
+
         [DataMember] public bool minimize = true; // for the maximizing problems, the objective value is turned to its inverse number (negative).
         [DataMember] public List<Dataset> datasets = new List<Dataset>(); // ordered by complexity. the benchmark may stop if the solver fails on easy datasets.
     }

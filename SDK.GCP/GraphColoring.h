@@ -18,7 +18,7 @@ using NodeId = int;
 using EdgeId = NodeId;
 using ColorId = NodeId;
 
-using Edge = std::array<NodeId, 2>;
+using Edge = std::array<NodeId, 2>; // undirected link.
 
 struct GraphColoring {
 	NodeId nodeNum;
@@ -27,7 +27,7 @@ struct GraphColoring {
 	std::vector<Edge> edges;
 };
 
-using NodeColors = std::vector<ColorId>; // `nodeColors[n]` is the color of node `n`.
+using NodeColors = std::vector<ColorId>; // `NodeColors[n]` is the color of node `n`.
 
 
 void solveGraphColoring(NodeColors& output, GraphColoring& input, long long secTimeout, int seed);

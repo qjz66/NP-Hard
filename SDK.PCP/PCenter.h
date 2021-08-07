@@ -1,5 +1,5 @@
 ////////////////////////////////
-/// usage : 1.	SDK for graph coloring solver.
+/// usage : 1.	SDK for p-center solver.
 /// 
 /// note  : 1.	
 ////////////////////////////////

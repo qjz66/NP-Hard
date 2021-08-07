@@ -77,7 +77,7 @@ namespace Analyzer {
                             if (!i.isNewRecord(obj)) { return; }
                             string slnPath = Path.Combine(s.problem, CommonCfg.SolutionSubDir, instance.Key + obj);
                             File.WriteAllText(slnPath, output); // save the solution if the record is refreshed.
-                        }, obj => (problem.minimize ? obj : -obj));
+                        }, obj => problem.normalizeObj(obj));
 
                         List<string> lines = new List<string>(statistics.Count);
                         foreach (var line in statistics) {
@@ -122,7 +122,7 @@ namespace Analyzer {
             return true;
         }
 
-        static List<Statistic> testInstance(string exePath, Instance instance, Check check, SaveOutput saveOutput, NormalizeObj calibrateObj) {
+        static List<Statistic> testInstance(string exePath, Instance instance, Check check, SaveOutput saveOutput, NormalizeObj normalizeObj) {
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = exePath;
             psi.WorkingDirectory = Environment.CurrentDirectory;
@@ -167,7 +167,7 @@ namespace Analyzer {
                     }
 
                     check(instance.data, output.ToString(), statistic);
-                    saveOutput(output.ToString(), statistic.obj = calibrateObj(statistic.obj));
+                    saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
 
                     statistic.duration = sw.ElapsedMilliseconds / 1000.0;
                     statistics.Add(statistic);

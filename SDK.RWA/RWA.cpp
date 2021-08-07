@@ -1,4 +1,4 @@
-#include "GraphColoring.h"
+#include "RWA.h"
 
 #include <chrono>
 #include <random>
@@ -25,28 +25,35 @@ class Solver {
 	bool isTimeout() { return endTime < Clock::now(); }
 
 public:
-	void solve(NodeColors& output, GraphColoring& input, long long secTimeout, int seed) {
+	void solve(Routes& output, RWA& input, long long secTimeout, int seed) {
 		initRand(seed);
 		initTimer(secTimeout);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
-		// sample solver: assign colors randomly (the solution can be infeasible).
+		// sample solver: assign wavelengths and find routes randomly (the solution can be infeasible).
 
 		//                      +----[ exit before timeout ]
 		//                      |
-		for (NodeId n = 0; !isTimeout() && (n < input.nodeNum); ++n) { output[n] = rand(input.colorNum); }
-		//                                                                           |
-		//      [ use the random number generator initialized by the given seed ]----+
+		for (NodeId t = 0; !isTimeout() && (t < input.trafficNum); ++t) { output[t].wavelen = rand(input.trafficNum); }
+		//                                                                                      |
+		//                 [ use the random number generator initialized by the given seed ]----+
+
+		for (NodeId t = 0; !isTimeout() && (t < input.trafficNum); ++t) {
+			output[t].nodes.resize(rand(input.nodeNum));
+			for (auto n = output[t].nodes.begin(); n != output[t].nodes.end(); ++n) {
+				*n = rand(input.trafficNum);
+			}
+		}
 
 		// print some information for debugging.
-		cerr << input.nodeNum << '\t' << input.colorNum << endl;
-		cerr << "node\tcolor" << endl;
-		for (NodeId n = 0; !isTimeout() && (n < input.nodeNum); ++n) { cerr << n << '\t' << output[n] << endl; }
+		cerr << input.nodeNum << '\t' << input.arcNum << '\t' << input.trafficNum << endl;
+		cerr << "traffic\twavelen" << endl;
+		for (NodeId n = 0; !isTimeout() && (n < input.nodeNum); ++n) { cerr << n << '\t' << output[n].wavelen << endl; }
 	}
 };
 
 // solver.
-void solveGraphColoring(NodeColors& output, GraphColoring& input, long long secTimeout, int seed) {
+void solveRWA(Routes& output, RWA& input, long long secTimeout, int seed) {
 	Solver().solve(output, input, secTimeout, seed);
 }
 

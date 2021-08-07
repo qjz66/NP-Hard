@@ -10,7 +10,7 @@ using namespace std;
 
 namespace szx {
 
-class Solver { // sample solver: pick center randomly (the solution can be infeasible).
+class Solver {
 	// random number generator.
 	mt19937 pseudoRandNumGen;
 	void initRand(int seed) { pseudoRandNumGen = mt19937(seed); }
@@ -37,6 +37,9 @@ public:
 	}
 
 	void coverAllNodesUnderFixedRadius(Centers& output, PCenter& input, long long secTimeout, int seed) {
+		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
+		// sample solver: pick center randomly (the solution can be infeasible).
+
 		//                      +----[ exit before timeout ]
 		//                      |
 		for (NodeId n = 0; !isTimeout() && (n < input.centerNum); ++n) { output[n] = rand(input.nodeNum); }
@@ -57,7 +60,6 @@ public:
 
 // solver.
 void solvePCenter(Centers& output, PCenter& input, long long secTimeout, int seed) {
-	// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
 	Solver().solve(output, input, secTimeout, seed);
 }
 

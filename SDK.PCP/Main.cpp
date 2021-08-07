@@ -17,11 +17,11 @@ int main(int argc, char* argv[]) {
 	PCenter pc;
 	cin >> pc.nodeNum >> pc.centerNum;
 	pc.coverages.resize(pc.nodeNum);
-	for (auto n = pc.coverages.begin(); n != pc.coverages.end(); ++n) {
+	for (auto coverage = pc.coverages.begin(); coverage != pc.coverages.end(); ++coverage) {
 		NodeId coveredNodeNum;
 		cin >> coveredNodeNum;
-		n->resize(coveredNodeNum);
-		for (auto i = n->begin(); i != n->end(); ++i) { cin >> *i; }
+		coverage->resize(coveredNodeNum);
+		for (auto node = coverage->begin(); node != coverage->end(); ++node) { cin >> *node; }
 	}
 
 	EdgeId minEdgeLenRank;
@@ -32,16 +32,16 @@ int main(int argc, char* argv[]) {
 		NodeId nodeNumToDrop;
 		cin >> nodeNumToDrop;
 		r->resize(nodeNumToDrop);
-		for (auto i = r->begin(); i != r->end(); ++i) { cin >> *i; }
+		for (auto node = r->begin(); node != r->end(); ++node) { cin >> *node; }
 	}
 
 	cerr << "init output." << endl;
-	Centers cs(pc.centerNum);
+	Centers centers(pc.centerNum);
 
 	cerr << "solve." << endl;
-	solvePCenter(cs, pc, secTimeout, randSeed);
+	solvePCenter(centers, pc, secTimeout, randSeed);
 
 	cerr << "save output." << endl;
-	for (auto c = cs.begin(); c != cs.end(); ++c) { cout << *c << endl; }
+	for (auto center = centers.begin(); center != centers.end(); ++center) { cout << *center << endl; }
 	return 0;
 }

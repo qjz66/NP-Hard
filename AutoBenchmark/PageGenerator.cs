@@ -18,8 +18,8 @@ namespace Analyzer {
                             sw.WriteLine("| Rank |    Author    |    Obj    |       Date       |   Duration (s)  |");
                             sw.WriteLine("| ---- | ------------ | --------- | ---------------- | --------------- |");
                             int count = 0;
-                            foreach (var result in instance.Value.results) {
-                                sw.WriteLine($"| {count} | {result.author} | {result.obj} | {result.date} | {result.duration} |");
+                            foreach (var r in instance.Value.results) {
+                                sw.WriteLine($"| {count} | {r.author} | {problem.Value.restoreObj(r.obj)} | {r.date} | {r.duration} |");
                                 ++count;
                             }
                             sw.WriteLine();
@@ -55,8 +55,8 @@ namespace Analyzer {
                             sw.WriteLine($"<li id='{problem.Key}-{instance.Key}'><a href='#{problem.Key}-{instance.Key}'>{instance.Key}</a><table>");
                             sw.WriteLine("<thead><tr><th>Rank</th><th>Author</th><th>Obj</th><th>Date</th><th>Duration</th></tr></thead><tbody>");
                             int count = 0;
-                            foreach (var result in instance.Value.results) {
-                                sw.WriteLine($"<tr><td>{count}</td><td id='auth'>{result.author}</td><td>{result.obj}</td><td>{result.date}</td><td>{result.duration}</td></tr>");
+                            foreach (var r in instance.Value.results) {
+                                sw.WriteLine($"<tr><td>{count}</td><td id='auth'>{r.author}</td><td>{problem.Value.restoreObj(r.obj)}</td><td>{r.date}</td><td>{r.duration}</td></tr>");
                                 ++count;
                             }
                             sw.WriteLine("</tbody></table></li>");
