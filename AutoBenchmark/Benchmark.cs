@@ -7,7 +7,7 @@ using System.Threading;
 
 
 namespace Analyzer {
-    delegate double CalibrateObj(double obj);
+    delegate double NormalizeObj(double obj);
     delegate void SaveOutput(string output, double obj);
 
 
@@ -27,10 +27,6 @@ namespace Analyzer {
             for (; ; Thread.Sleep(CommonCfg.PollIntervalInMillisecond)) {
                 while (testSubmission(pop())) { }
             }
-
-            //Util.run("git", "pull origin gh-pages");
-            //Util.Json.save(CommonCfg.RankPath, page.rank);
-            //page.generate();
         }
 
         public static void push(Submission s) {
@@ -81,7 +77,6 @@ namespace Analyzer {
                             if (!i.isNewRecord(obj)) { return; }
                             string slnPath = Path.Combine(s.problem, CommonCfg.SolutionSubDir, instance.Key + obj);
                             File.WriteAllText(slnPath, output); // save the solution if the record is refreshed.
-                            //Util.run("git", "add " + filePath);
                         }, obj => (problem.minimize ? obj : -obj));
 
                         List<string> lines = new List<string>(statistics.Count);
@@ -123,10 +118,11 @@ namespace Analyzer {
             StdSmtp.send(s.email, "Statistics of " + s.exePath, reply.ToString());
 
             Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
+            PageGenerator.generateMarkdown(BenchmarkCfg.rank);
             return true;
         }
 
-        static List<Statistic> testInstance(string exePath, Instance instance, Check check, SaveOutput saveOutput, CalibrateObj calibrateObj) {
+        static List<Statistic> testInstance(string exePath, Instance instance, Check check, SaveOutput saveOutput, NormalizeObj calibrateObj) {
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = exePath;
             psi.WorkingDirectory = Environment.CurrentDirectory;

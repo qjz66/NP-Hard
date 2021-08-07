@@ -661,7 +661,7 @@ namespace Analyzer {
             Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 1 };
             easyDataset.instances.Add("ATT.n90e274t359.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("ATT2.n71e350t2918.txt", new Instance { repeat = 5, secTimeout = 10 });
-            easyDataset.instances.Add("brasil.n27e140t1370.txt", new Instance { repeat = 5, secTimeout = 10 });
+            easyDataset.instances.Add("Brasil.n27e140t1370.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("EON.n20e78t373.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("Finland.n31e102t930.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("NSF-01.n14e42t284.txt", new Instance { repeat = 5, secTimeout = 10 });

@@ -13,6 +13,7 @@ namespace Analyzer {
 
         public const string RankPath = "rank.json";
 
+        public const string RankMarkdownPath = "ReadMe.md";
         public const string RankPagePath = "index.html";
         public const string RankCssPath = "base.css";
 
@@ -84,7 +85,7 @@ namespace Analyzer {
         public const int MillisecondCheckInterval = 1000;
         public const long ByteMemoryLimit = 1024 * 1024 * 1024;
 
-        public static readonly int ParallelBenchmarkNum = Math.Min(5, Environment.ProcessorCount);
+        public static readonly int ParallelBenchmarkNum = Math.Min(8, Environment.ProcessorCount);
 
         public const int RandSeedInc = 2011; // TODO[szx][0]: do not commit this.
         public const int RandSeedMul = 2111; // TODO[szx][0]: do not commit this.
