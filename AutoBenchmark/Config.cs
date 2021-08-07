@@ -90,14 +90,15 @@ namespace Analyzer {
         public const int RandSeedMul = 2111; // TODO[szx][0]: do not commit this.
 
         public const string LogDelim = "\t";
-        public const string LogCommonHeader = "Algorithm" + LogDelim + "Seed" + LogDelim + "Instance" + LogDelim + "Obj" + LogDelim + "Duration";
+        public const string LogBasicHeader = "Instance" + LogDelim + "Obj" + LogDelim + "Duration";
+        public const string LogCommonHeader = "Solver" + LogDelim + "Seed" + LogDelim + LogBasicHeader;
         public static readonly Dictionary<string, string> LogHeaders = new Dictionary<string, string> {
             { ProblemName.Coloring, LogCommonHeader + LogDelim + "Conflict" },
             { ProblemName.PCenter, LogCommonHeader + LogDelim + "Center" + LogDelim + "Uncover" },
             { ProblemName.Jobshop, LogCommonHeader + LogDelim + "RestJob" },
-            { ProblemName.RWA, LogCommonHeader + LogDelim + "Center" + LogDelim + "Uncover" },
-            { ProblemName.RectPacking, LogCommonHeader + LogDelim + "Center" + LogDelim + "Uncover" },
-            { ProblemName.VRP, LogCommonHeader + LogDelim + "Center" + LogDelim + "Uncover" },
+            { ProblemName.RWA, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Conflict" },
+            { ProblemName.RectPacking, LogCommonHeader + LogDelim + "Missing" + LogDelim + "Overlap" },
+            { ProblemName.VRP, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Overload" + LogDelim + "NotOnTime" },
         };
 
         public static readonly Dictionary<string, Check> Checkers = new Dictionary<string, Check> {

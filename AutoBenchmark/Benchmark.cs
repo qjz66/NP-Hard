@@ -7,6 +7,7 @@ using System.Threading;
 
 
 namespace Analyzer {
+    delegate double CalibrateObj(double obj);
     delegate void SaveOutput(string output, double obj);
 
 
@@ -60,8 +61,14 @@ namespace Analyzer {
             Problem problem = BenchmarkCfg.rank.problems[s.problem];
             Check check = BenchmarkCfg.Checkers[s.problem];
 
+            StringBuilder reply = new StringBuilder();
+            reply.AppendLine(BenchmarkCfg.LogBasicHeader + BenchmarkCfg.LogHeaders[s.problem].Substring(BenchmarkCfg.LogCommonHeader.Length));
+
             string logPath = Path.Combine(s.problem, CommonCfg.LogFilePrefix + s.date.Substring(0, 4) + CommonCfg.LogFileExt);
             foreach (var dataset in problem.datasets) {
+                int feasibleCount = 0;
+                int optCount = 0;
+                int timeoutCount = 0;
                 Util.scrambleForTasks(BenchmarkCfg.ParallelBenchmarkNum, (isTaskTaken) => {
                     foreach (var instance in dataset.instances) {
                         if (isTaskTaken()) { continue; }
@@ -69,29 +76,33 @@ namespace Analyzer {
                         Instance i = instance.Value;
                         string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
                         if (i.data == null) { i.data = File.ReadAllLines(inputPath); }
-                        List<Statistic> statistics = testInstance(s.exePath, i.secTimeout, i.data, check, i.repeat, (output, obj) => {
-                            if (problem.minimize) {
-                                if ((obj >= Problem.MaxObjValue) || ((i.results.Count > 0) && (obj >= i.results.Min.obj))) { return; }
-                            } else {
-                                if ((obj <= Problem.MinObjValue) || ((i.results.Count > 0) && (obj <= i.results.Max.obj))) { return; }
-                            }
+
+                        List<Statistic> statistics = testInstance(s.exePath, i, check, (output, obj) => {
+                            if (!i.isNewRecord(obj)) { return; }
                             string slnPath = Path.Combine(s.problem, CommonCfg.SolutionSubDir, instance.Key + obj);
                             File.WriteAllText(slnPath, output); // save the solution if the record is refreshed.
                             //Util.run("git", "add " + filePath);
-                        });
+                        }, obj => (problem.minimize ? obj : -obj));
 
                         List<string> lines = new List<string>(statistics.Count);
                         foreach (var line in statistics) {
+                            if (line.obj < Problem.MaxObjValue) { Interlocked.Increment(ref feasibleCount); }
+                            if (i.matchRecord(line.obj)) { Interlocked.Increment(ref optCount); }
+                            if (line.duration > i.secTimeout) { Interlocked.Increment(ref timeoutCount); }
                             lines.Add(s.author.ToString() + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
                                 + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
                                 + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
                         }
                         lock (logPath) {
-                            if (!File.Exists(logPath)) { Util.appendText(logPath, BenchmarkCfg.LogHeaders[s.problem] + Environment.NewLine); }
+                            if (!File.Exists(logPath)) { Util.appendLine(logPath, BenchmarkCfg.LogHeaders[s.problem]); }
                             Util.appendLines(logPath, lines);
+                            foreach (var line in statistics) {
+                                reply.AppendLine(instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
+                                    + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
+                            }
                         }
 
-                        Result bestResult = new Result { obj = problem.worstObjValue(), author = s.author, date = s.date };
+                        Result bestResult = new Result { obj = Problem.MaxObjValue, author = s.author, date = s.date };
                         foreach (var statistic in statistics) {
                             if (statistic.obj >= bestResult.obj) { continue; }
                             bestResult.obj = statistic.obj;
@@ -100,16 +111,22 @@ namespace Analyzer {
                         i.results.Add(bestResult);
 
                         if (i.results.Count <= CommonCfg.MaxResultsCountPerInstance) { continue; }
-                        i.results.Remove(problem.minimize ? i.results.Max : i.results.Min);
-                    } // EXT[szx][2]: stop testing next dataset if the results are poor.
+                        i.results.Remove(i.results.Max); // drop the worst one if the limit is exceeded.
+                    }
                 });
-            } // EXT[szx][3]: reply the test result.
+                // stop testing next dataset if the results are poor.
+                if (feasibleCount < (int)(dataset.instances.Count * dataset.minFeasibleRate)) { break; }
+                if (optCount < (int)(dataset.instances.Count * dataset.minOptRate)) { break; }
+                if (timeoutCount > (int)(dataset.instances.Count * dataset.maxTimeoutRate)) { break; }
+            }
+
+            StdSmtp.send(s.email, "Statistics of " + s.exePath, reply.ToString());
 
             Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
             return true;
         }
 
-        static List<Statistic> testInstance(string exePath, long secTimeout, string[] input, Check check, int repeat, SaveOutput saveOutput) {
+        static List<Statistic> testInstance(string exePath, Instance instance, Check check, SaveOutput saveOutput, CalibrateObj calibrateObj) {
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = exePath;
             psi.WorkingDirectory = Environment.CurrentDirectory;
@@ -119,12 +136,12 @@ namespace Analyzer {
             psi.RedirectStandardError = true;
 
             int seed = 0;
-            long msTimeout = secTimeout * 1000;
-            List<Statistic> statistics = new List<Statistic>(repeat);
-            for (int i = 0; i < repeat; ++i) {
+            long msTimeout = instance.secTimeout * 1000;
+            List<Statistic> statistics = new List<Statistic>(instance.repeat);
+            for (int i = 0; i < instance.repeat; ++i) {
                 Statistic statistic = new Statistic();
                 statistic.seed = (seed = nextSeed(seed));
-                psi.Arguments = secTimeout.ToString() + " " + statistic.seed.ToString();
+                psi.Arguments = instance.secTimeout.ToString() + " " + statistic.seed.ToString();
 
                 Stopwatch sw = new Stopwatch();
                 StringBuilder output = new StringBuilder();
@@ -138,7 +155,7 @@ namespace Analyzer {
 
                     p.BeginErrorReadLine();
                     p.BeginOutputReadLine();
-                    foreach (var line in input) { p.StandardInput.WriteLine(line); }
+                    foreach (var line in instance.data) { p.StandardInput.WriteLine(line); }
                     p.StandardInput.Flush();
 
                     sw.Start();
@@ -153,9 +170,10 @@ namespace Analyzer {
                         try { p.Kill(); } catch (Exception) { }
                     }
 
+                    check(instance.data, output.ToString(), statistic);
+                    saveOutput(output.ToString(), statistic.obj = calibrateObj(statistic.obj));
+
                     statistic.duration = sw.ElapsedMilliseconds / 1000.0;
-                    check(input, output.ToString(), statistic);
-                    saveOutput(output.ToString(), statistic.obj);
                     statistics.Add(statistic);
                 } catch (Exception e) {
                     Util.log("[error] test instance fail due to " + e.ToString());

@@ -35,20 +35,20 @@ namespace Analyzer {
         static Problem generateColoring() {
             Problem problem = new Problem { minimize = true };
 
-            Dataset easyDataset = new Dataset { minOptRate = 1 };
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 0 };
             easyDataset.instances.Add("DSJC0125.1.txt", new Instance { repeat = 5, secTimeout = 50 });
             easyDataset.instances.Add("DSJC0125.5.txt", new Instance { repeat = 5, secTimeout = 200 });
             easyDataset.instances.Add("DSJC0125.9.txt", new Instance { repeat = 5, secTimeout = 250 });
             easyDataset.instances.Add("DSJC0250.1.txt", new Instance { repeat = 5, secTimeout = 150 });
             problem.datasets.Add(easyDataset);
 
-            Dataset normDataset = new Dataset { minOptRate = 0.5 };
+            Dataset normDataset = new Dataset { minFeasibleRate = 0.5, minOptRate = 0.5, maxTimeoutRate = 1 };
             normDataset.instances.Add("DSJC0250.5.txt", new Instance { repeat = 10, secTimeout = 50 });
             normDataset.instances.Add("DSJC0250.9.txt", new Instance { repeat = 10, secTimeout = 200 });
             normDataset.instances.Add("DSJC0500.1.txt", new Instance { repeat = 10, secTimeout = 50 });
             problem.datasets.Add(normDataset);
 
-            Dataset hardDataset = new Dataset { minOptRate = 0 };
+            Dataset hardDataset = new Dataset { minFeasibleRate = 0, minOptRate = 0, maxTimeoutRate = 1 };
             hardDataset.instances.Add("DSJC0500.5.txt", new Instance { repeat = 10, secTimeout = 1000 });
             hardDataset.instances.Add("DSJC0500.9.txt", new Instance { repeat = 10, secTimeout = 2000 });
             hardDataset.instances.Add("DSJC1000.1.txt", new Instance { repeat = 10, secTimeout = 3000 });
@@ -61,7 +61,7 @@ namespace Analyzer {
         static Problem generatePCenter() {
             Problem problem = new Problem { minimize = true };
 
-            Dataset easyDataset = new Dataset { minOptRate = 1 };
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 0 };
             easyDataset.instances.Add("pmed01.n100p005.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("pmed02.n100p010.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("pmed03.n100p010.txt", new Instance { repeat = 5, secTimeout = 10 });
@@ -104,7 +104,7 @@ namespace Analyzer {
             easyDataset.instances.Add("pmed40.n900p090.txt", new Instance { repeat = 5, secTimeout = 10 });
             problem.datasets.Add(easyDataset);
 
-            Dataset normDataset = new Dataset { minOptRate = 0.5 };
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 0 };
             normDataset.instances.Add("u1060p010.txt", new Instance { repeat = 10, secTimeout = 10 });
             normDataset.instances.Add("u1060p020.txt", new Instance { repeat = 10, secTimeout = 10 });
             normDataset.instances.Add("u1060p030.txt", new Instance { repeat = 10, secTimeout = 10 });
@@ -147,7 +147,7 @@ namespace Analyzer {
             normDataset.instances.Add("u1817p150.txt", new Instance { repeat = 10, secTimeout = 10 });
             problem.datasets.Add(normDataset);
 
-            Dataset hardDataset = new Dataset { minOptRate = 0 };
+            Dataset hardDataset = new Dataset { minFeasibleRate = 0, minOptRate = 0, maxTimeoutRate = 1 };
             hardDataset.instances.Add("pcb3038p010r729.txt", new Instance { repeat = 10, secTimeout = 100 });
             hardDataset.instances.Add("pcb3038p020r494.txt", new Instance { repeat = 10, secTimeout = 500 });
             hardDataset.instances.Add("pcb3038p030r394.txt", new Instance { repeat = 10, secTimeout = 1000 });
@@ -169,7 +169,7 @@ namespace Analyzer {
         static Problem generateJobshop() {
             Problem problem = new Problem { minimize = true };
 
-            Dataset easyDataset = new Dataset { minOptRate = 1 };
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 1 };
             easyDataset.instances.Add("fjsp.brandimarte.Mk01.m6j10c3.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("fjsp.brandimarte.Mk02.m6j10c6.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("fjsp.brandimarte.Mk03.m8j15c5.txt", new Instance { repeat = 5, secTimeout = 10 });
@@ -449,7 +449,7 @@ namespace Analyzer {
             easyDataset.instances.Add("jsp.FT20.m5j20c1.txt", new Instance { repeat = 5, secTimeout = 10 });
             problem.datasets.Add(easyDataset);
 
-            Dataset normDataset = new Dataset { minOptRate = 0.5 };
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.5, maxTimeoutRate = 1 };
             normDataset.instances.Add("jsp.LA01.m5j10c1.txt", new Instance { repeat = 5, secTimeout = 10 });
             normDataset.instances.Add("jsp.LA02.m5j10c1.txt", new Instance { repeat = 5, secTimeout = 10 });
             normDataset.instances.Add("jsp.LA03.m5j10c1.txt", new Instance { repeat = 5, secTimeout = 10 });
@@ -541,7 +541,7 @@ namespace Analyzer {
             normDataset.instances.Add("fjsp.dauzere.18a.m10j20c10.txt", new Instance { repeat = 5, secTimeout = 150 });
             problem.datasets.Add(normDataset);
 
-            Dataset hardDataset = new Dataset { minOptRate = 0 };
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
             easyDataset.instances.Add("jsp.ABZ05.m10j10c1.txt", new Instance { repeat = 5, secTimeout = 500 });
             easyDataset.instances.Add("jsp.ABZ06.m10j10c1.txt", new Instance { repeat = 5, secTimeout = 500 });
             easyDataset.instances.Add("jsp.ABZ07.m15j20c1.txt", new Instance { repeat = 5, secTimeout = 500 });
@@ -658,7 +658,7 @@ namespace Analyzer {
         static Problem generateRWA() {
             Problem problem = new Problem { minimize = true };
 
-            Dataset easyDataset = new Dataset { minOptRate = 1 };
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 1 };
             easyDataset.instances.Add("ATT.n90e274t359.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("ATT2.n71e350t2918.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("brasil.n27e140t1370.txt", new Instance { repeat = 5, secTimeout = 10 });
@@ -674,7 +674,7 @@ namespace Analyzer {
             easyDataset.instances.Add("NSF2-48.n14e44t547.txt", new Instance { repeat = 5, secTimeout = 10 });
             problem.datasets.Add(easyDataset);
 
-            Dataset normDataset = new Dataset { minOptRate = 0.5 };
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.5, maxTimeoutRate = 1 };
             normDataset.instances.Add("Y3-020-1.n100e344t1975.txt", new Instance { repeat = 5, secTimeout = 300 });
             normDataset.instances.Add("Y3-020-2.n100e368t1961.txt", new Instance { repeat = 5, secTimeout = 300 });
             normDataset.instances.Add("Y3-020-3.n100e356t2055.txt", new Instance { repeat = 5, secTimeout = 300 });
@@ -752,7 +752,7 @@ namespace Analyzer {
             normDataset.instances.Add("Y5-100-5.n100e568t9900.txt", new Instance { repeat = 5, secTimeout = 300 });
             problem.datasets.Add(normDataset);
 
-            Dataset hardDataset = new Dataset { minOptRate = 0 };
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
             hardDataset.instances.Add("Z04x25-020.n100e400t1975.txt", new Instance { repeat = 10, secTimeout = 300 });
             hardDataset.instances.Add("Z04x25-040.n100e400t3894.txt", new Instance { repeat = 10, secTimeout = 300 });
             hardDataset.instances.Add("Z04x25-060.n100e400t5967.txt", new Instance { repeat = 10, secTimeout = 300 });

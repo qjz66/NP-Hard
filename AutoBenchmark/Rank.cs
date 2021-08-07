@@ -12,22 +12,24 @@ namespace Analyzer {
     [DataContract]
     public class Problem {
         public const double MaxObjValue = 1E9;
-        public const double MinObjValue = -1E9;
 
-        public double worstObjValue() { return minimize ? MaxObjValue : MinObjValue; }
-
-        [DataMember] public bool minimize = true;
+        [DataMember] public bool minimize = true; // for the maximizing problems, the objective value is turned to its inverse number (negative).
         [DataMember] public List<Dataset> datasets = new List<Dataset>(); // ordered by complexity. the benchmark may stop if the solver fails on easy datasets.
     }
 
     [DataContract]
     public class Dataset {
+        [DataMember] public double minFeasibleRate = 0; // the benchmark may stop if the feasible rate on this dataset is below `minFeasibleRate`.
         [DataMember] public double minOptRate = 0; // the benchmark may stop if the optimality rate on this dataset is below `minOptRate`.
+        [DataMember] public double maxTimeoutRate = 1; // the benchmark may stop if the timeout rate on this dataset is above `maxTimeoutRate`.
         [DataMember] public Dictionary<string, Instance> instances = new Dictionary<string, Instance>();
     }
 
     [DataContract]
     public class Instance {
+        public bool matchRecord(double obj) { return (Math.Abs(obj) < Problem.MaxObjValue) && ((results.Count <= 0) || (obj <= results.Min.obj)); }
+        public bool isNewRecord(double obj) { return (Math.Abs(obj) < Problem.MaxObjValue) && ((results.Count <= 0) || (obj < results.Min.obj)); }
+
         [DataMember] public int repeat = 10;
         [DataMember] public long secTimeout = 999;
         [DataMember] public SortedSet<Result> results = new SortedSet<Result>();

@@ -54,17 +54,27 @@ namespace Analyzer {
         public static void appendText(string path, string contents) {
             File.AppendAllText(path, contents, CommonCfg.DefaultEncoding);
         }
+        public static void appendLine(string path, string contents) {
+            File.AppendAllText(path, contents + Environment.NewLine, CommonCfg.DefaultEncoding);
+        }
         public static void appendLines(string path, IEnumerable<string> contents) {
             File.AppendAllLines(path, contents, CommonCfg.DefaultEncoding);
         }
         public static void writeText(string path, string contents) {
             File.WriteAllText(path, contents, CommonCfg.DefaultEncoding);
         }
+        public static void writeLine(string path, string contents) {
+            File.WriteAllText(path, contents + Environment.NewLine, CommonCfg.DefaultEncoding);
+        }
         public static void writeLines(string path, IEnumerable<string> contents) {
             File.WriteAllLines(path, contents, CommonCfg.DefaultEncoding);
         }
 
         public static class Json {
+            static readonly DataContractJsonSerializerSettings JsonSettings = new DataContractJsonSerializerSettings {
+                UseSimpleDictionaryFormat = true
+            };
+
             public static void save<T>(string path, T obj) {
                 using (FileStream fs = File.Open(path,
                     FileMode.Create, FileAccess.Write, FileShare.Read)) {
@@ -81,12 +91,12 @@ namespace Analyzer {
             }
 
             public static void serialize<T>(Stream stream, T obj) {
-                DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(T));
+                DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(T), JsonSettings);
                 js.WriteObject(stream, obj);
             }
 
             public static T deserialize<T>(Stream stream) {
-                DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(T));
+                DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(T), JsonSettings);
                 return (T)js.ReadObject(stream);
             }
 

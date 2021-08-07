@@ -90,7 +90,8 @@ namespace Analyzer {
                 StdSmtp.send(s.email, "Re: " + msg.Subject, sb.ToString());
                 return true;
             }
-            Util.log("[error] no executable found"); // EXT[szx][1]: reply "no executable found in your submission".
+            Util.log("[error] no executable found");
+            StdSmtp.send(s.email, "Re: " + msg.Subject, "No executable found in your submission.");
             return false;
         }
 

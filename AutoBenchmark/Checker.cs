@@ -80,7 +80,7 @@ namespace Analyzer {
                     List<int> setsWithdrop = new List<int>(cells.Length - 1);
                     for (int c = 1; c < cells.Length; ++c) { setsWithdrop.Add(int.Parse(cells[c])); }
                     setsWithdrops.Add(setsWithdrop);
-                } // TODO[szx][0]: handle empty lines.
+                }
             } catch (Exception) { }
 
             List<int> pickedSets = new List<int>(centerNum);
@@ -274,7 +274,7 @@ namespace Analyzer {
                 }
             } catch (Exception) { }
 
-            bool feasible = (brokenPathNum == 0) && (brokenPathNum == 0);
+            bool feasible = (brokenPathNum == 0) && (conflictNum == 0);
             statistic.obj = feasible ? colors.Count : Problem.MaxObjValue;
             statistic.info = brokenPathNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString();
         }
