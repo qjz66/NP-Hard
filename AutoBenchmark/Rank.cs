@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 
-namespace Analyzer {
+namespace AutoBenchmark {
     [DataContract]
     public class Rank {
         [DataMember] public Dictionary<string, Problem> problems = new Dictionary<string, Problem>();

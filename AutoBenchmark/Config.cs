@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace Analyzer {
+namespace AutoBenchmark {
     public class CommonCfg {
         public const string SolverSubDir = "Solver";
         public const string InstanceSubDir = "Instance";

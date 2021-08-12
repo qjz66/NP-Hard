@@ -9,9 +9,8 @@ using S22.Imap;
 using SevenZipExtractor;
 
 
-namespace Analyzer {
+namespace AutoBenchmark {
     public class EmailFetcher {
-        // [NonBlocking]
         public static bool fetch() {
             try {
                 return checkUnseenMails();

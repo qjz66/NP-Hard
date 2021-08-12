@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 
 
-namespace Analyzer {
+namespace AutoBenchmark {
     delegate double NormalizeObj(double obj);
     delegate void SaveOutput(string output, double obj);
 

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 
 
-namespace Analyzer {
+namespace AutoBenchmark {
     public static class Util {
         public static void log(string msg) { // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
             Console.WriteLine($"{friendlyDateTime()} {msg}");

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Analyzer {
+namespace AutoBenchmark {
     public class PageGenerator {
         public static void generateMarkdown(Rank rank) {
             using (StreamWriter sw = File.CreateText(CommonCfg.RankMarkdownPath)) {

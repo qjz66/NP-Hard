@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace Analyzer {
+namespace AutoBenchmark {
     public delegate void Check(string[] input, string output, Statistic statistic);
 
 
     public class Checker {
-        static readonly char[] InlineDelimiters = new char[] { ' ', '\t' };
-        static readonly char[] LineDelimiters = new char[] { '\r', '\n' };
-        static readonly char[] WhiteSpaceChars = new char[] { ' ', '\t', '\r', '\n' };
+        public static readonly char[] InlineDelimiters = new char[] { ' ', '\t' };
+        public static readonly char[] LineDelimiters = new char[] { '\r', '\n' };
+        public static readonly char[] WhiteSpaceChars = new char[] { ' ', '\t', '\r', '\n' };
 
 
         struct Edge {
