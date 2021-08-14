@@ -155,7 +155,8 @@ namespace AutoBenchmark {
                     p.StandardInput.Flush();
 
                     sw.Start();
-                    while (!p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
+                    while (!p.HasExited
+                        && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
                         && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
                         && (sw.ElapsedMilliseconds < msTimeout)) { }
                     sw.Stop();
