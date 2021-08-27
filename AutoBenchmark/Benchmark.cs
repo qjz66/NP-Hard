@@ -68,6 +68,7 @@ namespace AutoBenchmark {
                 Util.scrambleForTasks(BenchmarkCfg.ParallelBenchmarkNum, (isTaskTaken) => {
                     foreach (var instance in dataset.instances) {
                         if (isTaskTaken()) { continue; }
+                        //Util.log(instance.Key);
 
                         Instance i = instance.Value;
                         string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
@@ -153,6 +154,8 @@ namespace AutoBenchmark {
                     p.BeginOutputReadLine();
                     foreach (var line in instance.data) { p.StandardInput.WriteLine(line); }
                     p.StandardInput.Flush();
+                    Thread.Sleep(BenchmarkCfg.MillisecondCheckInterval); // TODO[szx][0]: make sure the solver can still receive the data after closing the stream.
+                    p.StandardInput.Close(); // send EOF to the solver.
 
                     sw.Start();
                     while (!p.HasExited
