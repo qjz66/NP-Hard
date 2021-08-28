@@ -134,11 +134,13 @@ namespace AutoBenchmark {
 
             int seed = 0;
             long msTimeout = instance.secTimeout * 1000;
+            long timeoutDelta = (instance.repeat > 1) ? (msTimeout / (4 * (instance.repeat - 1))) : 0;
             List<Statistic> statistics = new List<Statistic>(instance.repeat);
             for (int i = 0; i < instance.repeat; ++i) {
                 Statistic statistic = new Statistic();
                 statistic.seed = (seed = nextSeed(seed));
-                psi.Arguments = instance.secTimeout.ToString() + " " + statistic.seed.ToString();
+                long secTimeout = instance.secTimeout - instance.secTimeout * i / (instance.repeat * 4);
+                psi.Arguments = secTimeout.ToString() + " " + statistic.seed.ToString();
 
                 Stopwatch sw = new Stopwatch();
                 StringBuilder output = new StringBuilder();
