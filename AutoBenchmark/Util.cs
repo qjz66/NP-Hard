@@ -199,7 +199,7 @@ namespace AutoBenchmark {
         ///     }
         /// });
         /// </example>
-        public static void scrambleForTasks(int workerNum, UserTask userTask) {
+        public static void fightForTasks(int workerNum, UserTask userTask) {
             Thread[] workers = new Thread[workerNum];
             int gt = 0; // global task index.
             for (int w = 0; w < workerNum; ++w) {

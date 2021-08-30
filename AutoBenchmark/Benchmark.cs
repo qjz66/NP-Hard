@@ -65,7 +65,7 @@ namespace AutoBenchmark {
                 int feasibleCount = 0;
                 int optCount = 0;
                 int timeoutCount = 0;
-                Util.scrambleForTasks(BenchmarkCfg.ParallelBenchmarkNum, (isTaskTaken) => {
+                Util.fightForTasks(BenchmarkCfg.ParallelBenchmarkNum, (isTaskTaken) => {
                     foreach (var instance in dataset.instances) {
                         if (isTaskTaken()) { continue; }
                         //Util.log(instance.Key);
@@ -156,7 +156,6 @@ namespace AutoBenchmark {
                     p.BeginOutputReadLine();
                     foreach (var line in instance.data) { p.StandardInput.WriteLine(line); }
                     p.StandardInput.Flush();
-                    Thread.Sleep(BenchmarkCfg.MillisecondCheckInterval); // TODO[szx][0]: make sure the solver can still receive the data after closing the stream.
                     p.StandardInput.Close(); // send EOF to the solver.
 
                     sw.Start();
@@ -166,11 +165,11 @@ namespace AutoBenchmark {
                         && (sw.ElapsedMilliseconds < msTimeout)) { }
                     sw.Stop();
 
-                    if (p.HasExited) {
+                    try {
+                        p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval);
+                        if (!p.HasExited) { p.Kill(); }
                         p.WaitForExit();
-                    } else {
-                        try { p.Kill(); } catch (Exception) { }
-                    }
+                    } catch (Exception) { }
 
                     check(instance.data, output.ToString(), statistic);
                     saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
