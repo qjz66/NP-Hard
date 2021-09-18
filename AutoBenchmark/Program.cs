@@ -148,20 +148,20 @@ namespace AutoBenchmark {
             problem.datasets.Add(normDataset);
 
             Dataset hardDataset = new Dataset { minFeasibleRate = 0, minOptRate = 0, maxTimeoutRate = 1 };
-            hardDataset.instances.Add("pcb3038p010r729.txt", new Instance { repeat = 10, secTimeout = 100 });
-            hardDataset.instances.Add("pcb3038p020r494.txt", new Instance { repeat = 10, secTimeout = 500 });
-            hardDataset.instances.Add("pcb3038p030r394.txt", new Instance { repeat = 10, secTimeout = 1000 });
-            hardDataset.instances.Add("pcb3038p040r337.txt", new Instance { repeat = 10, secTimeout = 2000 });
-            hardDataset.instances.Add("pcb3038p050r299.txt", new Instance { repeat = 10, secTimeout = 3000 });
-            hardDataset.instances.Add("pcb3038p100r207.txt", new Instance { repeat = 10, secTimeout = 3000 });
-            hardDataset.instances.Add("pcb3038p150r165.txt", new Instance { repeat = 10, secTimeout = 3000 });
-            hardDataset.instances.Add("pcb3038p200r141.txt", new Instance { repeat = 10, secTimeout = 3000 });
-            hardDataset.instances.Add("pcb3038p250r123.txt", new Instance { repeat = 10, secTimeout = 2000 });
-            hardDataset.instances.Add("pcb3038p300r116.txt", new Instance { repeat = 10, secTimeout = 2000 });
-            hardDataset.instances.Add("pcb3038p350r105.txt", new Instance { repeat = 10, secTimeout = 1000 });
-            hardDataset.instances.Add("pcb3038p400r97.txt", new Instance { repeat = 10, secTimeout = 1000 });
-            hardDataset.instances.Add("pcb3038p450r89.txt", new Instance { repeat = 10, secTimeout = 500 });
-            hardDataset.instances.Add("pcb3038p500r85.txt", new Instance { repeat = 10, secTimeout = 100 });
+            hardDataset.instances.Add("pcb3038p010r729.txt", new Instance { repeat = 10, secTimeout = 20 });
+            hardDataset.instances.Add("pcb3038p020r494.txt", new Instance { repeat = 10, secTimeout = 30 });
+            hardDataset.instances.Add("pcb3038p030r394.txt", new Instance { repeat = 10, secTimeout = 30 });
+            hardDataset.instances.Add("pcb3038p040r337.txt", new Instance { repeat = 10, secTimeout = 100 });
+            hardDataset.instances.Add("pcb3038p050r299.txt", new Instance { repeat = 10, secTimeout = 300 });
+            hardDataset.instances.Add("pcb3038p100r207.txt", new Instance { repeat = 10, secTimeout = 500 });
+            hardDataset.instances.Add("pcb3038p150r165.txt", new Instance { repeat = 10, secTimeout = 500 });
+            hardDataset.instances.Add("pcb3038p200r141.txt", new Instance { repeat = 10, secTimeout = 500 });
+            hardDataset.instances.Add("pcb3038p250r123.txt", new Instance { repeat = 10, secTimeout = 100 });
+            hardDataset.instances.Add("pcb3038p300r116.txt", new Instance { repeat = 10, secTimeout = 100 });
+            hardDataset.instances.Add("pcb3038p350r105.txt", new Instance { repeat = 10, secTimeout = 50 });
+            hardDataset.instances.Add("pcb3038p400r97.txt", new Instance { repeat = 10, secTimeout = 50 });
+            hardDataset.instances.Add("pcb3038p450r89.txt", new Instance { repeat = 10, secTimeout = 50 });
+            hardDataset.instances.Add("pcb3038p500r85.txt", new Instance { repeat = 10, secTimeout = 50 });
             problem.datasets.Add(hardDataset);
 
             return problem;

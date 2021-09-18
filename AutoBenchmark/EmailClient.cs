@@ -68,7 +68,7 @@ namespace AutoBenchmark {
                     if (CommonCfg.ZipFileExts.Contains(Path.GetExtension(file.Name))) {
                         using (ArchiveFile archiveFile = new ArchiveFile(file.ContentStream)) {
                             foreach (Entry entry in archiveFile.Entries) {
-                                if (entry.Size > EmailCfg.MaxFileByteSize) { Util.log("[warning] skip file larger than 4MB"); continue; }
+                                if (entry.Size > EmailCfg.MaxFileByteSize) { Util.log($"[warning] skip file larger than {EmailCfg.MaxFileByteSize}B"); continue; }
                                 entry.Extract(detectExe(entry.FileName));
                             }
                         }

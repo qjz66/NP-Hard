@@ -40,13 +40,14 @@ namespace AutoBenchmark {
         }
 
         static Submission pop() {
-            if (!EmailFetcher.fetch()) { return null; }
-            Submission s;
-            do {
+            Submission s = null;
+            EmailFetcher.fetch();
+            while (q.Count > 0) {
                 s = q.Dequeue();
                 Util.tryDec(emailNums, s.email);
                 Util.tryDec(authorNums, s.author);
-            } while (emailNums.ContainsKey(s.email) || authorNums.ContainsKey(s.author));
+                if (!emailNums.ContainsKey(s.email) && !authorNums.ContainsKey(s.author)) { break; }
+            }
             return s;
         }
 
@@ -134,9 +135,8 @@ namespace AutoBenchmark {
 
             int seed = 0;
             long msTimeout = instance.secTimeout * 1000;
-            long timeoutDelta = (instance.repeat > 1) ? (msTimeout / (4 * (instance.repeat - 1))) : 0;
             List<Statistic> statistics = new List<Statistic>(instance.repeat);
-            for (int i = 0; i < instance.repeat; ++i) {
+            for (int i = instance.repeat - 1; i >= 0; --i) {
                 Statistic statistic = new Statistic();
                 statistic.seed = (seed = nextSeed(seed));
                 long secTimeout = instance.secTimeout - instance.secTimeout * i / (instance.repeat * 4);
