@@ -40,15 +40,14 @@ namespace AutoBenchmark {
         }
 
         static Submission pop() {
-            Submission s = null;
             EmailFetcher.fetch();
             while (q.Count > 0) {
-                s = q.Dequeue();
+                Submission s = q.Dequeue();
                 Util.tryDec(emailNums, s.email);
                 Util.tryDec(authorNums, s.author);
-                if (!emailNums.ContainsKey(s.email) && !authorNums.ContainsKey(s.author)) { break; }
+                if (!emailNums.ContainsKey(s.email) && !authorNums.ContainsKey(s.author)) { return s; }
             }
-            return s;
+            return null;
         }
 
 
@@ -85,7 +84,7 @@ namespace AutoBenchmark {
                         foreach (var line in statistics) {
                             if (line.obj < Problem.MaxObjValue) { Interlocked.Increment(ref feasibleCount); }
                             if (i.matchRecord(line.obj)) { Interlocked.Increment(ref optCount); }
-                            if (line.duration > i.secTimeout) { Interlocked.Increment(ref timeoutCount); }
+                            if (line.duration > (i.secTimeout + BenchmarkCfg.MillisecondCheckInterval)) { Interlocked.Increment(ref timeoutCount); }
                             lines.Add(s.author.ToString() + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
                                 + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
                                 + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
@@ -111,16 +110,19 @@ namespace AutoBenchmark {
                         i.results.Remove(i.results.Max); // drop the worst one if the limit is exceeded.
                     }
                 });
+                Util.log($"[info] feasibleCount={feasibleCount} optCount={optCount} timeoutCount={timeoutCount}");
                 // stop testing next dataset if the results are poor.
                 if (feasibleCount < (int)(dataset.instances.Count * dataset.minFeasibleRate)) { break; }
                 if (optCount < (int)(dataset.instances.Count * dataset.minOptRate)) { break; }
                 if (timeoutCount > (int)(dataset.instances.Count * dataset.maxTimeoutRate)) { break; }
             }
 
+            Util.log("[info] report statistics");
             StdSmtp.send(s.email, "Statistics of " + s.exePath, reply.ToString());
 
             Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
             PageGenerator.generateMarkdown(BenchmarkCfg.rank);
+            Util.log("[info] finish testing submission");
             return true;
         }
 
