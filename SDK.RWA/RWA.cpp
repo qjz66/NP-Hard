@@ -32,13 +32,13 @@ public:
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
 		// sample solver: assign wavelengths and find routes randomly (the solution can be infeasible).
 
-		//                      +----[ exit before timeout ]
-		//                      |
-		for (NodeId t = 0; !isTimeout() && (t < input.trafficNum); ++t) { output[t].wavelen = rand(input.trafficNum); }
-		//                                                                                      |
-		//                 [ use the random number generator initialized by the given seed ]----+
+		//                        +----[ exit before timeout ]
+		//                        |
+		for (TrafficId t = 0; !isTimeout() && (t < input.trafficNum); ++t) { output[t].wavelen = rand(input.trafficNum); }
+		//                                                                                        |
+		//                   [ use the random number generator initialized by the given seed ]----+
 
-		for (NodeId t = 0; !isTimeout() && (t < input.trafficNum); ++t) {
+		for (TrafficId t = 0; !isTimeout() && (t < input.trafficNum); ++t) {
 			output[t].nodes.resize(rand(input.nodeNum));
 			for (auto n = output[t].nodes.begin(); n != output[t].nodes.end(); ++n) {
 				*n = rand(input.trafficNum);
@@ -48,7 +48,7 @@ public:
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.arcNum << '\t' << input.trafficNum << endl;
 		cerr << "traffic\twavelen" << endl;
-		for (NodeId n = 0; !isTimeout() && (n < input.nodeNum); ++n) { cerr << n << '\t' << output[n].wavelen << endl; }
+		for (TrafficId t = 0; !isTimeout() && (t < input.trafficNum); ++t) { cerr << t << '\t' << output[t].wavelen << endl; }
 	}
 };
 

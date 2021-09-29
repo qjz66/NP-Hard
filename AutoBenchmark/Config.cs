@@ -78,14 +78,14 @@ namespace AutoBenchmark {
         public const string Jobshop = "FJSP";
         public const string RWA = "RWA";
         public const string RectPacking = "RPP";
-        public const string VRP = "VRP";
+        public const string VRPTW2d = "VRPTW2d";
     }
 
     public class BenchmarkCfg {
         public const int MillisecondCheckInterval = 1000;
-        public const long ByteMemoryLimit = 1024 * 1024 * 1024;
+        public const long ByteMemoryLimit = 16L * 1024 * 1024 * 1024;
 
-        public static readonly int ParallelBenchmarkNum = Math.Min(8, Environment.ProcessorCount);
+        public static readonly int ParallelBenchmarkNum = Math.Min(16, Environment.ProcessorCount);
 
         public const int RandSeedInc = 2011; // TODO[szx][0]: do not commit this.
         public const int RandSeedMul = 2111; // TODO[szx][0]: do not commit this.
@@ -99,7 +99,7 @@ namespace AutoBenchmark {
             { ProblemName.Jobshop, LogCommonHeader + LogDelim + "RestJob" },
             { ProblemName.RWA, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Conflict" },
             { ProblemName.RectPacking, LogCommonHeader + LogDelim + "Missing" + LogDelim + "Overlap" },
-            { ProblemName.VRP, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Overload" + LogDelim + "NotOnTime" },
+            { ProblemName.VRPTW2d, LogCommonHeader + LogDelim + "VehicleNum" + LogDelim + "Uncover" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
         };
 
         public static readonly Dictionary<string, Check> Checkers = new Dictionary<string, Check> {
@@ -108,7 +108,7 @@ namespace AutoBenchmark {
             { ProblemName.Jobshop, Checker.jobshop },
             { ProblemName.RWA, Checker.rwa },
             { ProblemName.RectPacking, Checker.rectPacking },
-            { ProblemName.VRP, Checker.vrp },
+            { ProblemName.VRPTW2d, Checker.vrptw2d },
         };
 
         public static Rank rank = Util.Json.load<Rank>(CommonCfg.RankPath);

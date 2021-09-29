@@ -29,25 +29,21 @@ namespace AutoBenchmark {
             }
             static void convertDimacs(string oldPath, string newPath, int colorNum) {
                 int nodeNum = 0;
-                int edgeNum = 0;
                 List<Arc> edges = new List<Arc>();
-                try {
-                    string[] lines = File.ReadAllLines(oldPath);
+                string[] lines = File.ReadAllLines(oldPath);
 
-                    foreach (string line in lines) {
-                        if (line.Length <= 0) { continue; }
-                        if (line[0] == 'c') { continue; }
+                foreach (string line in lines) {
+                    if (line.Length <= 0) { continue; }
+                    if (line[0] == 'c') { continue; }
 
-                        string[] cells = line.Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                        if (line[0] == 'p') {
-                            nodeNum = int.Parse(cells[2]);
-                            edgeNum = int.Parse(cells[3]);
-                            edges.Capacity = edgeNum;
-                        } else if (line[0] == 'e') {
-                            edges.Add(new Arc { src = int.Parse(cells[1]) - 1, dst = int.Parse(cells[2]) - 1 });
-                        }
+                    string[] words = line.Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (line[0] == 'p') {
+                        nodeNum = int.Parse(words[2]);
+                        edges.Capacity = int.Parse(words[3]);
+                    } else if (line[0] == 'e') {
+                        edges.Add(new Arc { src = int.Parse(words[1]) - 1, dst = int.Parse(words[2]) - 1 });
                     }
-                } catch (Exception) { }
+                }
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append(nodeNum).Append(' ').Append(edges.Count).Append(' ').Append(colorNum).AppendLine();
@@ -172,10 +168,10 @@ namespace AutoBenchmark {
 
                 double[,] coords = new double[nodeNum, 2];
                 for (int n = 0; l < lines.Length; ++l, ++n) {
-                    string[] cells = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                    if (cells.Length < 2) { continue; }
-                    coords[n, 0] = double.Parse(cells[cells.Length - 2]);
-                    coords[n, 1] = double.Parse(cells[cells.Length - 1]);
+                    string[] words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 2) { continue; }
+                    coords[n, 0] = double.Parse(words[words.Length - 2]);
+                    coords[n, 1] = double.Parse(words[words.Length - 1]);
                 }
 
                 return coords;
@@ -333,12 +329,12 @@ namespace AutoBenchmark {
                 string[] lines = File.ReadAllLines(path);
                 for (int l = 0; l < lines.Length; ++l) {
                     if (lines[l++].Length <= 0) { break; }
-                    string[] cells = lines[l++].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                    if (cells.Length <= 0) { break; }
-                    int batchNum = int.Parse(cells[0]);
-                    int workerNum = int.Parse(cells[1]);
-                    int ub = int.Parse(cells[4]);
-                    int lb = int.Parse(cells[5]);
+                    string[] words = lines[l++].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length <= 0) { break; }
+                    int batchNum = int.Parse(words[0]);
+                    int workerNum = int.Parse(words[1]);
+                    int ub = int.Parse(words[4]);
+                    int lb = int.Parse(words[5]);
                     string[][] times = new string[batchNum][];
                     for (int b = 0; b < batchNum; ++b) {
                         times[b] = lines[++l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
@@ -500,5 +496,392 @@ namespace AutoBenchmark {
                 File.WriteAllText(instancePath + ".n" + netNums[0] + "e" + netNums[1] + "t" + trafficLines[0] + ".txt", sb.ToString());
             }
         }
+
+        public class VRPTW2d {
+            public static void convertAll() {
+                convertDimacs("solomon.c101");
+                convertDimacs("solomon.c102");
+                convertDimacs("solomon.c103");
+                convertDimacs("solomon.c104");
+                convertDimacs("solomon.c105");
+                convertDimacs("solomon.c106");
+                convertDimacs("solomon.c107");
+                convertDimacs("solomon.c108");
+                convertDimacs("solomon.c109");
+                convertDimacs("solomon.c201");
+                convertDimacs("solomon.c202");
+                convertDimacs("solomon.c203");
+                convertDimacs("solomon.c204");
+                convertDimacs("solomon.c205");
+                convertDimacs("solomon.c206");
+                convertDimacs("solomon.c207");
+                convertDimacs("solomon.c208");
+                convertDimacs("solomon.r101");
+                convertDimacs("solomon.r102");
+                convertDimacs("solomon.r103");
+                convertDimacs("solomon.r104");
+                convertDimacs("solomon.r105");
+                convertDimacs("solomon.r106");
+                convertDimacs("solomon.r107");
+                convertDimacs("solomon.r108");
+                convertDimacs("solomon.r109");
+                convertDimacs("solomon.r110");
+                convertDimacs("solomon.r111");
+                convertDimacs("solomon.r112");
+                convertDimacs("solomon.r201");
+                convertDimacs("solomon.r202");
+                convertDimacs("solomon.r203");
+                convertDimacs("solomon.r204");
+                convertDimacs("solomon.r205");
+                convertDimacs("solomon.r206");
+                convertDimacs("solomon.r207");
+                convertDimacs("solomon.r208");
+                convertDimacs("solomon.r209");
+                convertDimacs("solomon.r210");
+                convertDimacs("solomon.r211");
+                convertDimacs("solomon.rc101");
+                convertDimacs("solomon.rc102");
+                convertDimacs("solomon.rc103");
+                convertDimacs("solomon.rc104");
+                convertDimacs("solomon.rc105");
+                convertDimacs("solomon.rc106");
+                convertDimacs("solomon.rc107");
+                convertDimacs("solomon.rc108");
+                convertDimacs("solomon.rc201");
+                convertDimacs("solomon.rc202");
+                convertDimacs("solomon.rc203");
+                convertDimacs("solomon.rc204");
+                convertDimacs("solomon.rc205");
+                convertDimacs("solomon.rc206");
+                convertDimacs("solomon.rc207");
+                convertDimacs("solomon.rc208");
+                convertDimacs("homberger.c10201");
+                convertDimacs("homberger.c10202");
+                convertDimacs("homberger.c10203");
+                convertDimacs("homberger.c10204");
+                convertDimacs("homberger.c10205");
+                convertDimacs("homberger.c10206");
+                convertDimacs("homberger.c10207");
+                convertDimacs("homberger.c10208");
+                convertDimacs("homberger.c10209");
+                convertDimacs("homberger.c10210");
+                convertDimacs("homberger.c10401");
+                convertDimacs("homberger.c10402");
+                convertDimacs("homberger.c10403");
+                convertDimacs("homberger.c10404");
+                convertDimacs("homberger.c10405");
+                convertDimacs("homberger.c10406");
+                convertDimacs("homberger.c10407");
+                convertDimacs("homberger.c10408");
+                convertDimacs("homberger.c10409");
+                convertDimacs("homberger.c10410");
+                convertDimacs("homberger.c10601");
+                convertDimacs("homberger.c10602");
+                convertDimacs("homberger.c10603");
+                convertDimacs("homberger.c10604");
+                convertDimacs("homberger.c10605");
+                convertDimacs("homberger.c10606");
+                convertDimacs("homberger.c10607");
+                convertDimacs("homberger.c10608");
+                convertDimacs("homberger.c10609");
+                convertDimacs("homberger.c10610");
+                convertDimacs("homberger.c10801");
+                convertDimacs("homberger.c10802");
+                convertDimacs("homberger.c10803");
+                convertDimacs("homberger.c10804");
+                convertDimacs("homberger.c10805");
+                convertDimacs("homberger.c10806");
+                convertDimacs("homberger.c10807");
+                convertDimacs("homberger.c10808");
+                convertDimacs("homberger.c10809");
+                convertDimacs("homberger.c10810");
+                convertDimacs("homberger.c11001");
+                convertDimacs("homberger.c11002");
+                convertDimacs("homberger.c11003");
+                convertDimacs("homberger.c11004");
+                convertDimacs("homberger.c11005");
+                convertDimacs("homberger.c11006");
+                convertDimacs("homberger.c11007");
+                convertDimacs("homberger.c11008");
+                convertDimacs("homberger.c11009");
+                convertDimacs("homberger.c11010");
+                convertDimacs("homberger.c20201");
+                convertDimacs("homberger.c20202");
+                convertDimacs("homberger.c20203");
+                convertDimacs("homberger.c20204");
+                convertDimacs("homberger.c20205");
+                convertDimacs("homberger.c20206");
+                convertDimacs("homberger.c20207");
+                convertDimacs("homberger.c20208");
+                convertDimacs("homberger.c20209");
+                convertDimacs("homberger.c20210");
+                convertDimacs("homberger.c20401");
+                convertDimacs("homberger.c20402");
+                convertDimacs("homberger.c20403");
+                convertDimacs("homberger.c20404");
+                convertDimacs("homberger.c20405");
+                convertDimacs("homberger.c20406");
+                convertDimacs("homberger.c20407");
+                convertDimacs("homberger.c20408");
+                convertDimacs("homberger.c20409");
+                convertDimacs("homberger.c20410");
+                convertDimacs("homberger.c20601");
+                convertDimacs("homberger.c20602");
+                convertDimacs("homberger.c20603");
+                convertDimacs("homberger.c20604");
+                convertDimacs("homberger.c20605");
+                convertDimacs("homberger.c20606");
+                convertDimacs("homberger.c20607");
+                convertDimacs("homberger.c20608");
+                convertDimacs("homberger.c20609");
+                convertDimacs("homberger.c20610");
+                convertDimacs("homberger.c20801");
+                convertDimacs("homberger.c20802");
+                convertDimacs("homberger.c20803");
+                convertDimacs("homberger.c20804");
+                convertDimacs("homberger.c20805");
+                convertDimacs("homberger.c20806");
+                convertDimacs("homberger.c20807");
+                convertDimacs("homberger.c20808");
+                convertDimacs("homberger.c20809");
+                convertDimacs("homberger.c20810");
+                convertDimacs("homberger.c21001");
+                convertDimacs("homberger.c21002");
+                convertDimacs("homberger.c21003");
+                convertDimacs("homberger.c21004");
+                convertDimacs("homberger.c21005");
+                convertDimacs("homberger.c21006");
+                convertDimacs("homberger.c21007");
+                convertDimacs("homberger.c21008");
+                convertDimacs("homberger.c21009");
+                convertDimacs("homberger.c21010");
+                convertDimacs("homberger.r10201");
+                convertDimacs("homberger.r10202");
+                convertDimacs("homberger.r10203");
+                convertDimacs("homberger.r10204");
+                convertDimacs("homberger.r10205");
+                convertDimacs("homberger.r10206");
+                convertDimacs("homberger.r10207");
+                convertDimacs("homberger.r10208");
+                convertDimacs("homberger.r10209");
+                convertDimacs("homberger.r10210");
+                convertDimacs("homberger.r10401");
+                convertDimacs("homberger.r10402");
+                convertDimacs("homberger.r10403");
+                convertDimacs("homberger.r10404");
+                convertDimacs("homberger.r10405");
+                convertDimacs("homberger.r10406");
+                convertDimacs("homberger.r10407");
+                convertDimacs("homberger.r10408");
+                convertDimacs("homberger.r10409");
+                convertDimacs("homberger.r10410");
+                convertDimacs("homberger.r10601");
+                convertDimacs("homberger.r10602");
+                convertDimacs("homberger.r10603");
+                convertDimacs("homberger.r10604");
+                convertDimacs("homberger.r10605");
+                convertDimacs("homberger.r10606");
+                convertDimacs("homberger.r10607");
+                convertDimacs("homberger.r10608");
+                convertDimacs("homberger.r10609");
+                convertDimacs("homberger.r10610");
+                convertDimacs("homberger.r10801");
+                convertDimacs("homberger.r10802");
+                convertDimacs("homberger.r10803");
+                convertDimacs("homberger.r10804");
+                convertDimacs("homberger.r10805");
+                convertDimacs("homberger.r10806");
+                convertDimacs("homberger.r10807");
+                convertDimacs("homberger.r10808");
+                convertDimacs("homberger.r10809");
+                convertDimacs("homberger.r10810");
+                convertDimacs("homberger.r11001");
+                convertDimacs("homberger.r11002");
+                convertDimacs("homberger.r11003");
+                convertDimacs("homberger.r11004");
+                convertDimacs("homberger.r11005");
+                convertDimacs("homberger.r11006");
+                convertDimacs("homberger.r11007");
+                convertDimacs("homberger.r11008");
+                convertDimacs("homberger.r11009");
+                convertDimacs("homberger.r11010");
+                convertDimacs("homberger.r20201");
+                convertDimacs("homberger.r20202");
+                convertDimacs("homberger.r20203");
+                convertDimacs("homberger.r20204");
+                convertDimacs("homberger.r20205");
+                convertDimacs("homberger.r20206");
+                convertDimacs("homberger.r20207");
+                convertDimacs("homberger.r20208");
+                convertDimacs("homberger.r20209");
+                convertDimacs("homberger.r20210");
+                convertDimacs("homberger.r20401");
+                convertDimacs("homberger.r20402");
+                convertDimacs("homberger.r20403");
+                convertDimacs("homberger.r20404");
+                convertDimacs("homberger.r20405");
+                convertDimacs("homberger.r20406");
+                convertDimacs("homberger.r20407");
+                convertDimacs("homberger.r20408");
+                convertDimacs("homberger.r20409");
+                convertDimacs("homberger.r20410");
+                convertDimacs("homberger.r20601");
+                convertDimacs("homberger.r20602");
+                convertDimacs("homberger.r20603");
+                convertDimacs("homberger.r20604");
+                convertDimacs("homberger.r20605");
+                convertDimacs("homberger.r20606");
+                convertDimacs("homberger.r20607");
+                convertDimacs("homberger.r20608");
+                convertDimacs("homberger.r20609");
+                convertDimacs("homberger.r20610");
+                convertDimacs("homberger.r20801");
+                convertDimacs("homberger.r20802");
+                convertDimacs("homberger.r20803");
+                convertDimacs("homberger.r20804");
+                convertDimacs("homberger.r20805");
+                convertDimacs("homberger.r20806");
+                convertDimacs("homberger.r20807");
+                convertDimacs("homberger.r20808");
+                convertDimacs("homberger.r20809");
+                convertDimacs("homberger.r20810");
+                convertDimacs("homberger.r21001");
+                convertDimacs("homberger.r21002");
+                convertDimacs("homberger.r21003");
+                convertDimacs("homberger.r21004");
+                convertDimacs("homberger.r21005");
+                convertDimacs("homberger.r21006");
+                convertDimacs("homberger.r21007");
+                convertDimacs("homberger.r21008");
+                convertDimacs("homberger.r21009");
+                convertDimacs("homberger.r21010");
+                convertDimacs("homberger.rc10201");
+                convertDimacs("homberger.rc10202");
+                convertDimacs("homberger.rc10203");
+                convertDimacs("homberger.rc10204");
+                convertDimacs("homberger.rc10205");
+                convertDimacs("homberger.rc10206");
+                convertDimacs("homberger.rc10207");
+                convertDimacs("homberger.rc10208");
+                convertDimacs("homberger.rc10209");
+                convertDimacs("homberger.rc10210");
+                convertDimacs("homberger.rc10401");
+                convertDimacs("homberger.rc10402");
+                convertDimacs("homberger.rc10403");
+                convertDimacs("homberger.rc10404");
+                convertDimacs("homberger.rc10405");
+                convertDimacs("homberger.rc10406");
+                convertDimacs("homberger.rc10407");
+                convertDimacs("homberger.rc10408");
+                convertDimacs("homberger.rc10409");
+                convertDimacs("homberger.rc10410");
+                convertDimacs("homberger.rc10601");
+                convertDimacs("homberger.rc10602");
+                convertDimacs("homberger.rc10603");
+                convertDimacs("homberger.rc10604");
+                convertDimacs("homberger.rc10605");
+                convertDimacs("homberger.rc10606");
+                convertDimacs("homberger.rc10607");
+                convertDimacs("homberger.rc10608");
+                convertDimacs("homberger.rc10609");
+                convertDimacs("homberger.rc10610");
+                convertDimacs("homberger.rc10801");
+                convertDimacs("homberger.rc10802");
+                convertDimacs("homberger.rc10803");
+                convertDimacs("homberger.rc10804");
+                convertDimacs("homberger.rc10805");
+                convertDimacs("homberger.rc10806");
+                convertDimacs("homberger.rc10807");
+                convertDimacs("homberger.rc10808");
+                convertDimacs("homberger.rc10809");
+                convertDimacs("homberger.rc10810");
+                convertDimacs("homberger.rc11001");
+                convertDimacs("homberger.rc11002");
+                convertDimacs("homberger.rc11003");
+                convertDimacs("homberger.rc11004");
+                convertDimacs("homberger.rc11005");
+                convertDimacs("homberger.rc11006");
+                convertDimacs("homberger.rc11007");
+                convertDimacs("homberger.rc11008");
+                convertDimacs("homberger.rc11009");
+                convertDimacs("homberger.rc11010");
+                convertDimacs("homberger.rc20201");
+                convertDimacs("homberger.rc20202");
+                convertDimacs("homberger.rc20203");
+                convertDimacs("homberger.rc20204");
+                convertDimacs("homberger.rc20205");
+                convertDimacs("homberger.rc20206");
+                convertDimacs("homberger.rc20207");
+                convertDimacs("homberger.rc20208");
+                convertDimacs("homberger.rc20209");
+                convertDimacs("homberger.rc20210");
+                convertDimacs("homberger.rc20401");
+                convertDimacs("homberger.rc20402");
+                convertDimacs("homberger.rc20403");
+                convertDimacs("homberger.rc20404");
+                convertDimacs("homberger.rc20405");
+                convertDimacs("homberger.rc20406");
+                convertDimacs("homberger.rc20407");
+                convertDimacs("homberger.rc20408");
+                convertDimacs("homberger.rc20409");
+                convertDimacs("homberger.rc20410");
+                convertDimacs("homberger.rc20601");
+                convertDimacs("homberger.rc20602");
+                convertDimacs("homberger.rc20603");
+                convertDimacs("homberger.rc20604");
+                convertDimacs("homberger.rc20605");
+                convertDimacs("homberger.rc20606");
+                convertDimacs("homberger.rc20607");
+                convertDimacs("homberger.rc20608");
+                convertDimacs("homberger.rc20609");
+                convertDimacs("homberger.rc20610");
+                convertDimacs("homberger.rc20801");
+                convertDimacs("homberger.rc20802");
+                convertDimacs("homberger.rc20803");
+                convertDimacs("homberger.rc20804");
+                convertDimacs("homberger.rc20805");
+                convertDimacs("homberger.rc20806");
+                convertDimacs("homberger.rc20807");
+                convertDimacs("homberger.rc20808");
+                convertDimacs("homberger.rc20809");
+                convertDimacs("homberger.rc20810");
+                convertDimacs("homberger.rc21001");
+                convertDimacs("homberger.rc21002");
+                convertDimacs("homberger.rc21003");
+                convertDimacs("homberger.rc21004");
+                convertDimacs("homberger.rc21005");
+                convertDimacs("homberger.rc21006");
+                convertDimacs("homberger.rc21007");
+                convertDimacs("homberger.rc21008");
+                convertDimacs("homberger.rc21009");
+                convertDimacs("homberger.rc21010");
+            }
+
+            static void convertDimacs(string oldPath) {
+                string[] lines = File.ReadAllLines(oldPath + ".txt");
+
+                string[] words = lines[4].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                string vehicleNum = words[0];
+                string vehicleCapacity = words[1];
+
+                int nodeNum = 0;
+                StringBuilder sb = new StringBuilder();
+                for (int l = 9; l < lines.Length; ++l) {
+                    words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length <= 0) { continue; }
+                    ++nodeNum;
+                    sb.Append(words[1]).Append(' ').Append(words[2]).Append(' ')
+                        .Append(words[3]).Append(' ').Append(words[6]).Append(' ')
+                        .Append(words[4]).Append(' ').AppendLine(words[5]);
+                }
+
+                StringBuilder header = new StringBuilder();
+                header.Append(nodeNum).Append(' ').Append(vehicleNum).Append(' ').AppendLine(vehicleCapacity);
+                StringBuilder fn = new StringBuilder();
+                fn.Append(".n").Append(nodeNum).Append('v').Append(vehicleNum).Append('c').Append(vehicleCapacity).Append(".txt");
+                File.WriteAllText(oldPath + fn.ToString(), header.ToString() + sb.ToString());
+            }
+        }
+
     }
 }

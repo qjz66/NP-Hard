@@ -21,21 +21,21 @@ namespace AutoBenchmark {
             int nodeNum = 0;
             List<Edge> edges = new List<Edge>();
             try { // load instance.
-                string[] cells = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                nodeNum = int.Parse(cells[0]);
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                nodeNum = int.Parse(words[0]);
                 for (int l = 1; l < input.Length; ++l) {
-                    cells = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                    edges.Add(new Edge { src = int.Parse(cells[0]), dst = int.Parse(cells[1]) });
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    edges.Add(new Edge { src = int.Parse(words[0]), dst = int.Parse(words[1]) });
                 }
             } catch (Exception) { }
 
             HashSet<string> colors = new HashSet<string>();
             List<string> nodeColors = new List<string>();
             try { // load solution.
-                string[] cells = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
-                for (int c = 0; c < cells.Length; ++c) {
-                    nodeColors.Add(cells[c]);
-                    colors.Add(cells[c]);
+                string[] words = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
+                for (int c = 0; c < words.Length; ++c) {
+                    nodeColors.Add(words[c]);
+                    colors.Add(words[c]);
                 }
             } catch (Exception) { }
 
@@ -60,25 +60,25 @@ namespace AutoBenchmark {
             List<List<int>> sets = new List<List<int>>();
             List<List<int>> setsWithdrops = new List<List<int>>();
             try { // load instance.
-                string[] cells = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                nodeNum = int.Parse(cells[0]);
-                centerNum = int.Parse(cells[1]);
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                nodeNum = int.Parse(words[0]);
+                centerNum = int.Parse(words[1]);
                 int l = 1;
                 for (sets.Capacity = nodeNum; (l < input.Length) && (sets.Count < nodeNum); ++l) {
                     int coveredItemNum = int.Parse(input[l]);
-                    cells = input[++l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    words = input[++l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
                     List<int> set = new List<int>(coveredItemNum);
-                    foreach (var cell in cells) { set.Add(int.Parse(cell)); }
+                    foreach (var word in words) { set.Add(int.Parse(word)); }
                     sets.Add(set);
                 }
 
-                cells = input[l++].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                maxRank = int.Parse(cells[0]);
-                minRank = int.Parse(cells[1]);
+                words = input[l++].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                maxRank = int.Parse(words[0]);
+                minRank = int.Parse(words[1]);
                 for (setsWithdrops.Capacity = maxRank - minRank; l < input.Length; ++l) {
-                    cells = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                    List<int> setsWithdrop = new List<int>(cells.Length - 1);
-                    for (int c = 1; c < cells.Length; ++c) { setsWithdrop.Add(int.Parse(cells[c])); }
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    List<int> setsWithdrop = new List<int>(words.Length - 1);
+                    for (int c = 1; c < words.Length; ++c) { setsWithdrop.Add(int.Parse(words[c])); }
                     setsWithdrops.Add(setsWithdrop);
                 }
             } catch (Exception) { }
@@ -86,9 +86,9 @@ namespace AutoBenchmark {
             List<int> pickedSets = new List<int>(centerNum);
             List<bool> notPickedSet = new List<bool>(Enumerable.Repeat(true, nodeNum));
             try { // load solution.
-                string[] cells = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string cell in cells) {
-                    int s = int.Parse(cell);
+                string[] words = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string word in words) {
+                    int s = int.Parse(word);
                     pickedSets.Add(s);
                     notPickedSet[s] = false;
                 }
@@ -143,20 +143,20 @@ namespace AutoBenchmark {
             List<Job> jobs = new List<Job>();
             List<List<int>> jobIdMap = new List<List<int>>(); // `jobIdMap[b][k]` is the `k`_th job (operation) in batch `b`.
             try { // load instance.
-                string[] cells = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                batchNum = int.Parse(cells[0]);
-                workerNum = int.Parse(cells[1]);
-                maxCandidateWorkerNum = int.Parse(cells[2]);
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                batchNum = int.Parse(words[0]);
+                workerNum = int.Parse(words[1]);
+                maxCandidateWorkerNum = int.Parse(words[2]);
                 for (int l = 1; l < input.Length; ++l) { // for each batch.
-                    cells = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                    int opNum = int.Parse(cells[0]);
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    int opNum = int.Parse(words[0]);
                     List<int> idMap = new List<int>(opNum);
-                    for (int c = 1; c < cells.Length; ++c) { // for each job in the batch.
+                    for (int c = 1; c < words.Length; ++c) { // for each job in the batch.
                         Job job = new Job();
-                        int candidateWorkerNum = int.Parse(cells[c]);
+                        int candidateWorkerNum = int.Parse(words[c]);
                         for (int w = 0; w < candidateWorkerNum; ++w) { // for each candidate worker.
-                            int worker = int.Parse(cells[++c]);
-                            int duration = int.Parse(cells[++c]);
+                            int worker = int.Parse(words[++c]);
+                            int duration = int.Parse(words[++c]);
                             job.candidateWorkers.Add(worker, duration);
                         }
                         idMap.Add(jobs.Count);
@@ -172,12 +172,12 @@ namespace AutoBenchmark {
             try { // load solution.
                 string[] lines = output.Split(LineDelimiters, StringSplitOptions.RemoveEmptyEntries);
                 for (int l = 0; l < lines.Length; ++l) {
-                    string[] cells = lines[l].Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
-                    int jobNumOnWorker = int.Parse(cells[0]);
+                    string[] words = lines[l].Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
+                    int jobNumOnWorker = int.Parse(words[0]);
                     List<int> jobsOnWorker = new List<int>(jobNumOnWorker);
-                    for (int c = 1; c < cells.Length; ++c) {
-                        int batch = int.Parse(cells[c]);
-                        int job = int.Parse(cells[++c]);
+                    for (int c = 1; c < words.Length; ++c) {
+                        int batch = int.Parse(words[c]);
+                        int job = int.Parse(words[++c]);
                         jobsOnWorker.Add(jobIdMap[batch][job]);
                     }
                     jobsOnWorkers.Add(jobsOnWorker);
@@ -285,8 +285,86 @@ namespace AutoBenchmark {
         }
 
 
-        public static void vrp(string[] input, string output, Statistic statistic) {
+        class Node2d {
+            public const int Amp = 10;
 
+            public double[] coords;
+            public int demand;
+            public int minStayTime;
+            public int timeWindowBegin;
+            public int timeWindowEnd;
+
+            public static int t(Node2d src, Node2d dst) {
+                double[] delta = src.coords.Zip(dst.coords, (s, d) => s - d).ToArray();
+                return (int)(Math.Sqrt(delta.Aggregate((sum, x) => sum + x * x)) * Amp);
+            }
+        }
+        public static void vrptw2d(string[] input, string output, Statistic statistic) {
+            List<Node2d> nodes = new List<Node2d>();
+            int nodeNum = 0;
+            int maxVehicleNum = 0;
+            int vehicleCapacity = 0;
+            try { // load instance.
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                nodeNum = int.Parse(words[0]);
+                maxVehicleNum = int.Parse(words[1]);
+                vehicleCapacity = int.Parse(words[2]);
+                int l = 1;
+                for (int n = 0; (n < nodeNum) && (l < input.Length); ++l, ++n) {
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    nodes.Add(new Node2d { coords = new double[2] { double.Parse(words[0]), double.Parse(words[1]) },
+                        demand = int.Parse(words[2]), minStayTime = int.Parse(words[3]) * Node2d.Amp,
+                        timeWindowBegin = int.Parse(words[4]) * Node2d.Amp, timeWindowEnd = int.Parse(words[5]) * Node2d.Amp
+                    });
+                }
+            } catch (Exception) { }
+
+            int uncoverNum = nodeNum; // unvisited nodes.
+            int conflictNum = 0; // revisited nodes.
+            int vehicleNum = 0;
+            int overload = 0;
+            int delay = 0;
+            int cost = 0;
+            int[] visited = new int[nodeNum];
+            try { // load solution and check.
+                string[] lines = output.Split(LineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                for (int l = 0; l < lines.Length; ++l) {
+                    string[] words = lines[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    int capacity = vehicleCapacity;
+                    int t = 0;
+                    int src = 0;
+                    for (int i = 0; i < words.Length; ++i) {
+                        int dst = int.Parse(words[i]);
+                        if (visited[dst]++ <= 0) {
+                            --uncoverNum; // check uncover.
+                            capacity -= nodes[dst].demand;
+                        } else {
+                            ++conflictNum; // check conflict.
+                        }
+                        int c = Node2d.t(nodes[src], nodes[dst]);
+                        t += c;
+                        cost += c;
+                        if (t < nodes[dst].timeWindowBegin) {
+                            t = nodes[dst].timeWindowBegin;
+                        } else if (t > nodes[dst].timeWindowEnd) { // check delay.
+                            delay += (t - nodes[dst].timeWindowEnd);
+                        }
+                        t += nodes[dst].minStayTime;
+                        src = dst;
+                    }
+
+                    int rc = Node2d.t(nodes[src], nodes[0]);
+                    t += rc;
+                    cost += rc;
+                    if (t > nodes[0].timeWindowEnd) { delay += (t - nodes[0].timeWindowEnd); } // check delay.
+
+                    if (capacity < 0) { overload -= capacity; } // check overload.
+                }
+            } catch (Exception) { }
+
+            bool feasible = (vehicleNum < maxVehicleNum) && (uncoverNum == 0) && (conflictNum == 0) && (overload == 0) && (delay == 0);
+            statistic.obj = feasible ? cost : Problem.MaxObjValue;
+            statistic.info = vehicleNum.ToString() + BenchmarkCfg.LogDelim + uncoverNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString() + BenchmarkCfg.LogDelim + overload.ToString() + BenchmarkCfg.LogDelim + delay.ToString();
         }
     }
 }
