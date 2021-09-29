@@ -20,8 +20,10 @@ using Coord = double;
 using Capacity = int;
 using Time = int;
 
+using Coord2d = std::array<Coord, 2>;
+
 struct Node2d {
-	std::array<Coord, 2> coords;
+	Coord2d coords;
 	Capacity demand;
 	Time minStayTime;
 	Time windowBegin;
@@ -29,6 +31,8 @@ struct Node2d {
 };
 
 struct VRPTW2d {
+	static constexpr Time Precision = 10;
+
 	NodeId nodeNum;
 	VehicleId maxVehicleNum;
 	Capacity vehicleCapacity;

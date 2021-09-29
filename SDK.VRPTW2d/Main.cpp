@@ -19,6 +19,11 @@ int main(int argc, char* argv[]) {
 	vrp.nodes.resize(vrp.nodeNum);
 	for (auto n = vrp.nodes.begin(); n != vrp.nodes.end(); ++n) {
 		cin >> n->coords[0] >> n->coords[1] >> n->demand >> n->minStayTime >> n->windowBegin >> n->windowEnd;
+		n->coords[0] *= VRPTW2d::Precision;
+		n->coords[1] *= VRPTW2d::Precision;
+		n->minStayTime *= VRPTW2d::Precision;
+		n->windowBegin *= VRPTW2d::Precision;
+		n->windowEnd *= VRPTW2d::Precision;
 	}
 
 	cerr << "init output." << endl;

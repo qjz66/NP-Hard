@@ -4,6 +4,8 @@
 #include <random>
 #include <iostream>
 
+#include <cmath>
+
 
 using namespace std;
 
@@ -25,12 +27,24 @@ class Solver {
 	bool isTimeout() { return endTime < Clock::now(); }
 
 public:
+	static Time travelTime(const Coord2d& src, const Coord2d& dst) {
+		return static_cast<Time>(hypot(src[0] - dst[0], src[1] - dst[1]));
+	}
+
 	void solve(Routes& output, VRPTW2d& input, long long secTimeout, int seed) {
 		initRand(seed);
 		initTimer(secTimeout);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
 		// sample solver: add nodes to routes randomly (the solution can be infeasible).
+
+		vector<vector<Time>> travelTimes(input.nodeNum, vector<Time>(input.nodeNum));
+		for (NodeId n = 0; n < input.nodeNum; ++n) {
+			travelTimes[n][n] = 0;
+			for (NodeId m = 0; m < n; ++m) {
+				travelTimes[n][m] = travelTimes[m][n] = travelTime(input.nodes[n].coords, input.nodes[m].coords);
+			}
+		}
 
 		VehicleId vehicleNum = rand(input.maxVehicleNum);
 		//                       |
