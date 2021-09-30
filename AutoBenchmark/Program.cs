@@ -5,11 +5,12 @@ using System.IO;
 namespace AutoBenchmark {
     class Program {
         static void Main(string[] args) {
-            if (!File.Exists(CommonCfg.RankPath)) { generateRank(); }
+            generateRank();
             Benchmark.run();
         }
 
         static void generateRank() {
+            int problemNum = BenchmarkCfg.rank.problems.Count;
             if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.Coloring)) {
                 BenchmarkCfg.rank.problems.Add(ProblemName.Coloring, generateColoring());
             }
@@ -29,7 +30,7 @@ namespace AutoBenchmark {
                 BenchmarkCfg.rank.problems.Add(ProblemName.VRPTW2d, generateVRPTW2d());
             }
 
-            Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
+            if (problemNum < BenchmarkCfg.rank.problems.Count) { Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank); }
         }
 
         static Problem generateColoring() {
