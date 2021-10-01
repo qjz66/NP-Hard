@@ -98,7 +98,7 @@ namespace AutoBenchmark {
             { ProblemName.PCenter, LogCommonHeader + LogDelim + "Center" + LogDelim + "Uncover" },
             { ProblemName.Jobshop, LogCommonHeader + LogDelim + "RestJob" },
             { ProblemName.RWA, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Conflict" },
-            { ProblemName.RectPacking, LogCommonHeader + LogDelim + "Missing" + LogDelim + "Overlap" },
+            { ProblemName.RectPacking, LogCommonHeader + LogDelim + "RestRect" + LogDelim + "Conflict" },
             { ProblemName.VRPTW2d, LogCommonHeader + LogDelim + "VehicleNum" + LogDelim + "Uncover" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
         };
 

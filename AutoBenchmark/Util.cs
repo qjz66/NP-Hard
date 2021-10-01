@@ -244,5 +244,20 @@ namespace AutoBenchmark {
 
             protected static OppositeComparer<T> oppositeComparer = new OppositeComparer<T>();
         }
+
+        public static void swap<T>(ref T l, ref T r) {
+            T tmp = l;
+            l = r;
+            r = tmp;
+        }
+
+        public static bool updateMin(ref int minValue, int newValue) {
+            if (newValue < minValue) { minValue = newValue; return true; }
+            return false;
+        }
+        public static bool updateMax(ref int maxValue, int newValue) {
+            if (newValue > maxValue) { maxValue = newValue; return true; }
+            return false;
+        }
     }
 }

@@ -25,6 +25,7 @@ namespace AutoBenchmark {
                 nodeNum = int.Parse(words[0]);
                 for (int l = 1; l < input.Length; ++l) {
                     words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 2) { continue; }
                     edges.Add(new Edge { src = int.Parse(words[0]), dst = int.Parse(words[1]) });
                 }
             } catch (Exception) { }
@@ -281,7 +282,53 @@ namespace AutoBenchmark {
 
 
         public static void rectPacking(string[] input, string output, Statistic statistic) {
+            int rectNum = 0;
+            List<int[]> rects = new List<int[]>();
+            try { // load instance.
+                rectNum = int.Parse(input[0]);
+                for (int l = 1; l < input.Length; ++l) {
+                    string[] words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 2) { continue; }
+                    rects.Add(new int[2] { int.Parse(words[0]), int.Parse(words[1]) });
+                }
+            } catch (Exception) { }
 
+            List<int[]> positions = new List<int[]>();
+            try { // load solution.
+                string[] lines = output.Split(LineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                for (int l = 0; l < lines.Length; ++l) {
+                    string[] words = lines[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 3) { continue; }
+                    if (words[3] != "0") { Util.swap(ref rects[positions.Count][0], ref rects[positions.Count][1]); }
+                    positions.Add(new int[2] { int.Parse(words[0]), int.Parse(words[1]) });
+                }
+            } catch (Exception) { }
+
+            int restRectNum = rectNum - positions.Count;
+            int conflictNum = 0;
+            int xMin = int.MaxValue;
+            int yMin = int.MaxValue;
+            int xMax = int.MinValue;
+            int yMax = int.MinValue;
+            try { // check.
+                for (int i = 0; i < rectNum; ++i) {
+                    Util.updateMin(ref xMin, positions[i][0]);
+                    Util.updateMin(ref yMin, positions[i][1]);
+                    Util.updateMax(ref xMax, positions[i][0] + rects[i][0]);
+                    Util.updateMax(ref yMax, positions[i][1] + rects[i][1]);
+                    for (int j = 0; j < i; ++j) {
+                        if (positions[i][0] > positions[j][0] + rects[j][0]) { continue; }
+                        if (positions[j][0] > positions[i][0] + rects[i][0]) { continue; }
+                        if (positions[i][1] > positions[j][1] + rects[j][1]) { continue; }
+                        if (positions[j][1] > positions[i][1] + rects[i][1]) { continue; }
+                        ++conflictNum; // OPT[szx][5]: line sweep + indexed tree, divide and conquer.
+                    }
+                }
+            } catch (Exception) { }
+
+            bool feasible = (conflictNum == 0) && (restRectNum == 0);
+            statistic.obj = feasible ? ((xMax - xMin) * (yMax - yMin)) : Problem.MaxObjValue;
+            statistic.info = restRectNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString();
         }
 
 

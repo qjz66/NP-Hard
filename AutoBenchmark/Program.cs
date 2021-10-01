@@ -24,7 +24,7 @@ namespace AutoBenchmark {
                 BenchmarkCfg.rank.problems.Add(ProblemName.RWA, generateRWA());
             }
             if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.RectPacking)) {
-                //BenchmarkCfg.rank.problems.Add(ProblemName.RectPacking, generateRectpacking());
+                BenchmarkCfg.rank.problems.Add(ProblemName.RectPacking, generateRectpacking());
             }
             if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.VRPTW2d)) {
                 BenchmarkCfg.rank.problems.Add(ProblemName.VRPTW2d, generateVRPTW2d());
@@ -43,13 +43,13 @@ namespace AutoBenchmark {
             easyDataset.instances.Add("DSJC0250.1.txt", new Instance { repeat = 5, secTimeout = 150 });
             problem.datasets.Add(easyDataset);
 
-            Dataset normDataset = new Dataset { minFeasibleRate = 0.5, minOptRate = 0.5, maxTimeoutRate = 1 };
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.5, maxTimeoutRate = 1 };
             normDataset.instances.Add("DSJC0250.5.txt", new Instance { repeat = 10, secTimeout = 50 });
             normDataset.instances.Add("DSJC0250.9.txt", new Instance { repeat = 10, secTimeout = 200 });
             normDataset.instances.Add("DSJC0500.1.txt", new Instance { repeat = 10, secTimeout = 50 });
             problem.datasets.Add(normDataset);
 
-            Dataset hardDataset = new Dataset { minFeasibleRate = 0, minOptRate = 0, maxTimeoutRate = 1 };
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
             hardDataset.instances.Add("DSJC0500.5.txt", new Instance { repeat = 10, secTimeout = 1000 });
             hardDataset.instances.Add("DSJC0500.9.txt", new Instance { repeat = 10, secTimeout = 2000 });
             hardDataset.instances.Add("DSJC1000.1.txt", new Instance { repeat = 10, secTimeout = 3000 });
@@ -148,7 +148,7 @@ namespace AutoBenchmark {
             normDataset.instances.Add("u1817p150.txt", new Instance { repeat = 10, secTimeout = 10 });
             problem.datasets.Add(normDataset);
 
-            Dataset hardDataset = new Dataset { minFeasibleRate = 0, minOptRate = 0, maxTimeoutRate = 1 };
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
             hardDataset.instances.Add("pcb3038p010r729.txt", new Instance { repeat = 10, secTimeout = 20 });
             hardDataset.instances.Add("pcb3038p020r494.txt", new Instance { repeat = 10, secTimeout = 30 });
             hardDataset.instances.Add("pcb3038p030r394.txt", new Instance { repeat = 10, secTimeout = 30 });
@@ -866,6 +866,26 @@ namespace AutoBenchmark {
         static Problem generateRectpacking() {
             Problem problem = new Problem { minimize = true };
 
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.25, maxTimeoutRate = 1 };
+            easyDataset.instances.Add("mcnc.apte.b9a46561628.txt", new Instance { repeat = 5, secTimeout = 300 });
+            easyDataset.instances.Add("gsrc.b10a221679.txt", new Instance { repeat = 5, secTimeout = 300 });
+            easyDataset.instances.Add("mcnc.xerox.b10a19350296.txt", new Instance { repeat = 5, secTimeout = 300 });
+            easyDataset.instances.Add("mcnc.hp.b11a8830584.txt", new Instance { repeat = 5, secTimeout = 300 });
+            problem.datasets.Add(easyDataset);
+
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
+            normDataset.instances.Add("gsrc.b30a208591.txt", new Instance { repeat = 10, secTimeout = 600 });
+            normDataset.instances.Add("mcnc.ami33.b33a1156449.txt", new Instance { repeat = 10, secTimeout = 600 });
+            normDataset.instances.Add("mcnc.ami49.b49a35445424.txt", new Instance { repeat = 10, secTimeout = 600 });
+            normDataset.instances.Add("gsrc.b50a198579.txt", new Instance { repeat = 10, secTimeout = 600 });
+            problem.datasets.Add(normDataset);
+
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
+            hardDataset.instances.Add("gsrc.b100a179501.txt", new Instance { repeat = 10, secTimeout = 900 });
+            hardDataset.instances.Add("gsrc.b200a175696.txt", new Instance { repeat = 10, secTimeout = 900 });
+            hardDataset.instances.Add("gsrc.b300a273170.txt", new Instance { repeat = 10, secTimeout = 900 });
+            problem.datasets.Add(hardDataset);
+
             return problem;
         }
         static Problem generateVRPTW2d() {
@@ -990,7 +1010,7 @@ namespace AutoBenchmark {
             easyDataset.instances.Add("homberger.rc10210.n201v50c200", new Instance { repeat = 5, secTimeout = 1800 });
             problem.datasets.Add(easyDataset);
 
-            Dataset normDataset = new Dataset { minFeasibleRate = 0.5, minOptRate = 0.5, maxTimeoutRate = 1 };
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.5, maxTimeoutRate = 1 };
             normDataset.instances.Add("homberger.c10401.n401v100c200", new Instance { repeat = 5, secTimeout = 3600 });
             normDataset.instances.Add("homberger.c10402.n401v100c200", new Instance { repeat = 5, secTimeout = 3600 });
             normDataset.instances.Add("homberger.c10403.n401v100c200", new Instance { repeat = 5, secTimeout = 3600 });
@@ -1173,7 +1193,7 @@ namespace AutoBenchmark {
             normDataset.instances.Add("homberger.rc20810.n801v200c1000", new Instance { repeat = 5, secTimeout = 3600 });
             problem.datasets.Add(normDataset);
 
-            Dataset hardDataset = new Dataset { minFeasibleRate = 0, minOptRate = 0, maxTimeoutRate = 1 };
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
             hardDataset.instances.Add("homberger.c11001.n1001v250c200", new Instance { repeat = 5, secTimeout = 7200 });
             hardDataset.instances.Add("homberger.c11002.n1001v250c200", new Instance { repeat = 5, secTimeout = 7200 });
             hardDataset.instances.Add("homberger.c11003.n1001v250c200", new Instance { repeat = 5, secTimeout = 7200 });
