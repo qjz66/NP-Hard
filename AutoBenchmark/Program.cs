@@ -5,8 +5,33 @@ using System.IO;
 namespace AutoBenchmark {
     class Program {
         static void Main(string[] args) {
+            if (args.Length == 3) { check(args[0], args[1], args[2]); return; }
+            if (args.Length > 0) { help(); return; }
+
             generateRank();
             Benchmark.run();
+        }
+
+        static void help() {
+            Console.WriteLine("Usage: ThisExe ProblemName InputPath OutputPath");
+            Console.Write("wherein: ProblemName := ");
+            bool notFirst = false;
+            foreach (var pn in BenchmarkCfg.Checkers.Keys) {
+                if (notFirst) { Console.Write(" | "); }
+                Console.Write(pn);
+                notFirst = true;
+            }
+            Console.WriteLine();
+        }
+
+        static void check(string problemName, string inputPath, string outputPath) {
+            if (!BenchmarkCfg.Checkers.ContainsKey(problemName)) { help(); return; }
+            string[] input = File.ReadAllLines(inputPath);
+            string output = File.ReadAllText(outputPath);
+            Statistic s = new Statistic();
+            BenchmarkCfg.Checkers[problemName](input, output, s);
+            Console.WriteLine(inputPath + BenchmarkCfg.LogDelim + outputPath + BenchmarkCfg.LogDelim
+                + s.obj + BenchmarkCfg.LogDelim + s.duration.ToString() + BenchmarkCfg.LogDelim + s.info);
         }
 
         static void generateRank() {
