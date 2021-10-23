@@ -53,13 +53,13 @@ namespace AutoBenchmark {
                     foreach (var dataset in problem.Value.datasets) {
                         foreach (var instance in dataset.instances) {
                             sw.WriteLine($"<li id='{problem.Key}-{instance.Key}'><a href='#{problem.Key}-{instance.Key}'>{instance.Key}</a><table>");
-                            sw.WriteLine("<thead><tr><th>Rank</th><th>Author</th><th>Obj</th><th>Date</th><th>Duration</th></tr></thead><tbody>");
+                            sw.WriteLine("<tr><th>Rank</th><th>Author</th><th>Obj</th><th>Date</th><th>Duration</th></tr>");
                             int count = 0;
                             foreach (var r in instance.Value.results) {
                                 sw.WriteLine($"<tr><td>{count}</td><td id='auth'>{r.author}</td><td>{problem.Value.restoreObj(r.obj)}</td><td>{r.date}</td><td>{r.duration}</td></tr>");
                                 ++count;
                             }
-                            sw.WriteLine("</tbody></table></li>");
+                            sw.WriteLine("</table></li>");
                         }
                     }
                     sw.WriteLine("</ol></li>");

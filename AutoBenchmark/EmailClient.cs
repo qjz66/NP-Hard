@@ -45,13 +45,13 @@ namespace AutoBenchmark {
             DateTime now = DateTime.Now;
 
             Submission s = new Submission();
-            s.problem = msg.Subject.subStr(EmailCfg.ProblemIndexBegin, msg.Subject.IndexOf('-'));
+            s.problem = msg.Subject.subStr(EmailCfg.ProblemIndexBegin, msg.Subject.IndexOf(EmailCfg.SubjectDelim));
             if (!BenchmarkCfg.rank.problems.ContainsKey(s.problem) || !BenchmarkCfg.Checkers.ContainsKey(s.problem)) {
                 Util.log("[error] problem not available");
                 return false;
             }
 
-            s.author = msg.Subject.Substring(msg.Subject.IndexOf('-') + 1);
+            s.author = msg.Subject.Substring(msg.Subject.IndexOf(EmailCfg.SubjectDelim) + 1);
             s.email = msg.From.Address;
             s.date = Util.friendlyDateTime(now);
 
@@ -115,7 +115,7 @@ namespace AutoBenchmark {
                     //msg.SubjectEncoding = Encoding.UTF8;
                     msg.Subject = subject;
                     //msg.BodyEncoding = Encoding.UTF8;
-                    msg.IsBodyHtml = false;
+                    msg.IsBodyHtml = true;
                     msg.Body = body;
 
                     try { client.Send(msg); } catch (Exception e) { Util.log(e.ToString()); }

@@ -61,6 +61,7 @@ namespace AutoBenchmark {
         public const string SubjectRegex = @"^Challenge20.*-.*$";
         public const string SubjectFilter = "Challenge20";
         public const int ProblemIndexBegin = 13; // "Challenge2020".Length;
+        public const char SubjectDelim = '-';
 
         public const string MyAddress = "szx@duhe.tech";
         //public const string ToAddress = "";
@@ -101,6 +102,7 @@ namespace AutoBenchmark {
             { ProblemName.RectPacking, LogCommonHeader + LogDelim + "RestRect" + LogDelim + "Conflict" },
             { ProblemName.VRPTW2d, LogCommonHeader + LogDelim + "VehicleNum" + LogDelim + "Uncover" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
         };
+        public const string ScoreHeader = "Solver" + LogDelim + LogBasicHeader;
 
         public static readonly Dictionary<string, Check> Checkers = new Dictionary<string, Check> {
             { ProblemName.Coloring, Checker.coloring },

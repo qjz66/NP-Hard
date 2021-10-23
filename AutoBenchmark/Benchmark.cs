@@ -85,7 +85,7 @@ namespace AutoBenchmark {
                             if (line.obj < Problem.MaxObjValue) { Interlocked.Increment(ref feasibleCount); }
                             if (i.matchRecord(line.obj)) { Interlocked.Increment(ref optCount); }
                             if (line.duration > i.secTimeout) { Interlocked.Increment(ref timeoutCount); }
-                            lines.Add(s.author.ToString() + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
+                            lines.Add(s.author + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
                                 + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
                                 + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
                         }
@@ -118,7 +118,7 @@ namespace AutoBenchmark {
             }
 
             Util.log("[info] report statistics");
-            StdSmtp.send(s.email, "Statistics of " + s.exePath, reply.ToString());
+            StdSmtp.send(s.email, "Statistics of " + s.exePath, reply.ToString().toHtmlTable());
 
             Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
             PageGenerator.generateMarkdown(BenchmarkCfg.rank);

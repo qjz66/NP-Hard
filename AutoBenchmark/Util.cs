@@ -30,6 +30,10 @@ namespace AutoBenchmark {
         public static string subStr(this string str, int beginIndex, int endIndex) {
             return str.Substring(beginIndex, endIndex - beginIndex);
         }
+        public static string subStr(this string str, int beginIndex, char delim) {
+            int endIndex = str.IndexOf(delim);
+            return str.subStr(beginIndex, (endIndex > beginIndex) ? endIndex : str.Length);
+        }
 
 
         public static void save(this Attachment attachment, string filePath) {
@@ -43,6 +47,30 @@ namespace AutoBenchmark {
                 return ms.toString();
             }
         }
+
+        public static string toHtmlTable(this string s) {
+            StringBuilder sb = new StringBuilder("<table border=1>");
+            bool emptyLine = true;
+            foreach (var c in s) {
+                if ((c == '\r') || (c == '\n')) {
+                    if (!emptyLine) {
+                        sb.Append("</td></tr>");
+                        emptyLine = true;
+                    }
+                    continue;
+                }
+                if (emptyLine) { sb.Append("<tr><td>"); }
+                if (c == '\t') {
+                    sb.Append("</td><td>");
+                    continue;
+                }
+                emptyLine = false;
+                sb.Append(c);
+            }
+            if (!emptyLine) { sb.Append("</td></tr>"); }
+            sb.Append("</table>");
+            return sb.ToString();
+        }
         #endregion String
 
         #region Serialization
@@ -51,6 +79,12 @@ namespace AutoBenchmark {
             return Encoding.GetEncoding(codePage);
         }
 
+        public static string readText(string path) {
+            return File.ReadAllText(path, CommonCfg.DefaultEncoding);
+        }
+        public static string[] readLines(string path) {
+            return File.ReadAllLines(path, CommonCfg.DefaultEncoding);
+        }
         public static void appendText(string path, string contents) {
             File.AppendAllText(path, contents, CommonCfg.DefaultEncoding);
         }
@@ -234,6 +268,21 @@ namespace AutoBenchmark {
         }
         public static void tryDec<TKey>(IDictionary<TKey, int> dictionary, TKey key) {
             if (--dictionary[key] <= 0) { dictionary.Remove(key); }
+        }
+
+        public static bool tryUpdateMin<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, TValue value) where TValue : IComparable<TValue> {
+            if (!dictionary.ContainsKey(key)) { dictionary.Add(key, value); return true; }
+            if (value.CompareTo(dictionary[key]) < 0) { dictionary[key] = value; return true; }
+            return false;
+        }
+
+        public static bool lexLess<T>(T[] l, T[] r) where T : IComparable<T> {
+            int len = Math.Min(l.Length, r.Length);
+            for (int i = 0; i < len; ++i) {
+                int diff = l[i].CompareTo(r[i]);
+                if (diff != 0) { return diff < 0; }
+            }
+            return l.Length < r.Length;
         }
         #endregion Container
 

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 
 namespace AutoBenchmark {
     class Program {
         static void Main(string[] args) {
             if (args.Length == 3) { check(args[0], args[1], args[2]); return; }
+            if (args.Length == 2) { analyze(args[0], args[1]); return; }
             if (args.Length > 0) { help(); return; }
 
             generateRank();
@@ -32,6 +35,29 @@ namespace AutoBenchmark {
             BenchmarkCfg.Checkers[problemName](input, output, s);
             Console.WriteLine(inputPath + BenchmarkCfg.LogDelim + outputPath + BenchmarkCfg.LogDelim
                 + s.obj + BenchmarkCfg.LogDelim + s.duration.ToString() + BenchmarkCfg.LogDelim + s.info);
+        }
+
+        public static void analyze(string problemName, string year) {
+            string[] lines = Util.readLines(Path.Combine(problemName, CommonCfg.LogFilePrefix + year + CommonCfg.LogFileExt));
+            Dictionary<string, double[]> optima = new Dictionary<string, double[]>();
+            StringBuilder sb = new StringBuilder(BenchmarkCfg.ScoreHeader);
+            sb.AppendLine();
+            for (int l = 1; l < lines.Length; ++l) {
+                string[] words = lines[l].Split(BenchmarkCfg.LogDelim);
+                string instance = words[2];
+                sb.AppendLine(words[0].subStr(0, EmailCfg.SubjectDelim) + BenchmarkCfg.LogDelim + instance
+                    + BenchmarkCfg.LogDelim + words[3] + BenchmarkCfg.LogDelim + words[4]);
+                double[] r = new double[] { double.Parse(words[3]), double.Parse(words[4]) };
+                if (optima.ContainsKey(instance)) {
+                    if (Util.lexLess(r, optima[instance])) { optima[instance] = r; }
+                } else {
+                    optima.Add(instance, r);
+                }
+            }
+            foreach (var opt in optima) {
+                sb.AppendLine("Best" + BenchmarkCfg.LogDelim + opt.Key + BenchmarkCfg.LogDelim + opt.Value[0] + BenchmarkCfg.LogDelim + opt.Value[1]);
+            }
+            Util.writeText(problemName + year + CommonCfg.LogFileExt, sb.ToString());
         }
 
         static void generateRank() {
