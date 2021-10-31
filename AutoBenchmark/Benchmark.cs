@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -112,9 +113,10 @@ namespace AutoBenchmark {
                 });
                 Util.log($"[info] feasibleCount={feasibleCount} optCount={optCount} timeoutCount={timeoutCount}");
                 // stop testing next dataset if the results are poor.
-                if (feasibleCount < (int)(dataset.instances.Count * dataset.minFeasibleRate)) { break; }
-                if (optCount < (int)(dataset.instances.Count * dataset.minOptRate)) { break; }
-                if (timeoutCount > (int)(dataset.instances.Count * dataset.maxTimeoutRate)) { break; }
+                int runCount = dataset.instances.Sum(o => o.Value.repeat);
+                if (feasibleCount < (int)(runCount * dataset.minFeasibleRate)) { break; }
+                if (optCount < (int)(runCount * dataset.minOptRate)) { break; }
+                if (timeoutCount > (int)(runCount * dataset.maxTimeoutRate)) { break; }
             }
 
             Util.log("[info] report statistics");
@@ -138,19 +140,20 @@ namespace AutoBenchmark {
             int seed = 0;
             long msTimeout = instance.secTimeout * 1000;
             List<Statistic> statistics = new List<Statistic>(instance.repeat);
-            for (int i = instance.repeat - 1; i >= 0; --i) {
+            for (int i = instance.repeat; i > 0; --i) {
                 Statistic statistic = new Statistic();
                 statistic.seed = (seed = nextSeed(seed));
                 long secTimeout = instance.secTimeout - instance.secTimeout * i / (instance.repeat * 4);
                 psi.Arguments = secTimeout.ToString() + " " + statistic.seed.ToString();
 
-                Stopwatch sw = new Stopwatch();
                 StringBuilder output = new StringBuilder();
-
                 Process p = new Process();
                 p.StartInfo = psi;
                 p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
                 p.OutputDataReceived += (s, l) => { lock (output) { output.AppendLine(l.Data); } };
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 try {
                     p.Start();
 
@@ -160,27 +163,23 @@ namespace AutoBenchmark {
                     p.StandardInput.Flush();
                     p.StandardInput.Close(); // send EOF to the solver.
 
-                    sw.Start();
-                    while (!p.HasExited
-                        && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
-                        && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
-                        && (sw.ElapsedMilliseconds < msTimeout)) { }
-                    sw.Stop();
-
                     try {
-                        p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval);
+                        while (!p.HasExited
+                            && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
+                            && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
+                            && (sw.ElapsedMilliseconds < msTimeout)) { }
+
                         if (!p.HasExited) { p.Kill(); }
-                        p.WaitForExit();
-                    } catch (Exception) { }
+                    } catch (Exception e) { Util.log("[error] run/kill exe fail due to " + e.ToString()); }
+                    sw.Stop();
 
                     check(instance.data, output.ToString(), statistic);
                     saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
-
-                    statistic.duration = sw.ElapsedMilliseconds / 1000.0;
-                    statistics.Add(statistic);
                 } catch (Exception e) {
                     Util.log("[error] test instance fail due to " + e.ToString());
                 }
+                statistic.duration = sw.ElapsedMilliseconds / 1000.0;
+                statistics.Add(statistic);
             }
 
             return statistics;
