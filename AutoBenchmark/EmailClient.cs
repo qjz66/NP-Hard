@@ -69,6 +69,7 @@ namespace AutoBenchmark {
                         using (ArchiveFile archiveFile = new ArchiveFile(file.ContentStream)) {
                             foreach (Entry entry in archiveFile.Entries) {
                                 if (entry.Size > EmailCfg.MaxFileByteSize) { Util.log($"[warning] skip file larger than {EmailCfg.MaxFileByteSize}B"); continue; }
+                                if (entry.FileName.Contains("__MACOSX") || entry.FileName.Contains(".DS_Store")) { continue; }
                                 entry.Extract(detectExe(entry.FileName));
                             }
                         }
