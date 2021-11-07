@@ -150,10 +150,9 @@ namespace AutoBenchmark {
                 Process p = new Process();
                 p.StartInfo = psi;
                 p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
-                p.OutputDataReceived += (s, l) => { lock (output) { output.AppendLine(l.Data); } };
+                p.OutputDataReceived += (s, l) => { if (l.Data != null) { lock (output) { output.AppendLine(l.Data); } } };
 
                 Stopwatch sw = new Stopwatch();
-                sw.Start();
                 try {
                     p.Start();
 
@@ -163,15 +162,19 @@ namespace AutoBenchmark {
                     p.StandardInput.Flush();
                     p.StandardInput.Close(); // send EOF to the solver.
 
+                    sw.Start();
                     try {
                         while (!p.HasExited
                             && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
                             && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
                             && (sw.ElapsedMilliseconds < msTimeout)) { }
-
-                        if (!p.HasExited) { p.Kill(); }
-                    } catch (Exception e) { Util.log("[error] run/kill exe fail due to " + e.ToString()); }
+                    } catch (Exception e) { } // Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString());
                     sw.Stop();
+
+                    try {
+                        if (!p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)) { p.Kill(); }
+                        p.WaitForExit();
+                    } catch (Exception e) { } // Util.log("[warning] " + instance.data[0] + " kill exe fail due to " + e.ToString());
 
                     check(instance.data, output.ToString(), statistic);
                     saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
