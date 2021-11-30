@@ -17,7 +17,7 @@ namespace szx {
 using RectId = int;
 using Coord = int;
 
-using Rect = std::array<Coord, 2>;
+using Rect = std::array<Coord, 2>; // `Rect[0]` is width (dx) and `Rect[1]` is height (dy).
 using Coords = std::array<Coord, 2>;
 
 struct RectPacking {

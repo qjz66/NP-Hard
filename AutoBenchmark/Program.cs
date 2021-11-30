@@ -97,7 +97,7 @@ namespace AutoBenchmark {
             Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.5, maxTimeoutRate = 1 };
             normDataset.instances.Add("DSJC0250.5.txt", new Instance { repeat = 10, secTimeout = 50 });
             normDataset.instances.Add("DSJC0250.9.txt", new Instance { repeat = 10, secTimeout = 200 });
-            normDataset.instances.Add("DSJC0500.1.txt", new Instance { repeat = 10, secTimeout = 50 });
+            normDataset.instances.Add("DSJC0500.1.txt", new Instance { repeat = 10, secTimeout = 100 });
             problem.datasets.Add(normDataset);
 
             Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };

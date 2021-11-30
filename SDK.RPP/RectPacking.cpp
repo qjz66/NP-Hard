@@ -32,14 +32,17 @@ public:
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
 		// sample solver: place rectangles randomly (the solution can be infeasible).
 
+		Coord x = 0;
 		//                      +----[ exit before timeout ]
 		//                      |
 		for (RectId r = 0; !isTimeout() && (r < input.rectNum); ++r) {
-			output[r].pos[0] = rand(input.rects[r][0] * input.rectNum);
-			output[r].pos[1] = rand(input.rects[r][1] * input.rectNum);
+			//                    +----[ use the random number generator initialized by the given seed ]
+			//                    |
 			output[r].rotated = rand(2) & 1;
-		} //                     |
-		//                       +----[ use the random number generator initialized by the given seed ]
+			output[r].pos[0] = x;
+			x += (output[r].rotated ? input.rects[r][1] : input.rects[r][0]);
+			output[r].pos[1] = 0;
+		}
 
 		// print some information for debugging.
 		cerr << input.rectNum << endl;

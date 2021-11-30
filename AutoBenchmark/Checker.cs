@@ -299,7 +299,7 @@ namespace AutoBenchmark {
                 for (int l = 0; l < lines.Length; ++l) {
                     string[] words = lines[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
                     if (words.Length < 3) { continue; }
-                    if (words[3] != "0") { Util.swap(ref rects[positions.Count][0], ref rects[positions.Count][1]); }
+                    if (words[2] != "0") { Util.swap(ref rects[positions.Count][0], ref rects[positions.Count][1]); }
                     positions.Add(new int[2] { int.Parse(words[0]), int.Parse(words[1]) });
                 }
             } catch (Exception) { }
@@ -317,10 +317,10 @@ namespace AutoBenchmark {
                     Util.updateMax(ref xMax, positions[i][0] + rects[i][0]);
                     Util.updateMax(ref yMax, positions[i][1] + rects[i][1]);
                     for (int j = 0; j < i; ++j) {
-                        if (positions[i][0] > positions[j][0] + rects[j][0]) { continue; }
-                        if (positions[j][0] > positions[i][0] + rects[i][0]) { continue; }
-                        if (positions[i][1] > positions[j][1] + rects[j][1]) { continue; }
-                        if (positions[j][1] > positions[i][1] + rects[i][1]) { continue; }
+                        if (positions[i][0] >= positions[j][0] + rects[j][0]) { continue; }
+                        if (positions[j][0] >= positions[i][0] + rects[i][0]) { continue; }
+                        if (positions[i][1] >= positions[j][1] + rects[j][1]) { continue; }
+                        if (positions[j][1] >= positions[i][1] + rects[i][1]) { continue; }
                         ++conflictNum; // OPT[szx][5]: line sweep + indexed tree, divide and conquer.
                     }
                 }
