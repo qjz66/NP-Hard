@@ -82,7 +82,7 @@ namespace AutoBenchmark {
                     for (int c = 1; c < words.Length; ++c) { setsWithdrop.Add(int.Parse(words[c])); }
                     setsWithdrops.Add(setsWithdrop);
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
 
             List<int> pickedSets = new List<int>(centerNum);
             List<bool> notPickedSet = new List<bool>(Enumerable.Repeat(true, nodeNum));
@@ -93,7 +93,7 @@ namespace AutoBenchmark {
                     pickedSets.Add(s);
                     notPickedSet[s] = false;
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
 
             int uncoveredItemNum = nodeNum;
             int rank = maxRank + 1;
@@ -115,9 +115,9 @@ namespace AutoBenchmark {
                         }
                     }
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
 
-            bool feasible = (uncoveredItemNum == 0) && (pickedSets.Count == centerNum);
+            bool feasible = (uncoveredItemNum == 0) && (pickedSets.Count <= centerNum);
             statistic.obj = feasible ? rank : Problem.MaxObjValue;
             statistic.info = pickedSets.Count.ToString() + BenchmarkCfg.LogDelim + uncoveredItemNum.ToString();
         }

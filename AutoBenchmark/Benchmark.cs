@@ -19,6 +19,7 @@ namespace AutoBenchmark {
 
 
         public static void run() {
+            //testSubmission(new Submission { author = "t", date = "2011", email = "s", exePath = "vwts.exe", problem = "PCP" });
             try {
                 foreach (var problem in BenchmarkCfg.rank.problems) {
                     Directory.CreateDirectory(Path.Combine(problem.Key, CommonCfg.SolutionSubDir));
@@ -73,7 +74,10 @@ namespace AutoBenchmark {
 
                         Instance i = instance.Value;
                         string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
-                        if (i.data == null) { i.data = File.ReadAllLines(inputPath); }
+                        if (i.data == null) {
+                            i.data = File.ReadAllLines(inputPath);
+                            i.data1 = Encoding.ASCII.GetBytes(string.Join(Environment.NewLine, i.data));
+                        }
 
                         List<Statistic> statistics = testInstance(s.exePath, i, check, (output, obj) => {
                             if (!i.isNewRecord(obj)) { return; }
@@ -158,7 +162,7 @@ namespace AutoBenchmark {
 
                     p.BeginErrorReadLine();
                     p.BeginOutputReadLine();
-                    foreach (var line in instance.data) { p.StandardInput.WriteLine(line); }
+                    p.StandardInput.WriteLine(instance.data1); //foreach (var line in instance.data) { p.StandardInput.WriteLine(line); }
                     p.StandardInput.Flush();
                     p.StandardInput.Close(); // send EOF to the solver.
 

@@ -221,7 +221,7 @@ namespace AutoBenchmark {
         static Problem generateJobshop() {
             Problem problem = new Problem { minimize = true };
 
-            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 1 };
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.75, maxTimeoutRate = 1 };
             easyDataset.instances.Add("fjsp.brandimarte.Mk01.m6j10c3.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("fjsp.brandimarte.Mk02.m6j10c6.txt", new Instance { repeat = 5, secTimeout = 10 });
             easyDataset.instances.Add("fjsp.brandimarte.Mk03.m8j15c5.txt", new Instance { repeat = 5, secTimeout = 10 });
