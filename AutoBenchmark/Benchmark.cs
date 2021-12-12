@@ -76,7 +76,7 @@ namespace AutoBenchmark {
                         string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
                         if (i.data == null) {
                             i.data = File.ReadAllLines(inputPath);
-                            i.data1 = Encoding.ASCII.GetBytes(string.Join(Environment.NewLine, i.data));
+                            //i.data1 = string.Join(Environment.NewLine, i.data).ToCharArray();
                         }
 
                         List<Statistic> statistics = testInstance(s.exePath, i, check, (output, obj) => {
@@ -159,14 +159,13 @@ namespace AutoBenchmark {
                 Stopwatch sw = new Stopwatch();
                 try {
                     p.Start();
-
                     p.BeginErrorReadLine();
                     p.BeginOutputReadLine();
-                    p.StandardInput.WriteLine(instance.data1); //foreach (var line in instance.data) { p.StandardInput.WriteLine(line); }
-                    p.StandardInput.Flush();
-                    p.StandardInput.Close(); // send EOF to the solver.
 
                     sw.Start();
+                    foreach (var line in instance.data) { p.StandardInput.WriteLine(line); } //p.StandardInput.Write(instance.data1);
+                    p.StandardInput.Flush();
+                    p.StandardInput.Close(); // send EOF to the solver.
                     try {
                         while (!p.HasExited
                             && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
