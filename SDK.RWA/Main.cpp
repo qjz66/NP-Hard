@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "RWA.h"
 
@@ -25,7 +26,8 @@ int main(int argc, char* argv[]) {
 	Routes routes(rwa.trafficNum);
 
 	cerr << "solve." << endl;
-	solveRWA(routes, rwa, secTimeout, randSeed);
+	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	solveRWA(routes, rwa, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
 
 	cerr << "save output." << endl;
 	for (auto route = routes.begin(); route != routes.end(); ++route) {

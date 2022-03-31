@@ -45,7 +45,12 @@ namespace AutoBenchmark {
             DateTime now = DateTime.Now;
 
             Submission s = new Submission();
-            s.problem = msg.Subject.subStr(EmailCfg.ProblemIndexBegin, msg.Subject.IndexOf(EmailCfg.SubjectDelim));
+            int problemIndexEnd = msg.Subject.IndexOf(EmailCfg.SubjectDelim);
+            if (problemIndexEnd < 0) {
+                Util.log("[error] unable to extract problem due to no subject delimiter found");
+                return false;
+            }
+            s.problem = msg.Subject.subStr(EmailCfg.ProblemIndexBegin, problemIndexEnd);
             if (!BenchmarkCfg.rank.problems.ContainsKey(s.problem) || !BenchmarkCfg.Checkers.ContainsKey(s.problem)) {
                 Util.log("[error] problem not available");
                 return false;

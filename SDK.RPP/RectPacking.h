@@ -10,6 +10,7 @@
 
 #include <array>
 #include <vector>
+#include <functional>
 
 
 namespace szx {
@@ -32,7 +33,7 @@ struct Placement {
 using Layout = std::vector<Placement>; // `Layout[r]` is the placement of rectangle `r`.
 
 
-void solveRectPacking(Layout& output, RectPacking& input, long long secTimeout, int seed);
+void solveRectPacking(Layout& output, RectPacking& input, std::function<bool()> isTimeout, int seed);
 
 }
 

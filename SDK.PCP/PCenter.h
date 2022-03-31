@@ -9,6 +9,7 @@
 
 
 #include <vector>
+#include <functional>
 
 
 namespace szx {
@@ -27,7 +28,7 @@ struct PCenter {
 using Centers = Nodes; // `Centers[k]` is the `k`th picked center.
 
 
-void solvePCenter(Centers& output, PCenter& input, long long secTimeout, int seed);
+void solvePCenter(Centers& output, PCenter& input, std::function<bool()> isTimeout, int seed);
 
 }
 

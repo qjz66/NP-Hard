@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "PCenter.h"
 
@@ -39,7 +40,8 @@ int main(int argc, char* argv[]) {
 	Centers centers(pc.centerNum);
 
 	cerr << "solve." << endl;
-	solvePCenter(centers, pc, secTimeout, randSeed);
+	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	solvePCenter(centers, pc, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
 
 	cerr << "save output." << endl;
 	for (auto center = centers.begin(); center != centers.end(); ++center) { cout << *center << endl; }

@@ -80,6 +80,9 @@ namespace AutoBenchmark {
             if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.VRPTW2d)) {
                 BenchmarkCfg.rank.problems.Add(ProblemName.VRPTW2d, generateVRPTW2d());
             }
+            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.OARSMT)) {
+                BenchmarkCfg.rank.problems.Add(ProblemName.OARSMT, generateOARSMT());
+            }
 
             if (problemNum < BenchmarkCfg.rank.problems.Count) { Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank); }
         }
@@ -1305,6 +1308,55 @@ namespace AutoBenchmark {
             hardDataset.instances.Add("homberger.rc21008.n1001v250c1000", new Instance { repeat = 5, secTimeout = 7200 });
             hardDataset.instances.Add("homberger.rc21009.n1001v250c1000", new Instance { repeat = 5, secTimeout = 7200 });
             hardDataset.instances.Add("homberger.rc21010.n1001v250c1000", new Instance { repeat = 5, secTimeout = 7200 });
+            problem.datasets.Add(hardDataset);
+
+            return problem;
+        }
+        static Problem generateOARSMT() {
+            Problem problem = new Problem { minimize = true };
+
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 1 };
+            easyDataset.instances.Add("ind1.n10o32.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("ind2.n10o43.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("ind3.n10o50.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("ind4.n25o79.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("ind5.n33o71.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("rc01.n10o10.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("rc02.n30o10.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("rc03.n50o10.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("rc04.n70o10.txt", new Instance { repeat = 5, secTimeout = 5 });
+            easyDataset.instances.Add("rc05.n100o10.txt", new Instance { repeat = 5, secTimeout = 5 });
+            problem.datasets.Add(easyDataset);
+
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.5, maxTimeoutRate = 1 };
+            normDataset.instances.Add("rt01.n10o500.txt", new Instance { repeat = 5, secTimeout = 30 });
+            normDataset.instances.Add("rt02.n50o500.txt", new Instance { repeat = 5, secTimeout = 30 });
+            normDataset.instances.Add("rt03.n100o500.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("rt04.n100o1000.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("rt05.n200o2000.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("rc06.n100o500.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("rc07.n200o500.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("rc08.n200o800.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("rc09.n200o1000.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("rc10.n500o100.txt", new Instance { repeat = 5, secTimeout = 300 });
+            normDataset.instances.Add("bonn.n109o101.txt", new Instance { repeat = 5, secTimeout = 300 });
+            problem.datasets.Add(normDataset);
+
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
+            hardDataset.instances.Add("rc11.n1000o100.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("rc12.n1000o10000.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("rl01.n5000o5000.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("rl02.n10000o500.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("rl03.n10000o100.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("rl04.n10000o10.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("rl05.n10000o0.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("bonn.n23292o54.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("bonn.n35574o158.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("bonn.n46269o127.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("bonn.n108500o141.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("bonn.n129399o210.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("bonn.n639639o382.txt", new Instance { repeat = 5, secTimeout = 600 });
+            hardDataset.instances.Add("bonn.n783352o175.txt", new Instance { repeat = 5, secTimeout = 600 });
             problem.datasets.Add(hardDataset);
 
             return problem;

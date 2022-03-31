@@ -10,6 +10,7 @@
 
 #include <array>
 #include <vector>
+#include <functional>
 
 
 namespace szx {
@@ -30,7 +31,7 @@ struct GraphColoring {
 using NodeColors = std::vector<ColorId>; // `NodeColors[n]` is the color of node `n`.
 
 
-void solveGraphColoring(NodeColors& output, GraphColoring& input, long long secTimeout, int seed);
+void solveGraphColoring(NodeColors& output, GraphColoring& input, std::function<bool()> isTimeout, int seed);
 
 }
 

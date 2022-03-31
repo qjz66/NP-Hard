@@ -1,6 +1,5 @@
 #include "GraphColoring.h"
 
-#include <chrono>
 #include <random>
 #include <iostream>
 
@@ -14,20 +13,14 @@ class Solver {
 	// random number generator.
 	mt19937 pseudoRandNumGen;
 	void initRand(int seed) { pseudoRandNumGen = mt19937(seed); }
+	int fastRand(int lb, int ub) { return (pseudoRandNumGen() % (ub - lb)) + lb; }
+	int fastRand(int ub) { return pseudoRandNumGen() % ub; }
 	int rand(int lb, int ub) { return uniform_int_distribution<int>(lb, ub - 1)(pseudoRandNumGen); }
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
-	// timer.
-	using Clock = chrono::steady_clock;
-	using TimePoint = Clock::time_point;
-	TimePoint endTime;
-	void initTimer(long long secTimeout) { endTime = Clock::now() + chrono::seconds(secTimeout); }
-	bool isTimeout() { return endTime < Clock::now(); }
-
 public:
-	void solve(NodeColors& output, GraphColoring& input, long long secTimeout, int seed) {
+	void solve(NodeColors& output, GraphColoring& input, std::function<bool()> isTimeout, int seed) {
 		initRand(seed);
-		initTimer(secTimeout);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
 		// sample solver: assign colors randomly (the solution can be infeasible).
@@ -46,8 +39,8 @@ public:
 };
 
 // solver.
-void solveGraphColoring(NodeColors& output, GraphColoring& input, long long secTimeout, int seed) {
-	Solver().solve(output, input, secTimeout, seed);
+void solveGraphColoring(NodeColors& output, GraphColoring& input, std::function<bool()> isTimeout, int seed) {
+	Solver().solve(output, input, isTimeout, seed);
 }
 
 }

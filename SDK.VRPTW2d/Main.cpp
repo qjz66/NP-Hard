@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "VRPTW2d.h"
 
@@ -30,7 +31,8 @@ int main(int argc, char* argv[]) {
 	Routes routes(vrp.maxVehicleNum);
 
 	cerr << "solve." << endl;
-	solveVRPTW2d(routes, vrp, secTimeout, randSeed);
+	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	solveVRPTW2d(routes, vrp, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
 
 	cerr << "save output." << endl;
 	for (auto route = routes.begin(); route != routes.end(); ++route) {

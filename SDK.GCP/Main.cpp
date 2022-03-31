@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "GraphColoring.h"
 
@@ -23,7 +24,8 @@ int main(int argc, char* argv[]) {
 	NodeColors nodeColors(gc.nodeNum);
 
 	cerr << "solve." << endl;
-	solveGraphColoring(nodeColors, gc, secTimeout, randSeed);
+	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	solveGraphColoring(nodeColors, gc, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
 
 	cerr << "save output." << endl;
 	for (auto color = nodeColors.begin(); color != nodeColors.end(); ++color) { cout << *color << endl; }

@@ -868,7 +868,7 @@ namespace AutoBenchmark {
                 StringBuilder sb = new StringBuilder();
                 for (int l = 9; l < lines.Length; ++l) {
                     words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
-                    if (words.Length <= 0) { continue; }
+                    if (words.Length < 7) { continue; }
                     ++nodeNum;
                     sb.Append(words[1]).Append(' ').Append(words[2]).Append(' ')
                         .Append(words[3]).Append(' ').Append(words[6]).Append(' ')
@@ -883,5 +883,71 @@ namespace AutoBenchmark {
             }
         }
 
+        public class OARSMT {
+            public static void convertAll() {
+                convertDimacs(@"Bonn_109_101");
+                convertDimacs(@"Bonn_23292_54");
+                convertDimacs(@"Bonn_35574_158");
+                convertDimacs(@"Bonn_46269_127");
+                convertDimacs(@"Bonn_108500_141");
+                convertDimacs(@"Bonn_129399_210");
+                convertDimacs(@"Bonn_639639_382");
+                convertDimacs(@"Bonn_783352_175");
+                convertDimacs(@"IND1");
+                convertDimacs(@"IND2");
+                convertDimacs(@"IND3");
+                convertDimacs(@"IND4");
+                convertDimacs(@"IND5");
+                convertDimacs(@"RC01");
+                convertDimacs(@"RC02");
+                convertDimacs(@"RC03");
+                convertDimacs(@"RC04");
+                convertDimacs(@"RC05");
+                convertDimacs(@"RC06");
+                convertDimacs(@"RC07");
+                convertDimacs(@"RC08");
+                convertDimacs(@"RC09");
+                convertDimacs(@"RC10");
+                convertDimacs(@"RC11");
+                convertDimacs(@"RC12");
+                convertDimacs(@"RL01");
+                convertDimacs(@"RL02");
+                convertDimacs(@"RL03");
+                convertDimacs(@"RL04");
+                convertDimacs(@"RL05");
+                convertDimacs(@"RT01");
+                convertDimacs(@"RT02");
+                convertDimacs(@"RT03");
+                convertDimacs(@"RT04");
+                convertDimacs(@"RT05");
+            }
+
+            static void convertDimacs(string oldPath) {
+                string[] lines = File.ReadAllLines(oldPath + ".stp");
+                string nodeNum = "";
+                string obstacleNum = "";
+                StringBuilder sb = new StringBuilder();
+                for (int l = 0; l < lines.Length; ++l) {
+                    string[] words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 2) { continue; }
+                    if (words[0] == "DD") {
+                        sb.Append(words[2]).Append(' ').AppendLine(words[3]);
+                    } else if (words[0] == "RR") {
+                        sb.Append(int.Parse(words[1]) + 1).Append(' ').Append(int.Parse(words[2]) + 1).Append(' ')
+                            .Append(int.Parse(words[3]) - 1).Append(' ').Append(int.Parse(words[4]) - 1).AppendLine();
+                    } else if (words[0] == "Nodes") {
+                        nodeNum = words[1];
+                    } else if (words[0] == "Obstacles") {
+                        obstacleNum = words[1];
+                    }
+                }
+
+                StringBuilder header = new StringBuilder();
+                header.Append(nodeNum).Append(' ').AppendLine(obstacleNum);
+                StringBuilder fn = new StringBuilder();
+                fn.Append(".n").Append(nodeNum).Append('o').Append(obstacleNum).Append(".txt");
+                File.WriteAllText(oldPath.subStr(0, '_').ToLower() + fn.ToString(), header.ToString() + sb.ToString());
+            }
+        }
     }
 }

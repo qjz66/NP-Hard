@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "RectPacking.h"
 
@@ -23,7 +24,8 @@ int main(int argc, char* argv[]) {
 	Layout layout(rp.rectNum);
 
 	cerr << "solve." << endl;
-	solveRectPacking(layout, rp, secTimeout, randSeed);
+	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	solveRectPacking(layout, rp, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
 
 	cerr << "save output." << endl;
 	for (auto placement = layout.begin(); placement != layout.end(); ++placement) {

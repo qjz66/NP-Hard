@@ -269,6 +269,10 @@ namespace AutoBenchmark {
         public static void tryDec<TKey>(IDictionary<TKey, int> dictionary, TKey key) {
             if (--dictionary[key] <= 0) { dictionary.Remove(key); }
         }
+        public static T tryAdd<TKey, T>(IDictionary<TKey, T> dictionary, TKey key) where T : new() {
+            dictionary.TryAdd(key, new T());
+            return dictionary[key];
+        }
 
         public static bool tryUpdateMin<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, TValue value) where TValue : IComparable<TValue> {
             if (!dictionary.ContainsKey(key)) { dictionary.Add(key, value); return true; }
@@ -286,6 +290,160 @@ namespace AutoBenchmark {
         }
         #endregion Container
 
+        #region Math
+        public static int count(params bool[] binaries) { return binaries.Count(t => t); }
+
+        public static bool updateMin(ref int minValue, int newValue) {
+            if (newValue < minValue) { minValue = newValue; return true; }
+            return false;
+        }
+        public static bool updateMax(ref int maxValue, int newValue) {
+            if (newValue > maxValue) { maxValue = newValue; return true; }
+            return false;
+        }
+
+        public static int lowerBound(int[] arr, int value) {
+            int i = Array.BinarySearch(arr, value);
+            return (i < 0) ? ~i : i;
+        }
+
+        // "forward" means `(src0 <= dst0) && (src1 <= dst1)`.
+        public static class RectilinearForward {
+            public static bool between(int value, int lb, int ub) { return (lb <= value) && (value <= ub); }
+
+            public static bool within(int[] pos, int[] corner0, int[] corner1) {
+                for (int i = 0; i < pos.Length; ++i) {
+                    if (!between(pos[i], corner0[i], corner1[i])) { return false; }
+                }
+                return true;
+            }
+            public static bool within(int[] pos, int[] box) {
+                return within(pos, new int[2] { box[0], box[1] }, new int[2] { box[2], box[3] });
+            }
+
+            public static bool segmentsInterfering(int src0, int dst0, int src1, int dst1) { return (src0 <= dst1) && (src1 <= dst0); }
+
+            /// <summary>
+            /// check if two rectilinear forward segments are intersected or overlapped.
+            /// </summary>
+            public static bool segmentsInterfering(int[] src0, int[] dst0, int[] src1, int[] dst1) {
+                int dx0 = dst0[0] - src0[0];
+                int dx1 = dst1[0] - src1[0];
+                if ((dx0 == 0) != (dx1 == 0)) { // orthogonal.
+                    if (dx0 == 0) { // segment 0 is vertical and segment 1 is horizontal.
+                        return between(src0[0], src1[0], dst1[0]) && between(src1[1], src0[1], dst0[1]);
+                    } else { // segment 0 is horizontal and segment 1 is vertical.
+                        return between(src1[0], src0[0], dst0[0]) && between(src0[1], src1[1], dst1[1]);
+                    }
+                } else { // parallel.
+                    if (dx0 == 0) { // both are vertical.
+                        return (src0[0] == src1[0]) && segmentsInterfering(src0[1], dst0[1], src1[1], dst1[1]);
+                    } else { // both are horizontal.
+                        return (src0[1] == src1[1]) && segmentsInterfering(src0[0], dst0[0], src1[0], dst1[0]);
+                    }
+                }
+            }
+            public static bool segmentsInterfering(int[][] segment0, int[][] segment1) {
+                return segmentsInterfering(segment0[0], segment0[1], segment1[0], segment1[1]);
+            }
+
+            /// <summary>
+            /// check if a rectilinear segments and a box (hollow rectangle) is intersected or overlapped.
+            /// </summary>
+            public static bool segmentBoxInterfering(int[][] segment, int[] box) {
+                int dx0 = segment[0][1] - segment[0][0];
+                if (dx0 == 0) { // vertical.
+                    return between(segment[0][0], box[0], box[2]) && segmentsInterfering(segment[0][1], segment[1][1], box[1], box[3]);
+                } else { // horizontal.
+                    return between(segment[0][1], box[1], box[3]) && segmentsInterfering(segment[0][0], segment[1][0], box[0], box[2]);
+                }
+            }
+
+            /// <summary>
+            /// check if a rectilinear segments and a solid rectangle is intersected or overlapped.
+            /// </summary>
+            public static bool segmentRectInterfering(int[][] segment, int[] rect) {
+                return segmentBoxInterfering(segment, rect)
+                    || (within(segment[0], rect) && within(segment[1], rect));
+            }
+        }
+
+        public static class Rectilinear {
+            public static bool between(int value, int bound0, int bound1) {
+                //return ((value - bound0) * (value - bound1)) <= 0; // may overflow.
+                return ((value == bound0) || (value == bound1)) || ((value < bound0) != (value < bound1));
+                //return (value <= bound0) ? (value >= bound1) : (value <= bound1);
+            }
+
+            public static bool within(int[] pos, int[] corner0, int[] corner1) {
+                for (int i = 0; i < pos.Length; ++i) {
+                    if (!between(pos[i], corner0[i], corner1[i])) { return false; }
+                }
+                return true;
+            }
+            public static bool within(int[] pos, int[] box) {
+                return within(pos, new int[2] { box[0], box[1] }, new int[2] { box[2], box[3] });
+            }
+
+            public static bool segmentsInterfering(int src0, int dst0, int src1, int dst1) {
+                int r = count(src0 <= src1, src0 < dst1, dst0 < src1, dst0 <= dst1);
+                return (0 < r) && (r < 4);
+            }
+
+            /// <summary>
+            /// check if two rectilinear segments are intersected or overlapped.
+            /// </summary>
+            public static bool segmentsInterfering(int[] src0, int[] dst0, int[] src1, int[] dst1) {
+                int dx0 = dst0[0] - src0[0];
+                int dx1 = dst1[0] - src1[0];
+                if ((dx0 == 0) != (dx1 == 0)) { // orthogonal.
+                    if (dx0 == 0) { // segment 0 is vertical and segment 1 is horizontal.
+                        return between(src0[0], src1[0], dst1[0]) && between(src1[1], src0[1], dst0[1]);
+                    } else { // segment 0 is horizontal and segment 1 is vertical.
+                        return between(src1[0], src0[0], dst0[0]) && between(src0[1], src1[1], dst1[1]);
+                    }
+                } else { // parallel.
+                    if (dx0 == 0) { // both are vertical.
+                        if (src0[0] != src1[0]) { return false; }
+                        return segmentsInterfering(src0[1], dst0[1], src1[1], dst1[1]);
+                    } else { // both are horizontal.
+                        if (src0[1] != src1[1]) { return false; }
+                        return segmentsInterfering(src0[0], dst0[0], src1[0], dst1[0]);
+                    }
+                }
+            }
+            public static bool segmentsInterfering(int[][] segment0, int[][] segment1) {
+                return segmentsInterfering(segment0[0], segment0[1], segment1[0], segment1[1]);
+            }
+
+            /// <summary>
+            /// check if a rectilinear segments and a box (hollow rectangle) is intersected or overlapped.
+            /// </summary>
+            public static bool segmentBoxInterfering(int[][] segment, int[] box) {
+                int dx0 = segment[0][1] - segment[0][0];
+                int[] n00 = new int[2] { box[0], box[1] };
+                int[] n01 = new int[2] { box[0], box[3] };
+                int[] n10 = new int[2] { box[2], box[1] };
+                int[] n11 = new int[2] { box[2], box[3] };
+                if (dx0 == 0) { // vertical.
+                    return segmentsInterfering(segment, new int[2][] { n00, n10 })
+                        || segmentsInterfering(segment, new int[2][] { n01, n11 });
+                } else { // horizontal.
+                    return segmentsInterfering(segment, new int[2][] { n00, n01 })
+                        || segmentsInterfering(segment, new int[2][] { n10, n11 });
+                }
+            }
+
+            /// <summary>
+            /// check if a rectilinear segments and a solid rectangle is intersected or overlapped.
+            /// </summary>
+            public static bool segmentRectInterfering(int[][] segment, int[] rect) {
+                return segmentBoxInterfering(segment, rect)
+                    || (within(segment[0], rect) && within(segment[1], rect));
+            }
+        }
+        #endregion Math
+
         public class OppositeComparer<T> : IComparer<T> {
             public static OppositeComparer<T> Default { get { return oppositeComparer; } }
 
@@ -298,15 +456,6 @@ namespace AutoBenchmark {
             T tmp = l;
             l = r;
             r = tmp;
-        }
-
-        public static bool updateMin(ref int minValue, int newValue) {
-            if (newValue < minValue) { minValue = newValue; return true; }
-            return false;
-        }
-        public static bool updateMax(ref int maxValue, int newValue) {
-            if (newValue > maxValue) { maxValue = newValue; return true; }
-            return false;
         }
     }
 }

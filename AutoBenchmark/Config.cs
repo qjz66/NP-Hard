@@ -80,6 +80,7 @@ namespace AutoBenchmark {
         public const string RWA = "RWA";
         public const string RectPacking = "RPP";
         public const string VRPTW2d = "VRPTW2d";
+        public const string OARSMT = "OARSMT";
     }
 
     public class BenchmarkCfg {
@@ -101,6 +102,7 @@ namespace AutoBenchmark {
             { ProblemName.RWA, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Conflict" },
             { ProblemName.RectPacking, LogCommonHeader + LogDelim + "RestRect" + LogDelim + "Conflict" },
             { ProblemName.VRPTW2d, LogCommonHeader + LogDelim + "VehicleNum" + LogDelim + "Uncover" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
+            { ProblemName.OARSMT, LogCommonHeader + LogDelim + "Invasion" + LogDelim + "SubTree" },
         };
         public const string ScoreHeader = "Solver" + LogDelim + LogBasicHeader;
 
@@ -111,6 +113,7 @@ namespace AutoBenchmark {
             { ProblemName.RWA, Checker.rwa },
             { ProblemName.RectPacking, Checker.rectPacking },
             { ProblemName.VRPTW2d, Checker.vrptw2d },
+            { ProblemName.OARSMT, Checker.oarsmt },
         };
 
         public static Rank rank = Util.Json.load<Rank>(CommonCfg.RankPath);

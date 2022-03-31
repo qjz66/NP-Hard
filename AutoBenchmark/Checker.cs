@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using RF = AutoBenchmark.Util.RectilinearForward;
+
 
 namespace AutoBenchmark {
     public delegate void Check(string[] input, string output, Statistic statistic);
@@ -412,6 +414,124 @@ namespace AutoBenchmark {
             bool feasible = (vehicleNum < maxVehicleNum) && (uncoverNum == 0) && (conflictNum == 0) && (overload == 0) && (delay == 0);
             statistic.obj = feasible ? cost : Problem.MaxObjValue;
             statistic.info = vehicleNum.ToString() + BenchmarkCfg.LogDelim + uncoverNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString() + BenchmarkCfg.LogDelim + overload.ToString() + BenchmarkCfg.LogDelim + delay.ToString();
+        }
+
+
+        public static void oarsmt(string[] input, string output, Statistic statistic) {
+            int nodeNum = 0;
+            //int obstacleNum = 0;
+            List<int[]> nodes = new List<int[]>();
+            List<int[]> obstacles = new List<int[]>();
+            try { // load instance.
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                nodeNum = int.Parse(words[0]);
+                //obstacleNum = int.Parse(words[1]);
+                int l = 1;
+                for (int n = 0; n < nodeNum; ++n, ++l) {
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    nodes.Add(new int[2] { int.Parse(words[0]), int.Parse(words[1]) });
+                }
+                for (; l < input.Length; ++l) {
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    int[] o = new int[4] { int.Parse(words[0]), int.Parse(words[1]), int.Parse(words[2]), int.Parse(words[3]) };
+                    if (o[0] > o[2]) { Util.swap(ref o[0], ref o[2]); }
+                    if (o[1] > o[3]) { Util.swap(ref o[1], ref o[3]); }
+                    obstacles.Add(o); // the rectangles are forward, i.e., from (xMin, yMin) to (xMax, yMax).
+                }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
+
+            List<int[][]> segments = new List<int[][]>();
+            Dictionary<int, List<int>> segmentsAtX = new Dictionary<int, List<int>>(); // `segmentsAtX[c]` is the list of segments which are parallel to line x = c.
+            Dictionary<int, List<int>> segmentsAtY = new Dictionary<int, List<int>>(); // `segmentsAtY[c]` is the list of segments which are parallel to line y = c.
+            try { // load solution.
+                string[] lines = output.Split(LineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines) {
+                    string[] words = line.Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    int[] pos = new int[2] { int.Parse(words[0]), int.Parse(words[1]) };
+                    for (int i = 2; i < words.Length; i += 2) {
+                        int d = int.Parse(words[i + 1]);
+                        if (d == 0) { continue; }
+                        int[] newPos = new int[2] { pos[0], pos[1] };
+                        if (words[i] == "x") {
+                            newPos[0] += d;
+                            Util.tryAdd(segmentsAtY, pos[1]).Add(segments.Count);
+                        } else {
+                            newPos[1] += d;
+                            Util.tryAdd(segmentsAtX, pos[0]).Add(segments.Count);
+                        } // the segments are forward, i.e., from (xMin, yMin) to (xMax, yMax).
+                        segments.Add(new int[2][] { ((d > 0) ? pos : newPos), ((d > 0) ? newPos : pos) });
+                        pos = newPos;
+                    }
+                }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
+
+            int invasionNum = 0;
+            int subgraphNum = nodeNum;
+            long wireLen = 0;
+            try { // check.
+                foreach (var s in segments) { // check obstacle invasion.
+                    wireLen += (s[1][0] - s[0][0] + s[1][1] - s[0][1]); // for forward rectilinear segments only.
+                    foreach (var o in obstacles) {
+                        if (RF.segmentBoxInterfering(s, o)) { ++invasionNum; break; }
+                    }
+                }
+                foreach (var n in nodes) { // check node inclusion.
+                    bool included = false;
+                    if (segmentsAtX.ContainsKey(n[0])) {
+                        foreach (var s in segmentsAtX[n[0]]) {
+                            if (RF.between(n[1], segments[s][0][1], segments[s][1][1])) { --subgraphNum; included = true; break; }
+                        }
+                    }
+                    if (included || !segmentsAtY.ContainsKey(n[1])) { continue; }
+                    foreach (var s in segmentsAtY[n[1]]) {
+                        if (RF.between(n[0], segments[s][0][0], segments[s][1][0])) { --subgraphNum; break; }
+                    }
+                }
+                if (subgraphNum == 0) { // check connectivity (if each node is covered by at least one segment).
+                    int[] xs = segmentsAtX.Keys.ToArray();
+                    Array.Sort(xs);
+                    int[] ys = segmentsAtY.Keys.ToArray();
+                    Array.Sort(ys);
+
+                    Queue<int> q = new Queue<int>();
+                    bool[] included = Enumerable.Repeat(false, segments.Count).ToArray();
+                    Action<int, int> adj = (int s0, int s1) => {
+                        if (included[s1] || (s0 == s1)) { return; }
+                        if (!RF.segmentsInterfering(segments[s0], segments[s1])) { return; }
+                        q.Enqueue(s1);
+                        included[s1] = true;
+                    };
+                    for (int s = 0; s < segments.Count; ++s) { // BFS.
+                        if (included[s]) { continue; }
+                        if (++subgraphNum > 1) { break; }
+                        q.Enqueue(s);
+                        included[s] = true;
+                        while (q.Count > 0) {
+                            int s0 = q.Dequeue();
+                            int xMin = Util.lowerBound(xs, segments[s0][0][0]);
+                            int xMax = Util.lowerBound(xs, segments[s0][1][0]);
+                            if (xMin > xMax) { Util.swap(ref xMin, ref xMax); }
+                            if (xMax < xs.Length) {
+                                for (; xMin <= xMax; ++xMin) {
+                                    foreach (var s1 in segmentsAtX[xs[xMin]]) { adj(s0, s1); }
+                                }
+                            }
+                            int yMin = Util.lowerBound(ys, segments[s0][0][1]);
+                            int yMax = Util.lowerBound(ys, segments[s0][1][1]);
+                            if (yMin > yMax) { Util.swap(ref yMin, ref yMax); }
+                            if (yMax < ys.Length) {
+                                for (; yMin <= yMax; ++yMin) {
+                                    foreach (var s1 in segmentsAtY[ys[yMin]]) { adj(s0, s1); }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
+
+            bool feasible = (invasionNum == 0) && (subgraphNum == 1);
+            statistic.obj = feasible ? wireLen : Problem.MaxObjValue;
+            statistic.info = invasionNum.ToString() + BenchmarkCfg.LogDelim + subgraphNum.ToString() + BenchmarkCfg.LogDelim;
         }
     }
 }

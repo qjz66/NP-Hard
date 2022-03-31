@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <chrono>
 
 #include "FJSP.h"
 
@@ -35,7 +36,8 @@ int main(int argc, char* argv[]) {
 	Schedule schedule(fjsp.workerNum);
 
 	cerr << "solve." << endl;
-	solveFJSP(schedule, fjsp, secTimeout, randSeed);
+	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	solveFJSP(schedule, fjsp, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
 
 	cerr << "save output." << endl;
 	for (auto worker = schedule.begin(); worker != schedule.end(); ++worker) {

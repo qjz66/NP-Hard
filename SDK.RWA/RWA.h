@@ -10,6 +10,7 @@
 
 #include <array>
 #include <vector>
+#include <functional>
 
 
 namespace szx {
@@ -38,7 +39,7 @@ struct Route {
 using Routes = std::vector<Route>; // `Routes[t]` is the route for traffic `t`.
 
 
-void solveRWA(Routes& output, RWA& input, long long secTimeout, int seed);
+void solveRWA(Routes& output, RWA& input, std::function<bool()> isTimeout, int seed);
 
 }
 
