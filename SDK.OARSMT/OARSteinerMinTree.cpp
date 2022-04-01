@@ -44,6 +44,7 @@ public:
 		}
 		output.push_back(path);
 
+		draw(input, output);
 		// print some information for debugging.
 		NodeId maxDebugLineNum = 32;
 		for (auto path = output.begin(); !isTimeout() && (path != output.end()); ++path) {
@@ -53,7 +54,6 @@ public:
 			}
 			cerr << "----" << endl;
 		}
-		draw(input, output);
 	}
 
 	static void draw(const OARSteinerMinTree& input, const Paths& output, const std::string filePath = "oarsmt.visualization.html") {

@@ -288,6 +288,17 @@ namespace AutoBenchmark {
             }
             return l.Length < r.Length;
         }
+
+        public static int[] orderedKeys<T>(Dictionary<int, T> mapping) {
+            int[] keys = mapping.Keys.ToArray();
+            Array.Sort(keys);
+            return keys;
+        }
+        public static int[] mapBack(Dictionary<int, int> mapping) {
+            int[] keys = orderedKeys(mapping);
+            for (int i = 0; i < keys.Length; ++i) { mapping[keys[i]] = i; }
+            return keys;
+        }
         #endregion Container
 
         #region Math
