@@ -30,7 +30,7 @@ namespace AutoBenchmark {
                     if (words.Length < 2) { continue; }
                     edges.Add(new Edge { src = int.Parse(words[0]), dst = int.Parse(words[1]) });
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
 
             HashSet<string> colors = new HashSet<string>();
             List<string> nodeColors = new List<string>();
@@ -40,14 +40,14 @@ namespace AutoBenchmark {
                     nodeColors.Add(words[c]);
                     colors.Add(words[c]);
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
 
             int conflictNum = 0;
             try { // check.
                 foreach (Edge edge in edges) {
                     if (nodeColors[edge.src] == nodeColors[edge.dst]) { ++conflictNum; }
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
 
             bool feasible = (conflictNum == 0) && (nodeColors.Count == nodeNum);
             statistic.obj = feasible ? colors.Count : Problem.MaxObjValue;
@@ -92,6 +92,7 @@ namespace AutoBenchmark {
                 string[] words = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string word in words) {
                     int s = int.Parse(word);
+                    if ((s < 0) || (s >= nodeNum)) { continue; }
                     pickedSets.Add(s);
                     notPickedSet[s] = false;
                 }
@@ -169,7 +170,7 @@ namespace AutoBenchmark {
                     jobs.Last().succeedingJobs.pop();
                     jobIdMap.Add(idMap);
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
 
             List<List<int>> jobsOnWorkers = new List<List<int>>(workerNum);
             try { // load solution.
@@ -185,7 +186,7 @@ namespace AutoBenchmark {
                     }
                     jobsOnWorkers.Add(jobsOnWorker);
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
 
             int makespan = (int)Problem.MaxObjValue;
             int restJobNum = jobs.Count;
@@ -226,7 +227,7 @@ namespace AutoBenchmark {
                 }
 
                 makespan = earliestFinishTimes.Max();
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
 
             bool feasible = (restJobNum == 0);
             statistic.obj = feasible ? makespan : Problem.MaxObjValue;
@@ -253,7 +254,7 @@ namespace AutoBenchmark {
                 for (int t = 0; (t < trafficNum) && (l < input.Length); ++l, ++t) {
                     traffics.Add(input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries));
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
 
             int brokenPathNum = 0;
             int conflictNum = 0;
@@ -276,7 +277,7 @@ namespace AutoBenchmark {
                         src = nums[i];
                     }
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
 
             bool feasible = (brokenPathNum == 0) && (conflictNum == 0);
             statistic.obj = feasible ? colors.Count : Problem.MaxObjValue;
@@ -294,7 +295,7 @@ namespace AutoBenchmark {
                     if (words.Length < 2) { continue; }
                     rects.Add(new int[2] { int.Parse(words[0]), int.Parse(words[1]) });
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
 
             List<int[]> positions = new List<int[]>();
             try { // load solution.
@@ -305,7 +306,7 @@ namespace AutoBenchmark {
                     if (words[2] != "0") { Util.swap(ref rects[positions.Count][0], ref rects[positions.Count][1]); }
                     positions.Add(new int[2] { int.Parse(words[0]), int.Parse(words[1]) });
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
 
             int restRectNum = rectNum - positions.Count;
             int conflictNum = 0;
@@ -327,7 +328,7 @@ namespace AutoBenchmark {
                         ++conflictNum; // OPT[szx][5]: line sweep + indexed tree, divide and conquer.
                     }
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
 
             bool feasible = (conflictNum == 0) && (restRectNum == 0);
             statistic.obj = feasible ? ((xMax - xMin) * (yMax - yMin)) : Problem.MaxObjValue;
@@ -367,7 +368,7 @@ namespace AutoBenchmark {
                         timeWindowBegin = int.Parse(words[4]) * Node2d.Amp, timeWindowEnd = int.Parse(words[5]) * Node2d.Amp
                     });
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
 
             int uncoverNum = nodeNum; // unvisited nodes.
             int conflictNum = 0; // revisited nodes.
@@ -410,7 +411,7 @@ namespace AutoBenchmark {
 
                     if (capacity < 0) { overload -= capacity; } // check overload.
                 }
-            } catch (Exception) { }
+            } catch (Exception e) { Util.log("[error] checker load output or check fail due to " + e.ToString()); }
 
             bool feasible = (vehicleNum < maxVehicleNum) && (uncoverNum == 0) && (conflictNum == 0) && (overload == 0) && (delay == 0);
             statistic.obj = feasible ? cost : Problem.MaxObjValue;
@@ -418,8 +419,7 @@ namespace AutoBenchmark {
         }
 
 
-        [Flags]
-        enum NodeState : byte {
+        [Flags] enum NodeState : byte {
             Free = 0x0,
             Obstacle = 0x1,
             Included = 0x2,
@@ -646,6 +646,62 @@ namespace AutoBenchmark {
             bool feasible = (invasionNum == 0) && (subgraphNum == 1);
             statistic.obj = feasible ? wireLen : Problem.MaxObjValue;
             statistic.info = invasionNum.ToString() + BenchmarkCfg.LogDelim + subgraphNum.ToString() + BenchmarkCfg.LogDelim;
+        }
+        
+        public static void dfvsp(string[] input, string output, Statistic statistic) {
+            int nodeNum = 0;
+            int arcNum = 0;
+            List<List<int>> adjList = new List<List<int>>(); // `adjList[s][d]` is the `d`_th out-degree of node `s`.
+            try { // load instance.
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                nodeNum = int.Parse(words[0]);
+                arcNum = int.Parse(words[1]);
+                for (int l = 1; l < input.Length; ++l) { // for each node.
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    List<int> adjNodes = new List<int>();
+                    foreach (var n in words) { adjNodes.Add(int.Parse(n)); }
+                    adjList.Add(adjNodes);
+                }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
+
+            List<int> removedNodes = new List<int>();
+            bool[] nodeRemoved = Enumerable.Repeat(false, nodeNum).ToArray();
+            try { // load solution.
+                string[] words = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string word in words) {
+                    int n = int.Parse(word);
+                    if ((n < 0) || (n >= nodeNum) || nodeRemoved[n]) { continue; }
+                    removedNodes.Add(n);
+                    nodeRemoved[n] = true;
+                }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
+
+            int unsortNodeNum = nodeNum - removedNodes.Count;
+            try { // check.
+                List<int> preceedingNodeNums = new List<int>(Enumerable.Repeat(0, nodeNum));
+                for (int src = 0; src < nodeNum; ++src) {
+                    if (nodeRemoved[src]) { continue; }
+                    foreach (var dst in adjList[src]) {
+                        if (!nodeRemoved[dst]) { ++preceedingNodeNums[dst]; }
+                    }
+                }
+
+                Queue<int> freeNodes = new Queue<int>(nodeNum);
+                for (int n = 0; n < nodeNum; ++n) {
+                    if (!nodeRemoved[n] && (preceedingNodeNums[n] <= 0)) { freeNodes.Enqueue(n); }
+                }
+                for (; freeNodes.Count > 0; --unsortNodeNum) {
+                    int src = freeNodes.Dequeue();
+                    foreach (var dst in adjList[src]) {
+                        if (nodeRemoved[dst]) { continue; }
+                        if (--preceedingNodeNums[dst] <= 0) { freeNodes.Enqueue(dst); }
+                    }
+                }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
+
+            bool feasible = (unsortNodeNum == 0);
+            statistic.obj = feasible ? removedNodes.Count : Problem.MaxObjValue;
+            statistic.info = unsortNodeNum.ToString();
         }
     }
 }

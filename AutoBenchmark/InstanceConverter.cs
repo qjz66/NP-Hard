@@ -949,5 +949,309 @@ namespace AutoBenchmark {
                 File.WriteAllText(oldPath.subStr(0, '_').ToLower() + fn.ToString(), header.ToString() + sb.ToString());
             }
         }
+
+        public class DFVSP {
+            public static void convertAll() {
+                convertPardalos(@"P50-100");
+                convertPardalos(@"P50-150");
+                convertPardalos(@"P50-200");
+                convertPardalos(@"P50-250");
+                convertPardalos(@"P50-300");
+                convertPardalos(@"P50-500");
+                convertPardalos(@"P50-600");
+                convertPardalos(@"P50-700");
+                convertPardalos(@"P50-800");
+                convertPardalos(@"P50-900");
+                convertPardalos(@"P100-200");
+                convertPardalos(@"P100-300");
+                convertPardalos(@"P100-400");
+                convertPardalos(@"P100-500");
+                convertPardalos(@"P100-600");
+                convertPardalos(@"P100-1000");
+                convertPardalos(@"P100-1100");
+                convertPardalos(@"P100-1200");
+                convertPardalos(@"P100-1300");
+                convertPardalos(@"P100-1400");
+                convertPardalos(@"P500-1000");
+                convertPardalos(@"P500-1500");
+                convertPardalos(@"P500-2000");
+                convertPardalos(@"P500-2500");
+                convertPardalos(@"P500-3000");
+                convertPardalos(@"P500-5000");
+                convertPardalos(@"P500-5500");
+                convertPardalos(@"P500-6000");
+                convertPardalos(@"P500-6500");
+                convertPardalos(@"P500-7000");
+                convertPardalos(@"P1000-3000");
+                convertPardalos(@"P1000-3500");
+                convertPardalos(@"P1000-4000");
+                convertPardalos(@"P1000-4500");
+                convertPardalos(@"P1000-5000");
+                convertPardalos(@"P1000-10000");
+                convertPardalos(@"P1000-15000");
+                convertPardalos(@"P1000-20000");
+                convertPardalos(@"P1000-25000");
+                convertPardalos(@"P1000-30000");
+                convertPace(@"h_001");
+                convertPace(@"h_003");
+                convertPace(@"h_005");
+                convertPace(@"h_007");
+                convertPace(@"h_009");
+                convertPace(@"h_011");
+                convertPace(@"h_013");
+                convertPace(@"h_015");
+                convertPace(@"h_017");
+                convertPace(@"h_019");
+                convertPace(@"h_021");
+                convertPace(@"h_023");
+                convertPace(@"h_025");
+                convertPace(@"h_027");
+                convertPace(@"h_029");
+                convertPace(@"h_031");
+                convertPace(@"h_033");
+                convertPace(@"h_035");
+                convertPace(@"h_037");
+                convertPace(@"h_039");
+                convertPace(@"h_041");
+                convertPace(@"h_043");
+                convertPace(@"h_045");
+                convertPace(@"h_047");
+                convertPace(@"h_049");
+                convertPace(@"h_051");
+                convertPace(@"h_053");
+                convertPace(@"h_055");
+                convertPace(@"h_057");
+                convertPace(@"h_059");
+                convertPace(@"h_061");
+                convertPace(@"h_063");
+                convertPace(@"h_065");
+                convertPace(@"h_067");
+                convertPace(@"h_069");
+                convertPace(@"h_071");
+                convertPace(@"h_073");
+                convertPace(@"h_075");
+                convertPace(@"h_077");
+                convertPace(@"h_079");
+                convertPace(@"h_081");
+                convertPace(@"h_083");
+                convertPace(@"h_085");
+                convertPace(@"h_087");
+                convertPace(@"h_089");
+                convertPace(@"h_091");
+                convertPace(@"h_093");
+                convertPace(@"h_095");
+                convertPace(@"h_097");
+                convertPace(@"h_099");
+                convertPace(@"h_101");
+                convertPace(@"h_103");
+                convertPace(@"h_105");
+                convertPace(@"h_107");
+                convertPace(@"h_109");
+                convertPace(@"h_111");
+                convertPace(@"h_113");
+                convertPace(@"h_115");
+                convertPace(@"h_117");
+                convertPace(@"h_119");
+                convertPace(@"h_121");
+                convertPace(@"h_123");
+                convertPace(@"h_125");
+                convertPace(@"h_127");
+                convertPace(@"h_129");
+                convertPace(@"h_131");
+                convertPace(@"h_133");
+                convertPace(@"h_135");
+                convertPace(@"h_137");
+                convertPace(@"h_139");
+                convertPace(@"h_141");
+                convertPace(@"h_143");
+                convertPace(@"h_145");
+                convertPace(@"h_147");
+                convertPace(@"h_149");
+                convertPace(@"h_151");
+                convertPace(@"h_153");
+                convertPace(@"h_155");
+                convertPace(@"h_157");
+                convertPace(@"h_159");
+                convertPace(@"h_161");
+                convertPace(@"h_163");
+                convertPace(@"h_165");
+                convertPace(@"h_167");
+                convertPace(@"h_169");
+                convertPace(@"h_171");
+                convertPace(@"h_173");
+                convertPace(@"h_175");
+                convertPace(@"h_177");
+                convertPace(@"h_179");
+                convertPace(@"h_181");
+                convertPace(@"h_183");
+                convertPace(@"h_185");
+                convertPace(@"h_187");
+                convertPace(@"h_189");
+                convertPace(@"h_191");
+                convertPace(@"h_193");
+                convertPace(@"h_195");
+                convertPace(@"h_197");
+                convertPace(@"h_199");
+                convertPace(@"e_001");
+                convertPace(@"e_003");
+                convertPace(@"e_005");
+                convertPace(@"e_007");
+                convertPace(@"e_009");
+                convertPace(@"e_011");
+                convertPace(@"e_013");
+                convertPace(@"e_015");
+                convertPace(@"e_017");
+                convertPace(@"e_019");
+                convertPace(@"e_021");
+                convertPace(@"e_023");
+                convertPace(@"e_025");
+                convertPace(@"e_027");
+                convertPace(@"e_029");
+                convertPace(@"e_031");
+                convertPace(@"e_033");
+                convertPace(@"e_035");
+                convertPace(@"e_037");
+                convertPace(@"e_039");
+                convertPace(@"e_041");
+                convertPace(@"e_043");
+                convertPace(@"e_045");
+                convertPace(@"e_047");
+                convertPace(@"e_049");
+                convertPace(@"e_051");
+                convertPace(@"e_053");
+                convertPace(@"e_055");
+                convertPace(@"e_057");
+                convertPace(@"e_059");
+                convertPace(@"e_061");
+                convertPace(@"e_063");
+                convertPace(@"e_065");
+                convertPace(@"e_067");
+                convertPace(@"e_069");
+                convertPace(@"e_071");
+                convertPace(@"e_073");
+                convertPace(@"e_075");
+                convertPace(@"e_077");
+                convertPace(@"e_079");
+                convertPace(@"e_081");
+                convertPace(@"e_083");
+                convertPace(@"e_085");
+                convertPace(@"e_087");
+                convertPace(@"e_089");
+                convertPace(@"e_091");
+                convertPace(@"e_093");
+                convertPace(@"e_095");
+                convertPace(@"e_097");
+                convertPace(@"e_099");
+                convertPace(@"e_101");
+                convertPace(@"e_103");
+                convertPace(@"e_105");
+                convertPace(@"e_107");
+                convertPace(@"e_109");
+                convertPace(@"e_111");
+                convertPace(@"e_113");
+                convertPace(@"e_115");
+                convertPace(@"e_117");
+                convertPace(@"e_119");
+                convertPace(@"e_121");
+                convertPace(@"e_123");
+                convertPace(@"e_125");
+                convertPace(@"e_127");
+                convertPace(@"e_129");
+                convertPace(@"e_131");
+                convertPace(@"e_133");
+                convertPace(@"e_135");
+                convertPace(@"e_137");
+                convertPace(@"e_139");
+                convertPace(@"e_141");
+                convertPace(@"e_143");
+                convertPace(@"e_145");
+                convertPace(@"e_147");
+                convertPace(@"e_149");
+                convertPace(@"e_151");
+                convertPace(@"e_153");
+                convertPace(@"e_155");
+                convertPace(@"e_157");
+                convertPace(@"e_159");
+                convertPace(@"e_161");
+                convertPace(@"e_163");
+                convertPace(@"e_165");
+                convertPace(@"e_167");
+                convertPace(@"e_169");
+                convertPace(@"e_171");
+                convertPace(@"e_173");
+                convertPace(@"e_175");
+                convertPace(@"e_177");
+                convertPace(@"e_179");
+                convertPace(@"e_181");
+                convertPace(@"e_183");
+                convertPace(@"e_185");
+                convertPace(@"e_187");
+                convertPace(@"e_189");
+                convertPace(@"e_191");
+                convertPace(@"e_193");
+                convertPace(@"e_195");
+                convertPace(@"e_197");
+                convertPace(@"e_199");
+            }
+
+            static void convertPardalos(string oldPath) {
+                string[] lines = File.ReadAllLines(oldPath + ".dat");
+                string[] words = lines[0].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                string nodeNum = words[0];
+                string arcNum = words[1];
+                List<int>[] adjList = new List<int>[int.Parse(nodeNum)];
+                for (int i = 0; i < adjList.Length; ++i) { adjList[i] = new List<int>(); }
+                for (int l = 1; l < lines.Length; ++l) {
+                    words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    adjList[int.Parse(words[0]) - 1].Add(int.Parse(words[1]) - 1);
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append(nodeNum).Append(' ').AppendLine(arcNum);
+                for (int i = 0; i < adjList.Length; ++i) {
+                    if (adjList[i].Count > 0) {
+                        foreach (var n in adjList[i]) {
+                            sb.Append(n).Append(' ');
+                        }
+                        --sb.Length;
+                    }
+                    sb.AppendLine();
+                }
+
+                StringBuilder fn = new StringBuilder();
+                fn.Append("pardalos.n").Append(nodeNum).Append('e').Append(arcNum).Append(".txt");
+                File.WriteAllText(fn.ToString(), sb.ToString());
+            }
+
+            static void convertPace(string oldPath) {
+                string[] lines = File.ReadAllLines(oldPath);
+                string[] words = lines[0].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                string nodeNum = words[0];
+                string arcNum = words[1];
+                List<int>[] adjList = new List<int>[int.Parse(nodeNum)];
+                for (int i = 0; i < adjList.Length; ++i) { adjList[i] = new List<int>(); }
+                for (int l = 1; l < lines.Length; ++l) {
+                    words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var w in words) { adjList[l - 1].Add(int.Parse(w) - 1); }
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append(nodeNum).Append(' ').AppendLine(arcNum);
+                for (int i = 0; i < adjList.Length; ++i) {
+                    if (adjList[i].Count > 0) {
+                        foreach (var n in adjList[i]) {
+                            sb.Append(n).Append(' ');
+                        }
+                        --sb.Length;
+                    }
+                    sb.AppendLine();
+                }
+
+                StringBuilder fn = new StringBuilder();
+                fn.Append("pace.").Append(Path.GetFileName(oldPath).Replace("_", ""))
+                    .Append(".n").Append(nodeNum).Append('e').Append(arcNum).Append(".txt");
+                File.WriteAllText(fn.ToString(), sb.ToString());
+            }
+        }
     }
 }

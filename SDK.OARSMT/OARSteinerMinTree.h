@@ -4,8 +4,8 @@
 /// note  : 1.	
 ////////////////////////////////
 
-#ifndef CN_HUST_SZX_NPBENCHMARK_GRAPH_COLORING_H
-#define CN_HUST_SZX_NPBENCHMARK_GRAPH_COLORING_H
+#ifndef CN_HUST_SZX_NPBENCHMARK_O_A_R_STEINER_MIN_TREE_H
+#define CN_HUST_SZX_NPBENCHMARK_O_A_R_STEINER_MIN_TREE_H
 
 
 #include <array>
@@ -38,4 +38,4 @@ void solveOARSteinerMinTree(Paths& output, OARSteinerMinTree& input, std::functi
 }
 
 
-#endif // CN_HUST_SZX_NPBENCHMARK_GRAPH_COLORING_H
+#endif // CN_HUST_SZX_NPBENCHMARK_O_A_R_STEINER_MIN_TREE_H

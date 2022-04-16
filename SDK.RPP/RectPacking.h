@@ -1,5 +1,5 @@
 ////////////////////////////////
-/// usage : 1.	SDK for graph coloring solver.
+/// usage : 1.	SDK for rectangle packing solver.
 /// 
 /// note  : 1.	
 ////////////////////////////////

@@ -1,11 +1,11 @@
 ////////////////////////////////
-/// usage : 1.	SDK for routing and wavelength assignment solver.
+/// usage : 1.	SDK for vehicle routing with time window on 2D plane solver.
 /// 
 /// note  : 1.	
 ////////////////////////////////
 
-#ifndef CN_HUST_SZX_NPBENCHMARK_RWA_H
-#define CN_HUST_SZX_NPBENCHMARK_RWA_H
+#ifndef CN_HUST_SZX_NPBENCHMARK_VRPTW_2D_H
+#define CN_HUST_SZX_NPBENCHMARK_VRPTW_2D_H
 
 
 #include <array>
@@ -52,4 +52,4 @@ void solveVRPTW2d(Routes& output, VRPTW2d& input, std::function<bool()> isTimeou
 }
 
 
-#endif // CN_HUST_SZX_NPBENCHMARK_RWA_H
+#endif // CN_HUST_SZX_NPBENCHMARK_VRPTW_2D_H
