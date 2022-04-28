@@ -703,5 +703,73 @@ namespace AutoBenchmark {
             statistic.obj = feasible ? removedNodes.Count : Problem.MaxObjValue;
             statistic.info = unsortNodeNum.ToString();
         }
+
+
+        public static void mcdsp(string[] input, string output, Statistic statistic) {
+            int nodeNum = 0;
+            List<int>[] adjList = null; // `adjList[s][d]` is the `d`_th out-degree of node `s`.
+            try { // load instance.
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                nodeNum = int.Parse(words[0]);
+                adjList = new List<int>[nodeNum];
+                for (int n = 0; n < nodeNum; ++n) { adjList[n] = new List<int>(); }
+                for (int l = 1; l < input.Length; ++l) {
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 2) { continue; }
+                    int src = int.Parse(words[0]);
+                    int dst = int.Parse(words[1]);
+                    adjList[src].Add(dst);
+                    adjList[dst].Add(src);
+                }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
+
+            List<int> pickedNodes = new List<int>();
+            bool[] isNodePicked = Enumerable.Repeat(false, nodeNum).ToArray();
+            try { // load solution.
+                string[] words = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
+                for (int c = 0; c < words.Length; ++c) {
+                    int node = int.Parse(words[c]);
+                    pickedNodes.Add(node);
+                    isNodePicked[node] = true;
+                }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
+
+            int uncoveredNodeNum = 0;
+            int subgraphNum = 0;
+            try { // check.
+                bool[] isNodeCovered = Enumerable.Repeat(false, nodeNum).ToArray();
+                foreach (var node in pickedNodes) {
+                    isNodeCovered[node] = true;
+                    foreach (var neighbor in adjList[node]) {
+                        isNodeCovered[neighbor] = true;
+                    }
+                }
+                foreach (var covered in isNodeCovered) {
+                    if (!covered) { ++uncoveredNodeNum; }
+                }
+
+                Queue<int> q = new Queue<int>(pickedNodes.Count);
+                bool[] included = Enumerable.Repeat(false, nodeNum).ToArray();
+                foreach (var node in pickedNodes) { // BFS.
+                    if (included[node]) { continue; }
+                    if (++subgraphNum > 1) { break; }
+                    q.Enqueue(node);
+                    included[node] = true;
+                    while (q.Count > 0) {
+                        int src = q.Dequeue();
+                        foreach (var dst in adjList[src]) {
+                            if (!isNodePicked[dst] || included[dst]) { continue; }
+                            q.Enqueue(dst);
+                            included[dst] = true;
+                        }
+                    }
+                }
+
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
+
+            bool feasible = (uncoveredNodeNum == 0) && (subgraphNum == 1);
+            statistic.obj = feasible ? pickedNodes.Count : Problem.MaxObjValue;
+            statistic.info = uncoveredNodeNum.ToString() + BenchmarkCfg.LogDelim + subgraphNum;
+        }
     }
 }

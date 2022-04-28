@@ -82,6 +82,7 @@ namespace AutoBenchmark {
         public const string VRPTW2d = "VRPTW2d";
         public const string OARSMT = "OARSMT";
         public const string DFVSP = "DFVSP";
+        public const string MCDSP = "MCDSP";
     }
 
     public class BenchmarkCfg {
@@ -98,13 +99,14 @@ namespace AutoBenchmark {
         public const string LogCommonHeader = "Solver" + LogDelim + "Seed" + LogDelim + LogBasicHeader;
         public static readonly Dictionary<string, string> LogHeaders = new Dictionary<string, string> {
             { ProblemName.Coloring, LogCommonHeader + LogDelim + "Conflict" },
-            { ProblemName.PCenter, LogCommonHeader + LogDelim + "Center" + LogDelim + "Uncover" },
+            { ProblemName.PCenter, LogCommonHeader + LogDelim + "Center" + LogDelim + "UncoveredNode" },
             { ProblemName.Jobshop, LogCommonHeader + LogDelim + "RestJob" },
             { ProblemName.RWA, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Conflict" },
             { ProblemName.RectPacking, LogCommonHeader + LogDelim + "RestRect" + LogDelim + "Conflict" },
-            { ProblemName.VRPTW2d, LogCommonHeader + LogDelim + "VehicleNum" + LogDelim + "Uncover" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
+            { ProblemName.VRPTW2d, LogCommonHeader + LogDelim + "Vehicle" + LogDelim + "UncoveredNode" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
             { ProblemName.OARSMT, LogCommonHeader + LogDelim + "Invasion" + LogDelim + "SubTree" },
             { ProblemName.DFVSP, LogCommonHeader + LogDelim + "UnsortNode" },
+            { ProblemName.MCDSP, LogCommonHeader + LogDelim + "UncoveredNode" + LogDelim + "SubGraph" },
         };
         public const string ScoreHeader = "Solver" + LogDelim + LogBasicHeader;
 
@@ -117,6 +119,7 @@ namespace AutoBenchmark {
             { ProblemName.VRPTW2d, Checker.vrptw2d },
             { ProblemName.OARSMT, Checker.oarsmt }, // alternative: `Checker.oarsmtEfficientRepresentation`.
             { ProblemName.DFVSP, Checker.dfvsp },
+            { ProblemName.MCDSP, Checker.mcdsp },
         };
 
         public static Rank rank = Util.Json.load<Rank>(CommonCfg.RankPath);

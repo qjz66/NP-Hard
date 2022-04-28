@@ -46,9 +46,9 @@ namespace AutoBenchmark {
                 }
 
                 StringBuilder sb = new StringBuilder();
-                sb.Append(nodeNum).Append(' ').Append(edges.Count).Append(' ').Append(colorNum).AppendLine();
+                sb.Append(nodeNum).Append(' ').Append(edges.Count).Append(' ').Append(colorNum).Append('\n');
                 foreach (var edge in edges) {
-                    sb.Append(edge.src).Append(' ').Append(edge.dst).AppendLine();
+                    sb.Append(edge.src).Append(' ').Append(edge.dst).Append('\n');
                 }
 
                 File.WriteAllText(newPath, sb.ToString());
@@ -272,17 +272,17 @@ namespace AutoBenchmark {
                 int minRank = estimateMinDistanceRankConservative(distances, adjMat, adjList, centerNum);
 
                 StringBuilder sb = new StringBuilder();
-                sb.Append(nodeNum).Append(' ').Append(centerNum).AppendLine();
+                sb.Append(nodeNum).Append(' ').Append(centerNum).Append('\n');
                 for (int s = 0; s < nodeNum; ++s) {
-                    sb.Append(adjList[s].Count).AppendLine();
+                    sb.Append(adjList[s].Count).Append('\n');
                     for (int d = 0; d < adjList[s].Count; ++d) {
                         sb.Append(adjList[s][d]).Append(' ');
                     }
                     sb.Remove(sb.Length - 1, 1);
-                    sb.AppendLine();
+                    sb.Append('\n');
                 }
 
-                sb.Append(maxRank).Append(' ').Append(minRank).AppendLine();
+                sb.Append(maxRank).Append(' ').Append(minRank).Append('\n');
                 for (int r = maxRank - 1; r >= minRank; --r) {
                     double radius = distances[r];
                     StringBuilder rsb = new StringBuilder();
@@ -353,7 +353,7 @@ namespace AutoBenchmark {
                             sb.Append("    1  ").Append(int.Parse(workers[b][w]) - 1)
                                 .Append(' ').Append(times[b][w]);
                         }
-                        sb.AppendLine();
+                        sb.Append('\n');
                     }
 
                     path = "jsp.TA" + index++ + ".m" + workerNum + "j" + batchNum + "c1";
@@ -934,7 +934,7 @@ namespace AutoBenchmark {
                         sb.Append(words[2]).Append(' ').AppendLine(words[3]);
                     } else if (words[0] == "RR") {
                         sb.Append(int.Parse(words[1]) + 1).Append(' ').Append(int.Parse(words[2]) + 1).Append(' ')
-                            .Append(int.Parse(words[3]) - 1).Append(' ').Append(int.Parse(words[4]) - 1).AppendLine();
+                            .Append(int.Parse(words[3]) - 1).Append(' ').Append(int.Parse(words[4]) - 1).Append('\n');
                     } else if (words[0] == "Nodes") {
                         nodeNum = words[1];
                     } else if (words[0] == "Obstacles") {
@@ -1215,7 +1215,7 @@ namespace AutoBenchmark {
                         }
                         --sb.Length;
                     }
-                    sb.AppendLine();
+                    sb.Append('\n');
                 }
 
                 StringBuilder fn = new StringBuilder();
@@ -1244,13 +1244,178 @@ namespace AutoBenchmark {
                         }
                         --sb.Length;
                     }
-                    sb.AppendLine();
+                    sb.Append('\n');
                 }
 
                 StringBuilder fn = new StringBuilder();
                 fn.Append("pace.").Append(Path.GetFileName(oldPath).Replace("_", ""))
                     .Append(".n").Append(nodeNum).Append('e').Append(arcNum).Append(".txt");
                 File.WriteAllText(fn.ToString(), sb.ToString());
+            }
+        }
+
+        public class MCDSP {
+            public static void convertAll() {
+                convertEdgeList("n1000_ep0007.rg", "BOBL");
+                convertEdgeList("n1000_ep0014.rg", "BOBL");
+                convertEdgeList("n1000_ep0028.rg", "BOBL");
+                convertEdgeList("n1000_ep0056.rg", "BOBL");
+                convertEdgeList("n1000_ep0112.rg", "BOBL");
+                convertEdgeList("n1000_ep0224.rg", "BOBL");
+                convertEdgeList("n1000_r0048.rgg", "BOBL");
+                convertEdgeList("n1000_r0070.rgg", "BOBL");
+                convertEdgeList("n1000_r0100.rgg", "BOBL");
+                convertEdgeList("n1000_r0140.rgg", "BOBL");
+                convertEdgeList("n1000_r0207.rgg", "BOBL");
+                convertEdgeList("n1000_r0308.rgg", "BOBL");
+                convertEdgeList("n5000_ep0007.rg", "BOBL");
+                convertEdgeList("n5000_ep0014.rg", "BOBL");
+                convertEdgeList("n5000_ep0028.rg", "BOBL");
+                convertEdgeList("n5000_ep0056.rg", "BOBL");
+                convertEdgeList("n5000_ep0112.rg", "BOBL");
+                convertEdgeList("n5000_ep0224.rg", "BOBL");
+                convertEdgeList("n5000_r0048.rgg", "BOBL");
+                convertEdgeList("n5000_r0070.rgg", "BOBL");
+                convertEdgeList("n5000_r0100.rgg", "BOBL");
+                convertEdgeList("n5000_r0140.rgg", "BOBL");
+                convertEdgeList("n5000_r0207.rgg", "BOBL");
+                convertEdgeList("n5000_r0308.rgg", "BOBL");
+
+                convertEdgeList("ieee_14_bus.txt", "BPFTC");
+                convertEdgeList("ieee_30_bus.txt", "BPFTC");
+                convertEdgeList("ieee_57_bus.txt", "BPFTC");
+                convertEdgeList("ieee_118_bus.txt", "BPFTC");
+                convertEdgeList("ieee_300_bus.txt", "BPFTC");
+                convertEdgeList("rts96.txt", "BPFTC");
+
+                convertEdgeList("v30_d10.dat", "LMS");
+                convertEdgeList("v30_d20.dat", "LMS");
+                convertEdgeList("v30_d30.dat", "LMS");
+                convertEdgeList("v30_d50.dat", "LMS");
+                convertEdgeList("v30_d70.dat", "LMS");
+                convertEdgeList("v50_d5.dat", "LMS");
+                convertEdgeList("v50_d10.dat", "LMS");
+                convertEdgeList("v50_d20.dat", "LMS");
+                convertEdgeList("v50_d30.dat", "LMS");
+                convertEdgeList("v50_d50.dat", "LMS");
+                convertEdgeList("v50_d70.dat", "LMS");
+                convertEdgeList("v70_d5.dat", "LMS");
+                convertEdgeList("v70_d10.dat", "LMS");
+                convertEdgeList("v70_d20.dat", "LMS");
+                convertEdgeList("v70_d30.dat", "LMS");
+                convertEdgeList("v70_d50.dat", "LMS");
+                convertEdgeList("v70_d70.dat", "LMS");
+                convertEdgeList("v100_d5.dat", "LMS");
+                convertEdgeList("v100_d10.dat", "LMS");
+                convertEdgeList("v100_d20.dat", "LMS");
+                convertEdgeList("v100_d30.dat", "LMS");
+                convertEdgeList("v100_d50.dat", "LMS");
+                convertEdgeList("v100_d70.dat", "LMS");
+                convertEdgeList("v120_d5.dat", "LMS");
+                convertEdgeList("v120_d10.dat", "LMS");
+                convertEdgeList("v120_d20.dat", "LMS");
+                convertEdgeList("v120_d30.dat", "LMS");
+                convertEdgeList("v120_d50.dat", "LMS");
+                convertEdgeList("v120_d70.dat", "LMS");
+                convertEdgeList("v150_d5.dat", "LMS");
+                convertEdgeList("v150_d10.dat", "LMS");
+                convertEdgeList("v150_d20.dat", "LMS");
+                convertEdgeList("v150_d30.dat", "LMS");
+                convertEdgeList("v150_d50.dat", "LMS");
+                convertEdgeList("v150_d70.dat", "LMS");
+                convertEdgeList("v200_d5.dat", "LMS");
+                convertEdgeList("v200_d10.dat", "LMS");
+                convertEdgeList("v200_d20.dat", "LMS");
+                convertEdgeList("v200_d30.dat", "LMS");
+                convertEdgeList("v200_d50.dat", "LMS");
+                convertEdgeList("v200_d70.dat", "LMS");
+
+                convertEdgeList("rand_40_200_1235844018_0_k=5_sat.gph", "LPNMR");
+                convertEdgeList("rand_45_250_1235855661_0_k=5_sat.gph", "LPNMR");
+                convertEdgeList("rand_50_250_1235336870_0_k=8_sat.gph", "LPNMR");
+                convertEdgeList("rand_50_250_1235842610_0_k=7_sat.gph", "LPNMR");
+                convertEdgeList("rand_55_250_1235855873_0_k=8_sat.gph", "LPNMR");
+                convertEdgeList("rand_60_400_1235843083_0_k=7_sat.gph", "LPNMR");
+                convertEdgeList("rand_70_250_1235844252_0_k=13_sat.gph", "LPNMR");
+                convertEdgeList("rand_80_500_1235848939_0_k=9_sat.gph", "LPNMR");
+                convertEdgeList("rand_90_600_1235859689_0_k=10_sat.gph", "LPNMR");
+
+                convertEdgeList("n400_80_r60.txt", "RGG");
+                convertEdgeList("n400_80_r70.txt", "RGG");
+                convertEdgeList("n400_80_r80.txt", "RGG");
+                convertEdgeList("n400_80_r90.txt", "RGG");
+                convertEdgeList("n400_80_r100.txt", "RGG");
+                convertEdgeList("n400_80_r110.txt", "RGG");
+                convertEdgeList("n400_80_r120.txt", "RGG");
+                convertEdgeList("n600_100_r80.txt", "RGG");
+                convertEdgeList("n600_100_r90.txt", "RGG");
+                convertEdgeList("n600_100_r100.txt", "RGG");
+                convertEdgeList("n600_100_r110.txt", "RGG");
+                convertEdgeList("n600_100_r120.txt", "RGG");
+                convertEdgeList("n700_200_r70.txt", "RGG");
+                convertEdgeList("n700_200_r80.txt", "RGG");
+                convertEdgeList("n700_200_r90.txt", "RGG");
+                convertEdgeList("n700_200_r100.txt", "RGG");
+                convertEdgeList("n700_200_r110.txt", "RGG");
+                convertEdgeList("n700_200_r120.txt", "RGG");
+                convertEdgeList("n1000_200_r100.txt", "RGG");
+                convertEdgeList("n1000_200_r110.txt", "RGG");
+                convertEdgeList("n1000_200_r120.txt", "RGG");
+                convertEdgeList("n1000_200_r130.txt", "RGG");
+                convertEdgeList("n1000_200_r140.txt", "RGG");
+                convertEdgeList("n1000_200_r150.txt", "RGG");
+                convertEdgeList("n1000_200_r160.txt", "RGG");
+                convertEdgeList("n1500_250_r130.txt", "RGG");
+                convertEdgeList("n1500_250_r140.txt", "RGG");
+                convertEdgeList("n1500_250_r150.txt", "RGG");
+                convertEdgeList("n1500_250_r160.txt", "RGG");
+                convertEdgeList("n2000_300_r200.txt", "RGG");
+                convertEdgeList("n2000_300_r210.txt", "RGG");
+                convertEdgeList("n2000_300_r220.txt", "RGG");
+                convertEdgeList("n2000_300_r230.txt", "RGG");
+                convertEdgeList("n2500_350_r200.txt", "RGG");
+                convertEdgeList("n2500_350_r210.txt", "RGG");
+                convertEdgeList("n2500_350_r220.txt", "RGG");
+                convertEdgeList("n2500_350_r230.txt", "RGG");
+                convertEdgeList("n3000_400_r210.txt", "RGG");
+                convertEdgeList("n3000_400_r220.txt", "RGG");
+                convertEdgeList("n3000_400_r230.txt", "RGG");
+                convertEdgeList("n3000_400_r240.txt", "RGG");
+
+                convertEdgeList("sparse-n1000-np300.txt", "Sparse");
+                convertEdgeList("sparse-n1000-np500.txt", "Sparse");
+                convertEdgeList("sparse-n1000-np700.txt", "Sparse");
+                convertEdgeList("sparse-n1500-np500.txt", "Sparse");
+                convertEdgeList("sparse-n1500-np700.txt", "Sparse");
+                convertEdgeList("sparse-n1500-np900.txt", "Sparse");
+                convertEdgeList("sparse-n2000-np600.txt", "Sparse");
+                convertEdgeList("sparse-n2000-np800.txt", "Sparse");
+                convertEdgeList("sparse-n2000-np1000.txt", "Sparse");
+                convertEdgeList("sparse-n2500-np800.txt", "Sparse");
+                convertEdgeList("sparse-n2500-np1000.txt", "Sparse");
+                convertEdgeList("sparse-n2500-np1200.txt", "Sparse");
+                convertEdgeList("sparse-n3000-np1000.txt", "Sparse");
+                convertEdgeList("sparse-n3000-np1300.txt", "Sparse");
+                convertEdgeList("sparse-n3000-np1600.txt", "Sparse");
+            }
+
+            static void convertEdgeList(string oldPath, string dataset) {
+                string[] lines = File.ReadAllLines(oldPath);
+                string[] words = lines[0].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                string nodeNum = words[0];
+                string arcNum = words[1];
+                StringBuilder sb = new StringBuilder();
+                sb.Append(nodeNum).Append(' ').Append(arcNum).Append('\n');
+                for (int l = 1; l < lines.Length; ++l) {
+                    if (lines[l].Length <= 0) { continue; }
+                    words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    sb.Append(int.Parse(words[0]) - 1).Append(' ').Append(int.Parse(words[1]) - 1).Append('\n');
+                }
+
+                StringBuilder fn = new StringBuilder();
+                fn.Append(dataset).Append(".n").Append(nodeNum).Append('e').Append(arcNum).Append(".txt");
+                File.WriteAllText(fn.ToString(), sb.ToString());
+                Console.WriteLine(oldPath + ' ' + fn.ToString());
             }
         }
     }

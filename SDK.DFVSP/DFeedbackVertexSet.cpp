@@ -35,8 +35,7 @@ public:
 
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.arcNum << endl;
-		cerr << "node\tcolor" << endl;
-		for (NodeId n = 0; !isTimeout() && (n < input.nodeNum); ++n) { cerr << n << '\t' << output[n] << endl; }
+		for (auto n = output.begin(); !isTimeout() && (n != output.end()); ++n) { cerr << *n << endl; }
 	}
 };
 
