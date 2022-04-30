@@ -49,6 +49,7 @@ public:
 			output[v].nodes.push_back(n);
 		}
 
+		// TODO: the following code in this function is for illustration only and can be deleted.
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.maxVehicleNum << '\t' << input.vehicleCapacity << endl;
 		cerr << "vehicle\tnodes" << endl;

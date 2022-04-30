@@ -330,7 +330,7 @@ namespace AutoBenchmark {
                 }
             } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
 
-            bool feasible = (conflictNum == 0) && (restRectNum == 0);
+            bool feasible = (restRectNum == 0) && (conflictNum == 0);
             statistic.obj = feasible ? ((xMax - xMin) * (yMax - yMin)) : Problem.MaxObjValue;
             statistic.info = restRectNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString();
         }
@@ -770,6 +770,54 @@ namespace AutoBenchmark {
             bool feasible = (uncoveredNodeNum == 0) && (subgraphNum == 1);
             statistic.obj = feasible ? pickedNodes.Count : Problem.MaxObjValue;
             statistic.info = uncoveredNodeNum.ToString() + BenchmarkCfg.LogDelim + subgraphNum;
+        }
+
+
+        public static void peccp(string[] input, string output, Statistic statistic) {
+            int circleNum = 0;
+            double err = 0;
+            try { // load instance.
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                circleNum = int.Parse(words[0]);
+                err = double.Parse(words[1]);
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
+
+            List<double[]> positions = new List<double[]>();
+            try { // load solution.
+                string[] lines = output.Split(LineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                for (int l = 0; l < lines.Length; ++l) {
+                    string[] words = lines[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    positions.Add(new double[2] { double.Parse(words[0]), double.Parse(words[1]) });
+                }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
+
+            int restCircleNum = circleNum - positions.Count;
+            int conflictNum = 0;
+            double ratio = Problem.MaxObjValue;
+            try { // check.
+                double r = 0; // max center distance between the container and each euqal circles (correlated to the radius of the container).
+                double d = 4; // min center distance between each pair of equal circles (diameter of equal circles).
+                for (int i = 0; i < circleNum; ++i) {
+                    Util.updateMax(ref r, Util.powerSum(positions[i][0], positions[i][1]));
+                    for (int j = 0; j < i; ++j) { // OPT[szx][5]: line sweep + indexed tree, divide and conquer.
+                        Util.updateMin(ref d, Util.powerSum(positions[i][0] - positions[j][0], positions[i][1] - positions[j][1]));
+                    }
+                }
+                r = Math.Sqrt(r);
+                d = Math.Sqrt(d);
+                //if (r < 1) { // the radius of the container is 1.
+                //    if ((r + d / 2) > (1 + err)) { ++conflictNum; } // some circles exceed the container.
+                //    ratio = 2 / d;
+                //} else { // the radius of each circle is 1.
+                //    if (d < (2 - err)) { ++conflictNum; } // some circles overlap.
+                //    ratio = r + 1;
+                //}
+                ratio = (r + d / 2) * (2 / d); // scaling the circles instead of reporting infeasibility.
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
+
+            bool feasible = (restCircleNum == 0) && (conflictNum == 0);
+            statistic.obj = feasible ? ratio : Problem.MaxObjValue;
+            statistic.info = restCircleNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString();
         }
     }
 }

@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK.DFVSP", "SDK.DFVSP\SDK.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK.MCDSP", "SDK.MCDSP\SDK.MCDSP.vcxproj", "{7EED456F-653A-4E7A-BD9A-6A330E7D8F48}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK.PECCP", "SDK.PECCP\SDK.PECCP.vcxproj", "{D605DCBE-6C7D-4BF6-B825-C889864B8035}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,16 @@ Global
 		{7EED456F-653A-4E7A-BD9A-6A330E7D8F48}.Release|x64.Build.0 = Release|x64
 		{7EED456F-653A-4E7A-BD9A-6A330E7D8F48}.Release|x86.ActiveCfg = Release|Win32
 		{7EED456F-653A-4E7A-BD9A-6A330E7D8F48}.Release|x86.Build.0 = Release|Win32
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Debug|x64.ActiveCfg = Debug|x64
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Debug|x64.Build.0 = Debug|x64
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Debug|x86.ActiveCfg = Debug|Win32
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Debug|x86.Build.0 = Debug|Win32
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Release|Any CPU.ActiveCfg = Release|Win32
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Release|x64.ActiveCfg = Release|x64
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Release|x64.Build.0 = Release|x64
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Release|x86.ActiveCfg = Release|Win32
+		{D605DCBE-6C7D-4BF6-B825-C889864B8035}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

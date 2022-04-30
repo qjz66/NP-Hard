@@ -38,6 +38,7 @@ public:
 			}
 		}
 
+		// TODO: the following code in this function is for illustration only and can be deleted.
 		// print some information for debugging.
 		cerr << input.jobNum << '\t' << input.workerNum << '\t' << input.maxCandidateNum << endl;
 		cerr << "job\toperation\tworker" << endl;

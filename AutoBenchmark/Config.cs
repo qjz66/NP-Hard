@@ -83,6 +83,7 @@ namespace AutoBenchmark {
         public const string OARSMT = "OARSMT";
         public const string DFVSP = "DFVSP";
         public const string MCDSP = "MCDSP";
+        public const string PECCP = "PECCP";
     }
 
     public class BenchmarkCfg {
@@ -107,6 +108,7 @@ namespace AutoBenchmark {
             { ProblemName.OARSMT, LogCommonHeader + LogDelim + "Invasion" + LogDelim + "SubTree" },
             { ProblemName.DFVSP, LogCommonHeader + LogDelim + "UnsortNode" },
             { ProblemName.MCDSP, LogCommonHeader + LogDelim + "UncoveredNode" + LogDelim + "SubGraph" },
+            { ProblemName.PECCP, LogCommonHeader + LogDelim + "RestCircle" + LogDelim + "Conflict" },
         };
         public const string ScoreHeader = "Solver" + LogDelim + LogBasicHeader;
 
@@ -120,6 +122,7 @@ namespace AutoBenchmark {
             { ProblemName.OARSMT, Checker.oarsmt }, // alternative: `Checker.oarsmtEfficientRepresentation`.
             { ProblemName.DFVSP, Checker.dfvsp },
             { ProblemName.MCDSP, Checker.mcdsp },
+            { ProblemName.PECCP, Checker.peccp },
         };
 
         public static Rank rank = Util.Json.load<Rank>(CommonCfg.RankPath);

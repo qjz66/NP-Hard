@@ -2,6 +2,9 @@
 
 #include <random>
 #include <iostream>
+#include <fstream>
+
+#include "SvgDrawer.h"
 
 
 using namespace std;
@@ -37,10 +40,32 @@ public:
 			output[r].pos[1] = 0;
 		}
 
+		// TODO: the following code in this function is for illustration only and can be deleted.
+		draw(input, output);
 		// print some information for debugging.
 		cerr << input.rectNum << endl;
 		cerr << "x\ty\trotated" << endl;
 		for (RectId r = 0; !isTimeout() && (r < input.rectNum); ++r) { cerr << output[r].pos[0] << '\t' << output[r].pos[1] << '\t' << output[r].rotated << endl; }
+	}
+
+	static void draw(const RectPacking& input, const Layout& output, const std::string filePath = "rpp.visualization.html") {
+		Coord minX = output[0].pos[0];
+		Coord maxX = output[0].pos[0];
+		Coord minY = output[0].pos[1];
+		Coord maxY = output[0].pos[1];
+		goal::SvgDrawer<Coord> sd;
+		for (RectId r = 0; r < input.rectNum; ++r) {
+			Coord w = !output[r].rotated ? input.rects[r][0] : input.rects[r][1];
+			Coord h = output[r].rotated ? input.rects[r][0] : input.rects[r][1];
+			if (output[r].pos[0] < minX) { minX = output[r].pos[0]; }
+			if ((output[r].pos[0] + w) > maxX) { maxX = output[r].pos[0]; }
+			if (output[r].pos[1] < minY) { minY = output[r].pos[1]; }
+			if ((output[r].pos[1] + h) > maxY) { maxY = output[r].pos[1]; }
+			sd.rect(output[r].pos[0], output[r].pos[1], w, h);
+		}
+		ofstream ofs(filePath);
+		ofs << sd.toStr(minX - 10, minY - 10, maxX - minX + 20, maxY - minY + 20, 1920, 1080, "", "",
+			"<style>rect { stroke:black; stroke-width: 1px; fill:transparent; }</style>") << endl;
 	}
 };
 

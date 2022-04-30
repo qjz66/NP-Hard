@@ -1418,5 +1418,13 @@ namespace AutoBenchmark {
                 Console.WriteLine(oldPath + ' ' + fn.ToString());
             }
         }
+
+        public class PECCP {
+            public static void convertAll() {
+                for (int n = 50; n < 250; ++n) { File.WriteAllText($"n{n}.txt", $"{n} 1e-15"); }
+                for (int n = 950; n < 1050; ++n) { File.WriteAllText($"n{n}.txt", $"{n} 1e-15"); }
+                for (int n = 1950; n < 2050; ++n) { File.WriteAllText($"n{n}.txt", $"{n} 1e-15"); }
+            }
+        }
     }
 }

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b0ffbe75-a3f3-4417-a65d-37636e56f392}</ProjectGuid>
-    <RootNamespace>SDK_RPP</RootNamespace>
+    <ProjectGuid>{d605dcbe-6c7d-4bf6-b825-c889864b8035}</ProjectGuid>
+    <RootNamespace>SDK_PECCP</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -148,10 +148,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="RectPacking.cpp" />
+    <ClCompile Include="PackingEqCircleInCircle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RectPacking.h" />
+    <ClInclude Include="PackingEqCircleInCircle.h" />
     <ClInclude Include="SvgDrawer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

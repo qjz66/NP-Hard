@@ -4,8 +4,8 @@
 /// note  : 1.	
 ////////////////////////////////
 
-#ifndef CN_HUST_SZX_NPBENCHMARK_GRAPH_COLORING_H
-#define CN_HUST_SZX_NPBENCHMARK_GRAPH_COLORING_H
+#ifndef CN_HUST_SZX_NPBENCHMARK_RECT_PACKING_H
+#define CN_HUST_SZX_NPBENCHMARK_RECT_PACKING_H
 
 
 #include <array>
@@ -38,4 +38,4 @@ void solveRectPacking(Layout& output, RectPacking& input, std::function<bool()> 
 }
 
 
-#endif // CN_HUST_SZX_NPBENCHMARK_GRAPH_COLORING_H
+#endif // CN_HUST_SZX_NPBENCHMARK_RECT_PACKING_H

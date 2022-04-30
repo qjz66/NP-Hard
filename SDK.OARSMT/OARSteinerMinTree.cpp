@@ -43,7 +43,8 @@ public:
 			path.push_back(input.nodes[n]);
 		}
 		output.push_back(path);
-
+		
+		// TODO: the following code in this function is for illustration only and can be deleted.
 		draw(input, output);
 		// print some information for debugging.
 		NodeId maxDebugLineNum = 32;
@@ -75,7 +76,7 @@ public:
 			}
 		}
 		ofstream ofs(filePath);
-		ofs << sd.toStr(minX, minY, maxX - minX + 20, maxY - minY + 20, 1920, 1080, "", "",
+		ofs << sd.toStr(minX - 10, minY - 10, maxX - minX + 20, maxY - minY + 20, 1920, 1080, "", "",
 			"<style>rect { fill:grey; stroke:red; stroke-width: 1px; } line { stroke:black; stroke-width: 1px; } path { stroke: black; fill:transparent; }</style>") << endl;
 	}
 };

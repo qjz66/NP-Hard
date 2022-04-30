@@ -33,6 +33,7 @@ public:
 		//                                                                      |
 		// [ use the random number generator initialized by the given seed ]----+
 
+		// TODO: the following code in this function is for illustration only and can be deleted.
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.arcNum << endl;
 		for (auto n = output.begin(); !isTimeout() && (n != output.end()); ++n) { cerr << *n << endl; }

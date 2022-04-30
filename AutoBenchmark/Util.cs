@@ -312,10 +312,22 @@ namespace AutoBenchmark {
             if (newValue > maxValue) { maxValue = newValue; return true; }
             return false;
         }
+        public static bool updateMin(ref double minValue, double newValue) {
+            if (newValue < minValue) { minValue = newValue; return true; }
+            return false;
+        }
+        public static bool updateMax(ref double maxValue, double newValue) {
+            if (newValue > maxValue) { maxValue = newValue; return true; }
+            return false;
+        }
 
         public static int lowerBound(int[] arr, int value) {
             int i = Array.BinarySearch(arr, value);
             return (i < 0) ? ~i : i;
+        }
+
+        public static double powerSum(double a, double b) {
+            return a * a + b * b;
         }
 
         // "forward" means `(src0 <= dst0) && (src1 <= dst1)`.

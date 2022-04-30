@@ -1,4 +1,4 @@
-#include "MinConnectedDominatingSet.h"
+#include "MinCDominatingSet.h"
 
 #include <random>
 #include <iostream>
@@ -19,7 +19,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(Nodes& output, MinConnectedDominatingSet& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Nodes& output, MinCDominatingSet& input, std::function<bool()> isTimeout, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -31,6 +31,7 @@ public:
 		//                                                                           |
 		//      [ use the random number generator initialized by the given seed ]----+
 
+		// TODO: the following code in this function is for illustration only and can be deleted.
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.edgeNum << endl;
 		for (auto n = output.begin(); !isTimeout() && (n != output.end()); ++n) { cerr << *n << endl; }
@@ -38,7 +39,7 @@ public:
 };
 
 // solver.
-void solveMinConnectedDominatingSet(Nodes& output, MinConnectedDominatingSet& input, std::function<bool()> isTimeout, int seed) {
+void solveMinCDominatingSet(Nodes& output, MinCDominatingSet& input, std::function<bool()> isTimeout, int seed) {
 	Solver().solve(output, input, isTimeout, seed);
 }
 

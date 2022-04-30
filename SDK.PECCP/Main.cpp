@@ -2,35 +2,35 @@
 #include <string>
 #include <chrono>
 
-#include "MinCDominatingSet.h"
+#include "PackingEqCircleInCircle.h"
 
 
 using namespace std;
 using namespace szx;
 
 
-void loadInput(istream& is, MinCDominatingSet& gc) {
-	is >> gc.nodeNum >> gc.edgeNum;
-	gc.edges.resize(gc.edgeNum);
-	for (auto edge = gc.edges.begin(); edge != gc.edges.end(); ++edge) { is >> (*edge)[0] >> (*edge)[1]; }
+void loadInput(istream& is, PackingEqCircleInCircle& pecc) {
+	is >> pecc.circleNum >> pecc.err;
 }
 
-void saveOutput(ostream& os, Nodes& nodes) {
-	for (auto node = nodes.begin(); node != nodes.end(); ++node) { os << *node << endl; }
+void saveOutput(ostream& os, Layout& layout) {
+	for (auto placement = layout.begin(); placement != layout.end(); ++placement) {
+		os << (*placement)[0] << ' ' << (*placement)[1] << endl;
+	}
 }
 
 void test(istream& inputStream, ostream& outputStream, long long secTimeout, int randSeed) {
 	cerr << "load input." << endl;
-	MinCDominatingSet gc;
-	loadInput(inputStream, gc);
+	PackingEqCircleInCircle rp;
+	loadInput(inputStream, rp);
 
 	cerr << "solve." << endl;
 	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
-	Nodes nodes;
-	solveMinCDominatingSet(nodes, gc, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
+	Layout layout(rp.circleNum);
+	solvePackingEqCircleInCircle(layout, rp, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
 
 	cerr << "save output." << endl;
-	saveOutput(outputStream, nodes);
+	saveOutput(outputStream, layout);
 }
 void test(istream& inputStream, ostream& outputStream, long long secTimeout) {
 	return test(inputStream, outputStream, secTimeout, static_cast<int>(time(nullptr) + clock()));

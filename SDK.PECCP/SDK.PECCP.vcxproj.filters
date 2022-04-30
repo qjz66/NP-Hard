@@ -18,12 +18,15 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MinCDominatingSet.cpp">
+    <ClCompile Include="PackingEqCircleInCircle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MinCDominatingSet.h">
+    <ClInclude Include="SvgDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PackingEqCircleInCircle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,8 +4,8 @@
 /// note  : 1.	
 ////////////////////////////////
 
-#ifndef CN_HUST_SZX_NPBENCHMARK_MIN_CONNECTED_DOMINATING_SET_H
-#define CN_HUST_SZX_NPBENCHMARK_MIN_CONNECTED_DOMINATING_SET_H
+#ifndef CN_HUST_SZX_NPBENCHMARK_MIN_C_DOMINATING_SET_H
+#define CN_HUST_SZX_NPBENCHMARK_MIN_C_DOMINATING_SET_H
 
 
 #include <array>
@@ -20,7 +20,7 @@ using EdgeId = NodeId;
 
 using Edge = std::array<NodeId, 2>; // undirected link.
 
-struct MinConnectedDominatingSet {
+struct MinCDominatingSet {
 	NodeId nodeNum;
 	EdgeId edgeNum;
 	std::vector<Edge> edges;
@@ -29,9 +29,9 @@ struct MinConnectedDominatingSet {
 using Nodes = std::vector<NodeId>;
 
 
-void solveMinConnectedDominatingSet(Nodes& output, MinConnectedDominatingSet& input, std::function<bool()> isTimeout, int seed);
+void solveMinCDominatingSet(Nodes& output, MinCDominatingSet& input, std::function<bool()> isTimeout, int seed);
 
 }
 
 
-#endif // CN_HUST_SZX_NPBENCHMARK_MIN_CONNECTED_DOMINATING_SET_H
+#endif // CN_HUST_SZX_NPBENCHMARK_MIN_C_DOMINATING_SET_H
