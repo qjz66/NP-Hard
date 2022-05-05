@@ -26,6 +26,16 @@ namespace AutoBenchmark {
         public static readonly Encoding DefaultEncoding = Util.getEncoding(936);
     }
 
+    class PrivateCfg { // TODO[szx][0]: do not commit this.
+        public const string EmailPassword = "";
+
+        public const string UserName = "";
+        public const string Password = "";
+
+        public const int RandSeedInc = 2011;
+        public const int RandSeedMul = 2111;
+    }
+
     public class EmailCfg {
         public const int Pop3Port = 110;
         public const int ImapPort = 143;
@@ -68,7 +78,7 @@ namespace AutoBenchmark {
         //public const string CcAddress = "";
 
         public const string Username = MyAddress;
-        public const string Password = ""; // TODO[szx][0]: do not commit this.
+        public const string Password = PrivateCfg.EmailPassword;
 
         public const ulong MaxFileByteSize = 8 * 1024 * 1024;
     }
@@ -92,8 +102,10 @@ namespace AutoBenchmark {
 
         public static readonly int ParallelBenchmarkNum = Math.Min(16, Environment.ProcessorCount);
 
-        public const int RandSeedInc = 2011; // TODO[szx][0]: do not commit this.
-        public const int RandSeedMul = 2111; // TODO[szx][0]: do not commit this.
+        public const string UserName = PrivateCfg.UserName;
+        public const string Password = PrivateCfg.Password;
+        public const int RandSeedInc = PrivateCfg.RandSeedInc;
+        public const int RandSeedMul = PrivateCfg.RandSeedMul;
 
         public const string LogDelim = "\t";
         public const string LogBasicHeader = "Instance" + LogDelim + "Obj" + LogDelim + "Duration";

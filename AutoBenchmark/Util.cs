@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
@@ -182,6 +183,28 @@ namespace AutoBenchmark {
         #endregion FileSystem
 
         #region Process
+        public static class OS {
+            [Flags]
+            public enum ErrorModes : uint {
+                SYSTEM_DEFAULT = 0x0,
+                SEM_FAILCRITICALERRORS = 0x0001,
+                SEM_NOALIGNMENTFAULTEXCEPT = 0x0004,
+                SEM_NOGPFAULTERRORBOX = 0x0002,
+                SEM_NOOPENFILEERRORBOX = 0x8000,
+
+                NoWerDialog = SEM_NOGPFAULTERRORBOX | SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX,
+            }
+
+            [DllImport("kernel32.dll")]
+            public static extern ErrorModes GetErrorMode();
+            [DllImport("kernel32.dll")]
+            public static extern ErrorModes SetErrorMode(ErrorModes mode);
+
+            public static void disableWindowsErrorReportingDialog() {
+                SetErrorMode(GetErrorMode() | ErrorModes.NoWerDialog);
+            }
+        }
+
         // [Blocking][NoWindow][InterceptOutput]
         public static string runRead(string fileName, string arguments = "") {
             ProcessStartInfo psi = new ProcessStartInfo(fileName, arguments);

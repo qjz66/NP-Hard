@@ -19,7 +19,7 @@ namespace AutoBenchmark {
 
 
         public static void run() {
-            //testSubmission(new Submission { author = "t", date = "2011", email = "s", exePath = "vwts.exe", problem = "PCP" });
+            Util.OS.disableWindowsErrorReportingDialog();
             try {
                 foreach (var problem in BenchmarkCfg.rank.problems) {
                     Directory.CreateDirectory(Path.Combine(problem.Key, CommonCfg.SolutionSubDir));
@@ -135,6 +135,10 @@ namespace AutoBenchmark {
         static List<Statistic> testInstance(string exePath, Instance instance, Check check, SaveOutput saveOutput, NormalizeObj normalizeObj) {
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = exePath;
+            if (BenchmarkCfg.UserName.Length > 0) {
+                psi.UserName = BenchmarkCfg.UserName;
+                psi.PasswordInClearText = BenchmarkCfg.Password;
+            }
             psi.WorkingDirectory = Environment.CurrentDirectory;
             psi.UseShellExecute = false;
             psi.RedirectStandardInput = true;
@@ -151,41 +155,42 @@ namespace AutoBenchmark {
                 psi.Arguments = secTimeout.ToString() + " " + statistic.seed.ToString();
 
                 StringBuilder output = new StringBuilder();
-                Process p = new Process();
-                p.StartInfo = psi;
-                p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
-                p.OutputDataReceived += (s, l) => { if (l.Data != null) { lock (output) { output.AppendLine(l.Data); } } };
+                using (Process p = new Process()) {
+                    p.StartInfo = psi;
+                    p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
+                    p.OutputDataReceived += (s, l) => { if (l.Data != null) { lock (output) { output.AppendLine(l.Data); } } };
 
-                Stopwatch sw = new Stopwatch();
-                try {
-                    p.Start();
-                    p.BeginErrorReadLine();
-                    p.BeginOutputReadLine();
-
-                    sw.Start();
-                    foreach (var line in instance.data) { p.StandardInput.WriteLine(line); } //p.StandardInput.Write(instance.data1);
-                    p.StandardInput.Flush();
-                    p.StandardInput.Close(); // send EOF to the solver.
+                    Stopwatch sw = new Stopwatch();
                     try {
-                        while (!p.HasExited
-                            && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
-                            && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
-                            && (sw.ElapsedMilliseconds < msTimeout)) { }
-                    } catch (Exception e) { } // Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString());
-                    sw.Stop();
+                        p.Start();
+                        p.BeginErrorReadLine();
+                        p.BeginOutputReadLine();
 
-                    try {
-                        if (!p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)) { p.Kill(); }
-                        p.WaitForExit();
-                    } catch (Exception e) { } // Util.log("[warning] " + instance.data[0] + " kill exe fail due to " + e.ToString());
+                        sw.Start();
+                        foreach (var line in instance.data) { p.StandardInput.WriteLine(line); } //p.StandardInput.Write(instance.data1);
+                        p.StandardInput.Flush();
+                        p.StandardInput.Close(); // send EOF to the solver.
+                        try {
+                            while (!p.HasExited
+                                && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
+                                && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
+                                && (sw.ElapsedMilliseconds < msTimeout)) { }
+                        } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString()); }
+                        sw.Stop();
 
-                    check(instance.data, output.ToString(), statistic);
-                    saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
-                } catch (Exception e) {
-                    Util.log("[error] test instance fail due to " + e.ToString());
+                        try {
+                            if (!p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)) { p.CloseMainWindow(); }
+                            if (!p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)) { p.Kill(true); }
+                        } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " kill exe fail due to " + e.ToString()); }
+
+                        check(instance.data, output.ToString(), statistic);
+                        saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
+                    } catch (Exception e) {
+                        Util.log("[error] test instance fail due to " + e.ToString());
+                    }
+                    statistic.duration = sw.ElapsedMilliseconds / 1000.0;
+                    statistics.Add(statistic);
                 }
-                statistic.duration = sw.ElapsedMilliseconds / 1000.0;
-                statistics.Add(statistic);
             }
 
             return statistics;
