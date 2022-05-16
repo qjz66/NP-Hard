@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MimeKit;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -47,6 +48,13 @@ namespace AutoBenchmark {
                 attachment.ContentStream.CopyTo(ms);
                 return ms.toString();
             }
+        }
+
+        public static MemoryStream toStream(this MimePart attachment) {
+            MemoryStream ms = new MemoryStream();
+            attachment.Content.DecodeTo(ms);
+            ms.Position = 0;
+            return ms;
         }
 
         public static string toHtmlTable(this string s) {

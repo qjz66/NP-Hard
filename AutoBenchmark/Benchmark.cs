@@ -187,6 +187,7 @@ namespace AutoBenchmark {
                         saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
                     } catch (Exception e) {
                         Util.log("[error] test instance fail due to " + e.ToString());
+                        check(instance.data, "", statistic);
                     }
                     statistic.duration = sw.ElapsedMilliseconds / 1000.0;
                     statistics.Add(statistic);

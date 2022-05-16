@@ -5,8 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using S22.Imap;
 using SevenZipExtractor;
+using MimeKit;
+using MailKit;
+using MailKit.Search;
+using MailKit.Net.Imap;
 
 
 namespace AutoBenchmark {
@@ -23,25 +26,30 @@ namespace AutoBenchmark {
 
         static bool checkUnseenMails() {
             Util.log("[info] query unseen emails");
-            using (ImapClient client = createImapClient()) {
+            using (ImapClient client = new ImapClient()) {
+                client.Connect(EmailCfg.ImapAddr, EmailCfg.ImapSslPort, true);
+                client.Authenticate(EmailCfg.Username, EmailCfg.Password);
+                client.Inbox.Open(FolderAccess.ReadWrite);
+
                 bool updated = false;
-                IEnumerable<uint> uids = client.Search(SearchCondition.Unseen());
+                IList<UniqueId> uids = client.Inbox.Search(SearchQuery.NotSeen);
                 foreach (var uid in uids) {
-                    MailMessage msg = client.GetMessage(uid, FetchOptions.Normal, false);
+                    MimeMessage msg = client.Inbox.GetMessage(uid);
                     if (msg.Subject.StartsWith(EmailCfg.SubjectFilter)) {
                         Util.log("[info] handle " + msg.Subject);
                         updated |= handleMessage(msg);
-                        client.AddMessageFlags(uid, null, MessageFlag.Seen);
-                        //client.DeleteMessage(uid);
+                        client.Inbox.Store(uid, new StoreFlagsRequest(StoreAction.Add, MessageFlags.Seen) { Silent = true });
                     } else {
                         Util.log("[info] ignore " + msg.Subject);
                     }
                 }
+
+                client.Disconnect(true);
                 return updated;
             }
         }
 
-        static bool handleMessage(MailMessage msg) {
+        static bool handleMessage(MimeMessage msg) {
             DateTime now = DateTime.Now;
 
             Submission s = new Submission();
@@ -57,7 +65,7 @@ namespace AutoBenchmark {
             }
 
             s.author = msg.Subject.Substring(msg.Subject.IndexOf(EmailCfg.SubjectDelim) + 1);
-            s.email = msg.From.Address;
+            s.email = msg.Sender?.Address ?? msg.From.Mailboxes.First().Address;
             s.date = Util.friendlyDateTime(now);
 
             string dirPath = Path.Combine(s.problem, CommonCfg.SolverSubDir, s.author + Util.compactDateTime(now));
@@ -70,8 +78,12 @@ namespace AutoBenchmark {
             try {
                 Directory.CreateDirectory(dirPath);
                 foreach (var file in msg.Attachments) {
-                    if (CommonCfg.ZipFileExts.Contains(Path.GetExtension(file.Name))) {
-                        using (ArchiveFile archiveFile = new ArchiveFile(file.ContentStream)) {
+                    string fileName = file.ContentDisposition?.FileName;
+                    if (fileName == null) { continue; }
+                    string ext = Path.GetExtension(fileName);
+                    if (CommonCfg.ZipFileExts.Contains(ext)) {
+                        using (MemoryStream ms = ((MimePart)file).toStream())
+                        using (ArchiveFile archiveFile = new ArchiveFile(ms)) {
                             foreach (Entry entry in archiveFile.Entries) {
                                 if (entry.Size > EmailCfg.MaxFileByteSize) { Util.log($"[warning] skip file larger than {EmailCfg.MaxFileByteSize}B"); continue; }
                                 if (entry.FileName.Contains("__MACOSX") || entry.FileName.Contains(".DS_Store")) { continue; }
@@ -79,7 +91,7 @@ namespace AutoBenchmark {
                             }
                         }
                     } else {
-                        file.save(detectExe(file.Name));
+                        using (FileStream fs = File.Create(detectExe(fileName))) { ((MimePart)file).Content.DecodeTo(fs); }
                     }
                 }
             } catch (Exception e) {
@@ -98,10 +110,6 @@ namespace AutoBenchmark {
             Util.log("[error] no executable found");
             StdSmtp.send(s.email, "Re: " + msg.Subject, "No executable found in your submission.");
             return false;
-        }
-
-        static ImapClient createImapClient() {
-            return new ImapClient(EmailCfg.ImapAddr, EmailCfg.ImapSslPort, EmailCfg.Username, EmailCfg.Password, AuthMethod.Login, true);
         }
     }
 
