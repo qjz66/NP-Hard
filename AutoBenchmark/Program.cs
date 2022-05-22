@@ -61,39 +61,27 @@ namespace AutoBenchmark {
         }
 
         static void generateRank() {
-            int problemNum = BenchmarkCfg.rank.problems.Count;
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.Coloring)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.Coloring, generateColoring());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.PCenter)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.PCenter, generatePCenter());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.Jobshop)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.Jobshop, generateJobshop());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.RWA)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.RWA, generateRWA());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.RectPacking)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.RectPacking, generateRectPacking());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.VRPTW2d)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.VRPTW2d, generateVRPTW2d());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.OARSMT)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.OARSMT, generateOARSMT());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.DFVSP)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.DFVSP, generateDFVSP());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.MCDSP)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.MCDSP, generateMCDSP());
-            }
-            if (!BenchmarkCfg.rank.problems.ContainsKey(ProblemName.PECCP)) {
-                BenchmarkCfg.rank.problems.Add(ProblemName.PECCP, generatePECCP());
-            }
+            Dictionary<string, Func<Problem>> generators = new Dictionary<string, Func<Problem>> {
+                { ProblemName.GCP.ToString(), generateColoring },
+                { ProblemName.PCP.ToString(), generatePCenter },
+                { ProblemName.FJSP.ToString(), generateJobshop },
+                { ProblemName.RWA.ToString(), generateRWA },
+                { ProblemName.RPP.ToString(), generateRectPacking },
+                { ProblemName.VRPTW2d.ToString(), generateVRPTW2d },
+                { ProblemName.OARSMT.ToString(), generateOARSMT },
+                { ProblemName.DFVSP.ToString(), generateDFVSP },
+                { ProblemName.MCDSP.ToString(), generateMCDSP },
+                { ProblemName.PECCP.ToString(), generatePECCP },
+            };
 
-            if (problemNum < BenchmarkCfg.rank.problems.Count) { Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank); }
+            foreach (var pn in Enum.GetNames(typeof(ProblemName))) {
+                if (BenchmarkCfg.rank.problems.ContainsKey(pn)) { continue; }
+                BenchmarkCfg.rank.problems.Add(pn, generators[pn]());
+                string filename = $"{pn}/{CommonCfg.RankMarkdownPath}";
+                using (File.Create(filename)) { }
+                Util.run("git", $"add {filename}");
+            }
+            //Util.run("git", "add " + CommonCfg.RankPath);
         }
 
         static Problem generateColoring() {

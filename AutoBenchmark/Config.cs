@@ -15,7 +15,7 @@ namespace AutoBenchmark {
 
         public const string RankMarkdownPath = "ReadMe.md";
         public const string RankPagePath = "index.html";
-        public const string RankCssPath = "base.css";
+        public const string RankCsvPathExt = ".rank.csv";
 
         public const int MaxResultsCountPerInstance = 10;
 
@@ -83,17 +83,19 @@ namespace AutoBenchmark {
         public const ulong MaxFileByteSize = 8 * 1024 * 1024;
     }
 
-    public class ProblemName {
-        public const string Coloring = "GCP";
-        public const string PCenter = "PCP";
-        public const string Jobshop = "FJSP";
-        public const string RWA = "RWA";
-        public const string RectPacking = "RPP";
-        public const string VRPTW2d = "VRPTW2d";
-        public const string OARSMT = "OARSMT";
-        public const string DFVSP = "DFVSP";
-        public const string MCDSP = "MCDSP";
-        public const string PECCP = "PECCP";
+    public enum ProblemName {
+        GCP,
+        PCP,
+        FJSP,
+        RWA,
+        RPP,
+        VRPTW2d,
+        OARSMT,
+        DFVSP,
+        MCDSP,
+        PECCP,
+
+        Count,
     }
 
     public class BenchmarkCfg {
@@ -111,30 +113,30 @@ namespace AutoBenchmark {
         public const string LogBasicHeader = "Instance" + LogDelim + "Obj" + LogDelim + "Duration";
         public const string LogCommonHeader = "Solver" + LogDelim + "Seed" + LogDelim + LogBasicHeader;
         public static readonly Dictionary<string, string> LogHeaders = new Dictionary<string, string> {
-            { ProblemName.Coloring, LogCommonHeader + LogDelim + "Conflict" },
-            { ProblemName.PCenter, LogCommonHeader + LogDelim + "Center" + LogDelim + "UncoveredNode" },
-            { ProblemName.Jobshop, LogCommonHeader + LogDelim + "RestJob" },
-            { ProblemName.RWA, LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Conflict" },
-            { ProblemName.RectPacking, LogCommonHeader + LogDelim + "RestRect" + LogDelim + "Conflict" },
-            { ProblemName.VRPTW2d, LogCommonHeader + LogDelim + "Vehicle" + LogDelim + "UncoveredNode" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
-            { ProblemName.OARSMT, LogCommonHeader + LogDelim + "Invasion" + LogDelim + "SubTree" },
-            { ProblemName.DFVSP, LogCommonHeader + LogDelim + "UnsortNode" },
-            { ProblemName.MCDSP, LogCommonHeader + LogDelim + "UncoveredNode" + LogDelim + "SubGraph" },
-            { ProblemName.PECCP, LogCommonHeader + LogDelim + "RestCircle" + LogDelim + "Conflict" },
+            { ProblemName.GCP.ToString(), LogCommonHeader + LogDelim + "Conflict" },
+            { ProblemName.PCP.ToString(), LogCommonHeader + LogDelim + "Center" + LogDelim + "UncoveredNode" },
+            { ProblemName.FJSP.ToString(), LogCommonHeader + LogDelim + "RestJob" },
+            { ProblemName.RWA.ToString(), LogCommonHeader + LogDelim + "BrokenPath" + LogDelim + "Conflict" },
+            { ProblemName.RPP.ToString(), LogCommonHeader + LogDelim + "RestRect" + LogDelim + "Conflict" },
+            { ProblemName.VRPTW2d.ToString(), LogCommonHeader + LogDelim + "Vehicle" + LogDelim + "UncoveredNode" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
+            { ProblemName.OARSMT.ToString(), LogCommonHeader + LogDelim + "Invasion" + LogDelim + "SubTree" },
+            { ProblemName.DFVSP.ToString(), LogCommonHeader + LogDelim + "UnsortNode" },
+            { ProblemName.MCDSP.ToString(), LogCommonHeader + LogDelim + "UncoveredNode" + LogDelim + "SubGraph" },
+            { ProblemName.PECCP.ToString(), LogCommonHeader + LogDelim + "RestCircle" + LogDelim + "Conflict" },
         };
         public const string ScoreHeader = "Solver" + LogDelim + LogBasicHeader;
 
         public static readonly Dictionary<string, Check> Checkers = new Dictionary<string, Check> {
-            { ProblemName.Coloring, Checker.coloring },
-            { ProblemName.PCenter, Checker.pCenter },
-            { ProblemName.Jobshop, Checker.jobshop },
-            { ProblemName.RWA, Checker.rwa },
-            { ProblemName.RectPacking, Checker.rectPacking },
-            { ProblemName.VRPTW2d, Checker.vrptw2d },
-            { ProblemName.OARSMT, Checker.oarsmt }, // alternative: `Checker.oarsmtEfficientRepresentation`.
-            { ProblemName.DFVSP, Checker.dfvsp },
-            { ProblemName.MCDSP, Checker.mcdsp },
-            { ProblemName.PECCP, Checker.peccp },
+            { ProblemName.GCP.ToString(), Checker.coloring },
+            { ProblemName.PCP.ToString(), Checker.pCenter },
+            { ProblemName.FJSP.ToString(), Checker.jobshop },
+            { ProblemName.RWA.ToString(), Checker.rwa },
+            { ProblemName.RPP.ToString(), Checker.rectPacking },
+            { ProblemName.VRPTW2d.ToString(), Checker.vrptw2d },
+            { ProblemName.OARSMT.ToString(), Checker.oarsmt }, // alternative: `Checker.oarsmtEfficientRepresentation`.
+            { ProblemName.DFVSP.ToString(), Checker.dfvsp },
+            { ProblemName.MCDSP.ToString(), Checker.mcdsp },
+            { ProblemName.PECCP.ToString(), Checker.peccp },
         };
 
         public static Rank rank = Util.Json.load<Rank>(CommonCfg.RankPath);

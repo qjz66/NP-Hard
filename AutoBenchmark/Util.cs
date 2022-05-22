@@ -57,6 +57,10 @@ namespace AutoBenchmark {
             return ms;
         }
 
+        public static void appendAll(this StringBuilder sb, StreamReader sr) {
+            while (sr.Peek() != -1) { sb.Append((char)sr.Read()); }
+        }
+
         public static string toHtmlTable(this string s) {
             StringBuilder sb = new StringBuilder("<table border=1>");
             bool emptyLine = true;
@@ -111,6 +115,10 @@ namespace AutoBenchmark {
         }
         public static void writeLines(string path, IEnumerable<string> contents) {
             File.WriteAllLines(path, contents, CommonCfg.DefaultEncoding);
+        }
+
+        public static class Table {
+
         }
 
         public static class Json {
