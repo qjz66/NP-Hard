@@ -57,10 +57,6 @@ namespace AutoBenchmark {
             return ms;
         }
 
-        public static void appendAll(this StringBuilder sb, StreamReader sr) {
-            while (sr.Peek() != -1) { sb.Append((char)sr.Read()); }
-        }
-
         public static string toHtmlTable(this string s) {
             StringBuilder sb = new StringBuilder("<table border=1>");
             bool emptyLine = true;
@@ -84,6 +80,11 @@ namespace AutoBenchmark {
             sb.Append("</table>");
             return sb.ToString();
         }
+
+        public static string toSafeCsvStr(this string s) {
+            if (s.Length <= 0) { return "?"; }
+            return s.Replace(",", "").Replace("\"", "").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+        }
         #endregion String
 
         #region Serialization
@@ -93,9 +94,11 @@ namespace AutoBenchmark {
         }
 
         public static string readText(string path) {
+            if (!File.Exists(path)) { return ""; }
             return File.ReadAllText(path, CommonCfg.DefaultEncoding);
         }
         public static string[] readLines(string path) {
+            if (!File.Exists(path)) { return new string[0]; }
             return File.ReadAllLines(path, CommonCfg.DefaultEncoding);
         }
         public static void appendText(string path, string contents) {
@@ -117,8 +120,23 @@ namespace AutoBenchmark {
             File.WriteAllLines(path, contents, CommonCfg.DefaultEncoding);
         }
 
-        public static class Table {
-
+        public static void saveCsv(string filename, string[,] table, string delim) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < table.GetLength(0); ++i) {
+                sb.Append($"{table[i, 0]}");
+                for (int j = 1; j < table.GetLength(1); ++j) {
+                    sb.Append($"{delim}{table[i, j]}");
+                }
+                sb.AppendLine();
+            }
+            writeText(filename, sb.ToString());
+        }
+        public static string[][] loadCsv(string filename, string delim) {
+            if (!File.Exists(filename)) { return null; }
+            string[] lines = readLines(filename);
+            string[][] table = new string[lines.Length][];
+            for (int i = 0; i < lines.Length; ++i) { table[i] = lines[i].Split(delim); }
+            return table;
         }
 
         public static class Json {

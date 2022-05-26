@@ -8,14 +8,14 @@ namespace AutoBenchmark {
         public const string SolverSubDir = "Solver";
         public const string InstanceSubDir = "Instance";
         public const string SolutionSubDir = "Solution";
-        public const string LogFilePrefix = "Log";
-        public const string LogFileExt = ".tsv";
 
         public const string RankPath = "rank.json";
-
-        public const string RankMarkdownPath = "ReadMe.md";
+        public const string ReadMePath = "ReadMe.md";
         public const string RankPagePath = "index.html";
-        public const string RankCsvPathExt = ".rank.csv";
+
+        public static string rankMarkdownPath(string problemName) { return $"{problemName}/ReadMe.md"; }
+        public static string rankCsvPath(string problemName) { return $"{problemName}/Rank.csv"; }
+        public static string logPath(string problemName, string year) { return $"{problemName}/Log{year}.tsv"; }
 
         public const int MaxResultsCountPerInstance = 10;
 
@@ -24,16 +24,6 @@ namespace AutoBenchmark {
         public static readonly HashSet<string> ZipFileExts = new HashSet<string> { ".7z", ".gz", ".tar", ".rar", ".zip", ".bz2", ".iso", ".xz" };
 
         public static readonly Encoding DefaultEncoding = Util.getEncoding(936);
-    }
-
-    class PrivateCfg { // TODO[szx][0]: do not commit this.
-        public const string EmailPassword = "";
-
-        public const string UserName = "";
-        public const string Password = "";
-
-        public const int RandSeedInc = 2011;
-        public const int RandSeedMul = 2111;
     }
 
     public class EmailCfg {
@@ -94,12 +84,11 @@ namespace AutoBenchmark {
         DFVSP,
         MCDSP,
         PECCP,
-
-        Count,
     }
 
     public class BenchmarkCfg {
         public const int MillisecondCheckInterval = 1000;
+        public const int MillisecondMarginTime = 4000;
         public const long ByteMemoryLimit = 16L * 1024 * 1024 * 1024;
 
         public static readonly int ParallelBenchmarkNum = Math.Min(16, Environment.ProcessorCount);
@@ -124,7 +113,9 @@ namespace AutoBenchmark {
             { ProblemName.MCDSP.ToString(), LogCommonHeader + LogDelim + "UncoveredNode" + LogDelim + "SubGraph" },
             { ProblemName.PECCP.ToString(), LogCommonHeader + LogDelim + "RestCircle" + LogDelim + "Conflict" },
         };
-        public const string ScoreHeader = "Solver" + LogDelim + LogBasicHeader;
+
+        public const string LeaderboardDelim = ",";
+        public const int LeaderboardHeaderRowNum = 3;
 
         public static readonly Dictionary<string, Check> Checkers = new Dictionary<string, Check> {
             { ProblemName.GCP.ToString(), Checker.coloring },
@@ -139,6 +130,7 @@ namespace AutoBenchmark {
             { ProblemName.PECCP.ToString(), Checker.peccp },
         };
 
-        public static Rank rank = Util.Json.load<Rank>(CommonCfg.RankPath);
+        public static Rank rank;
+        public static Dictionary<string, Leaderboard> leaderboards = new Dictionary<string, Leaderboard>();
     }
 }

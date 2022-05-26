@@ -7,9 +7,14 @@ using System.Text;
 
 namespace AutoBenchmark {
     public class PageGenerator {
+        public static void gitSync() {
+            Util.run("git", "pull origin data");
+            Util.run("git", "commit -a -m a");
+            Util.run("git", "push origin data");
+        }
+
         public static void generateMarkdown(string problemName, Problem problem) {
-            string filename = $"{problemName}/{CommonCfg.RankMarkdownPath}";
-            using (StreamWriter sw = File.CreateText(filename)) {
+            using (StreamWriter sw = File.CreateText(CommonCfg.rankCsvPath(problemName))) {
                 sw.WriteLine($"# {problemName} Results");
                 foreach (var dataset in problem.datasets) {
                     foreach (var instance in dataset.instances) {
@@ -25,25 +30,47 @@ namespace AutoBenchmark {
                     }
                 }
             }
-
-            Util.run("git", "pull origin data");
-            //Util.run("git", $"add {filename}");
-            Util.run("git", "commit -a -m a");
-            Util.run("git", "push origin data");
         }
         public static void generateMarkdowns(Rank rank) {
-            using (StreamWriter sw = File.CreateText(CommonCfg.RankMarkdownPath)) {
+            using (StreamWriter sw = File.CreateText(CommonCfg.ReadMePath)) {
                 sw.WriteLine("# NPBenchmark Results");
-                foreach (var problem in rank.problems) {
-                    sw.WriteLine($"- [{problem.Key}]({problem.Key}/{CommonCfg.RankMarkdownPath})");
-                    generateMarkdown(problem.Key, problem.Value);
+                sw.WriteLine("| Problem | Rank | Leaderboard |");
+                sw.WriteLine("| ------- | ---- | ----------- |");
+                foreach (var p in rank.problems) {
+                    string r = CommonCfg.rankMarkdownPath(p.Key);
+                    string c = CommonCfg.rankCsvPath(p.Key);
+                    sw.WriteLine($"| {p.Key} | [{r}]({r}) | [{c}]({c}) |");
+                    generateMarkdown(p.Key, p.Value);
                 }
             }
 
-            Util.run("git", "pull origin data");
-            //Util.run("git", "add " + CommonCfg.RankMarkdownPath);
-            Util.run("git", "commit -a -m a");
-            Util.run("git", "push origin data");
+        }
+
+        public static void generateCsv(string problemName, Problem problem) {
+            Leaderboard lb = BenchmarkCfg.leaderboards[problemName];
+            lb.sort();
+
+            string[,] table = new string[problem.instanceNum + BenchmarkCfg.LeaderboardHeaderRowNum, lb.records.Count + 1];
+
+            int i = 0;
+            table[i++, 0] = "Author";
+            table[i++, 0] = "Date";
+            table[i++, 0] = "Score";
+            foreach (var dataset in problem.datasets) {
+                foreach (var instance in dataset.instances) { table[i++, 0] = instance.Key; }
+            }
+
+            int s = 1;
+            foreach (Records r in lb.records) {
+                i = 0;
+                table[i++, s] = r.author;
+                table[i++, s] = r.date;
+                table[i++, s] = $"{r.score}";
+                foreach (double obj in r.objs) { table[i++, s] = $"{problem.restoreObj(obj)}"; }
+                ++s;
+            }
+
+            Util.saveCsv($"{CommonCfg.rankCsvPath(problemName)}", table, BenchmarkCfg.LeaderboardDelim);
         }
 
         public static void generateHtml(Rank rank) {
@@ -78,11 +105,6 @@ namespace AutoBenchmark {
                 sw.WriteLine("</body>");
                 sw.WriteLine("</html>");
             }
-
-            Util.run("git", "pull origin data");
-            //Util.run("git", "add " + CommonCfg.RankPagePath);
-            Util.run("git", "commit -a -m a");
-            Util.run("git", "push origin data");
         }
     }
 }

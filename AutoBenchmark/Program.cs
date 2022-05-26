@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 
 namespace AutoBenchmark {
     class Program {
         static void Main(string[] args) {
+            loadRank();
+
             if (args.Length == 3) { check(args[0], args[1], args[2]); return; }
-            if (args.Length == 2) { analyze(args[0], args[1]); return; }
             if (args.Length > 0) { help(); return; }
 
-            generateRank();
             Benchmark.run();
         }
 
@@ -37,30 +38,11 @@ namespace AutoBenchmark {
                 + s.obj + BenchmarkCfg.LogDelim + s.duration.ToString() + BenchmarkCfg.LogDelim + s.info);
         }
 
-        public static void analyze(string problemName, string year) {
-            string[] lines = Util.readLines(Path.Combine(problemName, CommonCfg.LogFilePrefix + year + CommonCfg.LogFileExt));
-            Dictionary<string, double[]> optima = new Dictionary<string, double[]>();
-            StringBuilder sb = new StringBuilder(BenchmarkCfg.ScoreHeader);
-            sb.AppendLine();
-            for (int l = 1; l < lines.Length; ++l) {
-                string[] words = lines[l].Split(BenchmarkCfg.LogDelim);
-                string instance = words[2];
-                sb.AppendLine(words[0].subStr(0, EmailCfg.SubjectDelim) + BenchmarkCfg.LogDelim + instance
-                    + BenchmarkCfg.LogDelim + words[3] + BenchmarkCfg.LogDelim + words[4]);
-                double[] r = new double[] { double.Parse(words[3]), double.Parse(words[4]) };
-                if (optima.ContainsKey(instance)) {
-                    if (Util.lexLess(r, optima[instance])) { optima[instance] = r; }
-                } else {
-                    optima.Add(instance, r);
-                }
-            }
-            foreach (var opt in optima) {
-                sb.AppendLine("Best" + BenchmarkCfg.LogDelim + opt.Key + BenchmarkCfg.LogDelim + opt.Value[0] + BenchmarkCfg.LogDelim + opt.Value[1]);
-            }
-            Util.writeText(problemName + year + CommonCfg.LogFileExt, sb.ToString());
-        }
+        static void loadRank() {
+            BenchmarkCfg.rank = Util.Json.load<Rank>(CommonCfg.RankPath);
+            //PageGenerator.generateMarkdowns(BenchmarkCfg.rank);
+            //Leaderboard.loadFromLog(BenchmarkCfg.rank);
 
-        static void generateRank() {
             Dictionary<string, Func<Problem>> generators = new Dictionary<string, Func<Problem>> {
                 { ProblemName.GCP.ToString(), generateColoring },
                 { ProblemName.PCP.ToString(), generatePCenter },
@@ -74,14 +56,33 @@ namespace AutoBenchmark {
                 { ProblemName.PECCP.ToString(), generatePECCP },
             };
 
-            foreach (var pn in Enum.GetNames(typeof(ProblemName))) {
-                if (BenchmarkCfg.rank.problems.ContainsKey(pn)) { continue; }
-                BenchmarkCfg.rank.problems.Add(pn, generators[pn]());
-                string filename = $"{pn}/{CommonCfg.RankMarkdownPath}";
+            Action<string> gitAdd = (string filename) => {
                 using (File.Create(filename)) { }
                 Util.run("git", $"add {filename}");
+            };
+
+            foreach (var pn in Enum.GetNames(typeof(ProblemName))) {
+                Problem p;
+                if (BenchmarkCfg.rank.problems.ContainsKey(pn)) {
+                    p = BenchmarkCfg.rank.problems[pn];
+                } else {
+                    p = generators[pn]();
+                    BenchmarkCfg.rank.problems.Add(pn, p);
+                    gitAdd(CommonCfg.rankMarkdownPath(pn));
+                }
+
+                BenchmarkCfg.leaderboards.TryAdd(pn, new Leaderboard());
+                if (!BenchmarkCfg.leaderboards[pn].load(pn, p)) {
+                    BenchmarkCfg.leaderboards[pn].records.Add(new Records {
+                        author = "Best", date = "0", score = 0,
+                        objs = Enumerable.Repeat(Problem.MaxObjValue, p.instanceNum).ToArray()
+                    });
+                    gitAdd(CommonCfg.rankCsvPath(pn));
+                }
             }
             //Util.run("git", "add " + CommonCfg.RankPath);
+            //Util.run("git", "add " + CommonCfg.ReadMePath);
+            //PageGenerator.gitSync();
         }
 
         static Problem generateColoring() {

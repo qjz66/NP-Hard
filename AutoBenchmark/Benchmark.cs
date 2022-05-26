@@ -62,7 +62,9 @@ namespace AutoBenchmark {
             StringBuilder reply = new StringBuilder();
             reply.AppendLine(BenchmarkCfg.LogBasicHeader + BenchmarkCfg.LogHeaders[s.problem].Substring(BenchmarkCfg.LogCommonHeader.Length));
 
-            string logPath = Path.Combine(s.problem, CommonCfg.LogFilePrefix + s.date.Substring(0, 4) + CommonCfg.LogFileExt);
+            Dictionary<string, double> r = new Dictionary<string, double>();
+
+            string logPath = CommonCfg.logPath(s.problem, s.date.Substring(0, 4));
             foreach (var dataset in problem.datasets) {
                 int feasibleCount = 0;
                 int optCount = 0;
@@ -70,7 +72,6 @@ namespace AutoBenchmark {
                 Util.fightForTasks(BenchmarkCfg.ParallelBenchmarkNum, (isTaskTaken) => {
                     foreach (var instance in dataset.instances) {
                         if (isTaskTaken()) { continue; }
-                        //Util.log(instance.Key);
 
                         Instance i = instance.Value;
                         string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
@@ -109,6 +110,7 @@ namespace AutoBenchmark {
                             bestResult.obj = statistic.obj;
                             bestResult.duration = statistic.duration;
                         }
+                        r.Add(instance.Key, bestResult.obj);
                         i.results.Add(bestResult);
 
                         if (i.results.Count <= CommonCfg.MaxResultsCountPerInstance) { continue; }
@@ -128,6 +130,21 @@ namespace AutoBenchmark {
 
             Util.Json.save(CommonCfg.RankPath, BenchmarkCfg.rank);
             PageGenerator.generateMarkdown(s.problem, problem);
+
+            double[] objs = new double[problem.instanceNum];
+            int i = 0;
+            foreach (var dataset in problem.datasets) {
+                foreach (var instance in dataset.instances) {
+                    objs[i++] = r.ContainsKey(instance.Key) ? r[instance.Key] : Problem.MaxObjValue;
+                }
+            }
+            BenchmarkCfg.leaderboards[s.problem].records.Add(new Records {
+                author = s.author.toSafeCsvStr(), date = s.date,
+                score = 0, objs = objs
+            });
+            PageGenerator.generateCsv(s.problem, problem);
+            PageGenerator.gitSync();
+
             Util.log("[info] finish testing submission");
             return true;
         }
@@ -157,18 +174,14 @@ namespace AutoBenchmark {
                 StringBuilder output = new StringBuilder();
                 using (Process p = new Process()) {
                     p.StartInfo = psi;
-#if ReadOutputAsync
                     p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
                     p.OutputDataReceived += (s, l) => { if (l.Data != null) { lock (output) { output.AppendLine(l.Data); } } };
-#endif
 
                     Stopwatch sw = new Stopwatch();
                     try {
                         p.Start();
-#if ReadOutputAsync
                         p.BeginErrorReadLine();
                         p.BeginOutputReadLine();
-#endif
 
                         sw.Start();
                         foreach (var line in instance.data) { p.StandardInput.WriteLine(line); } //p.StandardInput.Write(instance.data1);
@@ -183,14 +196,7 @@ namespace AutoBenchmark {
                         sw.Stop();
 
                         try {
-#if !ReadOutputAsync
-                            if (p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)) {
-                                output.Append(p.StandardOutput.ReadToEnd());
-                            } else {
-                                output.appendAll(p.StandardOutput);
-                            }
-#endif
-                            if (!p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)) { p.Kill(true); }
+                            if (!p.WaitForExit(BenchmarkCfg.MillisecondMarginTime)) { p.Kill(true); }
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " kill exe fail due to " + e.ToString()); }
 
                         check(instance.data, output.ToString(), statistic);
