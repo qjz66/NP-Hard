@@ -110,7 +110,7 @@ namespace AutoBenchmark {
                 r.date = table[i++][s];
                 r.score = double.Parse(table[i++][s]);
                 r.objs = new double[instanceNum];
-                while (i < instanceNum) { r.objs[i++] = problem.normalizeObj(double.Parse(table[i++][s])); }
+                for (int j = 0; j < instanceNum; ++j) { r.objs[j] = problem.normalizeObj(double.Parse(table[i++][s])); }
                 records.Add(r);
             }
             return true;
