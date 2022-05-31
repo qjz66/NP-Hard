@@ -120,6 +120,19 @@ namespace AutoBenchmark {
             File.WriteAllLines(path, contents, CommonCfg.DefaultEncoding);
         }
 
+        public static async void appendAll(this StringBuilder sb, StreamReader sr, int msTimeout, int bufSize = 4096) {
+            for (char[] buf = new char[bufSize]; ;) {
+                var n = sr.ReadAsync(buf, 0, buf.Length);
+                if (!n.Wait(msTimeout)) { break; }
+                sb.Append(new Span<char>(buf, 0, await n));
+            }
+            //ThreadPool.QueueUserWorkItem(o => {
+            //    try {
+            //        for (int c = 0; (c = sr.Read()) != -1; sb.Append((char)c)) { }
+            //    } catch (Exception) { }
+            //});
+        }
+
         public static void saveCsv(string filename, string[,] table, string delim) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < table.GetLength(0); ++i) {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 
 namespace AutoBenchmark {
@@ -1557,7 +1556,7 @@ namespace AutoBenchmark {
             //normDataset.instances.Add("pace.e197.n4096e93346.txt", new Instance { repeat = 5, secTimeout = 600 });
             //normDataset.instances.Add("pace.e199.n16384e559996.txt", new Instance { repeat = 5, secTimeout = 600 });
             problem.datasets.Add(normDataset);
-            
+
             Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
             hardDataset.instances.Add("pace.h101.n65536e618237.txt", new Instance { repeat = 5, secTimeout = 600 });
             hardDataset.instances.Add("pace.h103.n159316e544621.txt", new Instance { repeat = 5, secTimeout = 600 });

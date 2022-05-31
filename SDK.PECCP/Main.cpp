@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <limits>
+
 
 #include "PackingEqCircleInCircle.h"
 
@@ -14,6 +16,7 @@ void loadInput(istream& is, PackingEqCircleInCircle& pecc) {
 }
 
 void saveOutput(ostream& os, Layout& layout) {
+	os.precision(numeric_limits<double>::max_digits10);
 	for (auto placement = layout.begin(); placement != layout.end(); ++placement) {
 		os << (*placement)[0] << ' ' << (*placement)[1] << endl;
 	}
