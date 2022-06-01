@@ -101,10 +101,10 @@ namespace AutoBenchmark {
 
             if (s.exePath != null) {
                 Benchmark.push(s);
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Your submission has been received.")
-                    .Append("There are ").Append(Benchmark.queueSize).AppendLine(" submissions in queue.");
-                StdSmtp.send(s.email, "Re: " + msg.Subject, sb.ToString());
+                //StringBuilder sb = new StringBuilder();
+                //sb.AppendLine("Your submission has been received.")
+                //    .Append("There are ").Append(Benchmark.queueSize).AppendLine(" submissions in queue.");
+                //StdSmtp.send(s.email, "Re: " + msg.Subject, sb.ToString());
                 return true;
             }
             Util.log("[error] no executable found");

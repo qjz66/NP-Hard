@@ -79,6 +79,12 @@ namespace AutoBenchmark {
                     gitAdd(CommonCfg.rankCsvPath(pn));
                 }
             }
+
+            if (!File.Exists(CommonCfg.QueuePath)) {
+                Util.appendLine(CommonCfg.QueuePath, "| Date | Author | Problem | State |");
+                Util.run("git", "add " + CommonCfg.QueuePath);
+            }
+
             //Util.run("git", "add " + CommonCfg.RankPath);
             //Util.run("git", "add " + CommonCfg.ReadMePath);
             //PageGenerator.gitSync();

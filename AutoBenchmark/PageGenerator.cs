@@ -73,6 +73,10 @@ namespace AutoBenchmark {
             Util.saveCsv($"{CommonCfg.rankCsvPath(problemName)}", table, BenchmarkCfg.LeaderboardDelim);
         }
 
+        public static void appendQueue(Submission s, CommonCfg.QueueState state) {
+            Util.appendLine(CommonCfg.QueuePath, $"| {s.date} | {s.problem} | {s.author} | {state} |");
+        }
+
         public static void generateHtml(Rank rank) {
             using (StreamWriter sw = File.CreateText(CommonCfg.RankPagePath)) {
                 sw.WriteLine("<!DOCTYPE html>");

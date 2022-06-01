@@ -35,6 +35,7 @@ namespace AutoBenchmark {
             q.Enqueue(s);
             Util.tryInc(emailNums, s.email);
             Util.tryInc(authorNums, s.author);
+            PageGenerator.appendQueue(s, CommonCfg.QueueState.Pending);
         }
 
         public static int queueSize {
@@ -42,7 +43,7 @@ namespace AutoBenchmark {
         }
 
         static Submission pop() {
-            EmailFetcher.fetch();
+            if (EmailFetcher.fetch()) { PageGenerator.gitSync(); }
             while (q.Count > 0) {
                 Submission s = q.Dequeue();
                 Util.tryDec(emailNums, s.email);
@@ -55,6 +56,8 @@ namespace AutoBenchmark {
 
         static bool testSubmission(Submission s) {
             if (s == null) { return false; }
+            PageGenerator.appendQueue(s, CommonCfg.QueueState.Running);
+            PageGenerator.gitSync();
 
             Problem problem = BenchmarkCfg.rank.problems[s.problem];
             Check check = BenchmarkCfg.Checkers[s.problem];
@@ -143,6 +146,7 @@ namespace AutoBenchmark {
                 score = 0, objs = objs
             });
             PageGenerator.generateCsv(s.problem, problem);
+            PageGenerator.appendQueue(s, CommonCfg.QueueState.Finished);
             PageGenerator.gitSync();
 
             Util.log("[info] finish testing submission");
@@ -178,6 +182,10 @@ namespace AutoBenchmark {
                     p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
                     p.OutputDataReceived += (s, l) => { if (l.Data != null) { lock (output) { output.AppendLine(l.Data); } } };
 #endif
+                    new Thread(() => {
+                        Thread.Sleep((int)msTimeout + 2 * BenchmarkCfg.MsMarginTime);
+                        try { if (!p.HasExited) { p.Kill(true); } } catch (Exception) { }
+                    });
                     Stopwatch sw = new Stopwatch();
                     try {
                         p.Start();
@@ -191,21 +199,22 @@ namespace AutoBenchmark {
                         p.StandardInput.Close(); // send EOF to the solver.
                         try {
                             while (!p.HasExited
-                                && !p.WaitForExit(BenchmarkCfg.MillisecondCheckInterval)
+                                && !p.WaitForExit(BenchmarkCfg.MsCheckInterval)
                                 && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
                                 && (sw.ElapsedMilliseconds < msTimeout)) { }
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString()); }
                         if (!p.HasExited) { sw.Stop(); }
 
                         try {
-#if !ReadOutputAsync
-                            if (p.WaitForExit(BenchmarkCfg.MillisecondMarginTime)) {
+#if ReadOutputAsync
+                            p.WaitForExit(BenchmarkCfg.MsMarginTime);
+#else
+                            if (p.WaitForExit(BenchmarkCfg.MsMarginTime)) {
                                 output.Append(p.StandardOutput.ReadToEnd());
                             } else {
-                                output.appendAll(p.StandardOutput, BenchmarkCfg.MillisecondMarginTime);
+                                output.appendAll(p.StandardOutput, BenchmarkCfg.MsMarginTime);
                             }
 #endif
-                            if (!p.HasExited) { p.Kill(true); }
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " kill exe fail due to " + e.ToString()); }
 
                         sw.Stop();

@@ -11,11 +11,14 @@ namespace AutoBenchmark {
 
         public const string RankPath = "rank.json";
         public const string ReadMePath = "ReadMe.md";
+        public const string QueuePath = "Queue.md";
         public const string RankPagePath = "index.html";
 
         public static string rankMarkdownPath(string problemName) { return $"{problemName}/ReadMe.md"; }
         public static string rankCsvPath(string problemName) { return $"{problemName}/Rank.csv"; }
         public static string logPath(string problemName, string year) { return $"{problemName}/Log{year}.tsv"; }
+
+        public enum QueueState { Pending, Running, Finished }
 
         public const int MaxResultsCountPerInstance = 10;
 
@@ -87,8 +90,8 @@ namespace AutoBenchmark {
     }
 
     public class BenchmarkCfg {
-        public const int MillisecondCheckInterval = 1000;
-        public const int MillisecondMarginTime = 4000;
+        public const int MsCheckInterval = 1000;
+        public const int MsMarginTime = 4000;
         public const long ByteMemoryLimit = 16L * 1024 * 1024 * 1024;
 
         public static readonly int ParallelBenchmarkNum = Math.Min(16, Environment.ProcessorCount);
