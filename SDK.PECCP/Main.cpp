@@ -12,7 +12,7 @@ using namespace szx;
 
 
 void loadInput(istream& is, PackingEqCircleInCircle& pecc) {
-	is >> pecc.circleNum >> pecc.err;
+	is >> pecc.circleNum >> pecc.ratio >> pecc.err;
 }
 
 void saveOutput(ostream& os, Layout& layout) {

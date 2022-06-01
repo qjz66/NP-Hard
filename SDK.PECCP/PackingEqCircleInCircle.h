@@ -22,6 +22,7 @@ using Coords = std::array<Coord, 2>;
 
 struct PackingEqCircleInCircle {
 	CircleId circleNum;
+	Coord ratio; // best known (ContainerRadius / CircleRadius).
 	Coord err; // error tolerance for overlap/overflow checking.
 };
 
