@@ -74,7 +74,7 @@ namespace AutoBenchmark {
         }
 
         public static void appendQueue(Submission s, CommonCfg.QueueState state) {
-            Util.appendLine(CommonCfg.QueuePath, $"| {s.date} | {s.problem} | {s.author} | {state} |");
+            Util.appendLine(CommonCfg.QueuePath, $"| {Util.friendlyDateTime()} | {s.problem} | {s.author} | {s.date} | {state} |");
         }
 
         public static void generateHtml(Rank rank) {

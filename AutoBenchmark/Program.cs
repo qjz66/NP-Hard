@@ -81,7 +81,8 @@ namespace AutoBenchmark {
             }
 
             if (!File.Exists(CommonCfg.QueuePath)) {
-                Util.appendLine(CommonCfg.QueuePath, "| Date | Author | Problem | State |");
+                Util.appendLine(CommonCfg.QueuePath, "| EventDate | Problem | Author | SubmissionDate | State |");
+                Util.appendLine(CommonCfg.QueuePath, "| --------- | ------- | ------ | -------------- | ----- |");
                 Util.run("git", "add " + CommonCfg.QueuePath);
             }
 

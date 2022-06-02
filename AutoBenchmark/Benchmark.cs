@@ -93,7 +93,7 @@ namespace AutoBenchmark {
                         foreach (var line in statistics) {
                             if (line.obj < Problem.MaxObjValue) { Interlocked.Increment(ref feasibleCount); }
                             if (i.matchRecord(line.obj)) { Interlocked.Increment(ref optCount); }
-                            if (line.duration > i.secTimeout) { Interlocked.Increment(ref timeoutCount); }
+                            if (line.duration > (i.secTimeout + BenchmarkCfg.MsCheckInterval)) { Interlocked.Increment(ref timeoutCount); }
                             lines.Add(s.author + BenchmarkCfg.LogDelim + line.seed.ToString() + BenchmarkCfg.LogDelim
                                 + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
                                 + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
@@ -182,10 +182,13 @@ namespace AutoBenchmark {
                     p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
                     p.OutputDataReceived += (s, l) => { if (l.Data != null) { lock (output) { output.AppendLine(l.Data); } } };
 #endif
-                    new Thread(() => {
-                        Thread.Sleep((int)msTimeout + 2 * BenchmarkCfg.MsMarginTime);
-                        try { if (!p.HasExited) { p.Kill(true); } } catch (Exception) { }
-                    });
+                    new Timer((o) => {
+                        try {
+                            Process tp = o as Process;
+                            if ((tp != null) && !tp.HasExited) { tp.Kill(true); }
+                        } catch (Exception) { }
+                    }, p, msTimeout + BenchmarkCfg.MsMarginTime, Timeout.Infinite);
+
                     Stopwatch sw = new Stopwatch();
                     try {
                         p.Start();
@@ -209,13 +212,13 @@ namespace AutoBenchmark {
 #if ReadOutputAsync
                             p.WaitForExit(BenchmarkCfg.MsMarginTime);
 #else
-                            if (p.WaitForExit(BenchmarkCfg.MsMarginTime)) {
+                            if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
                                 output.Append(p.StandardOutput.ReadToEnd());
                             } else {
-                                output.appendAll(p.StandardOutput, BenchmarkCfg.MsMarginTime);
+                                output.appendAll(p.StandardOutput);
                             }
 #endif
-                        } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " kill exe fail due to " + e.ToString()); }
+                        } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " wait exe fail due to " + e.ToString()); }
 
                         sw.Stop();
                         check(instance.data, output.ToString(), statistic);
