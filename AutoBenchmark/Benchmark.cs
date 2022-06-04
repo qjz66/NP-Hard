@@ -182,13 +182,6 @@ namespace AutoBenchmark {
                     p.ErrorDataReceived += (object sendingProcess, DataReceivedEventArgs line) => { }; // drop all.
                     p.OutputDataReceived += (s, l) => { if (l.Data != null) { lock (output) { output.AppendLine(l.Data); } } };
 #endif
-                    new Timer((o) => {
-                        try {
-                            Process tp = o as Process;
-                            if ((tp != null) && !tp.HasExited) { tp.Kill(true); }
-                        } catch (Exception) { }
-                    }, p, msTimeout + BenchmarkCfg.MsMarginTime, Timeout.Infinite);
-
                     Stopwatch sw = new Stopwatch();
                     try {
                         p.Start();
@@ -206,11 +199,21 @@ namespace AutoBenchmark {
                                 && (p.PrivateMemorySize64 < BenchmarkCfg.ByteMemoryLimit)
                                 && (sw.ElapsedMilliseconds < msTimeout)) { }
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString()); }
-                        if (!p.HasExited) { sw.Stop(); }
+                        if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { sw.Stop(); }
+                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { Util.Signal.send(p.Id); }
+                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { Util.Signal.send(p.Id); }
+                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
+                            new Timer((o) => {
+                                try {
+                                    Process tp = o as Process;
+                                    if ((tp != null) && !tp.HasExited) { tp.Kill(true); }
+                                } catch (Exception) { }
+                            }, p, BenchmarkCfg.MsMarginTime, Timeout.Infinite);
+                        }
 
                         try {
 #if ReadOutputAsync
-                            p.WaitForExit(BenchmarkCfg.MsMarginTime);
+                            p.WaitForExit(BenchmarkCfg.MsCheckInterval);
 #else
                             if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
                                 output.Append(p.StandardOutput.ReadToEnd());

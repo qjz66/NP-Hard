@@ -120,7 +120,7 @@ namespace AutoBenchmark {
             File.WriteAllLines(path, contents, CommonCfg.DefaultEncoding);
         }
 
-        public static async void appendAll(this StringBuilder sb, StreamReader sr, int msTimeout, int bufSize = 4096) {
+        public static async void appendAll(this StringBuilder sb, StreamReader sr, int msTimeout, int bufSize = 4096) { // non-blocking version.
             for (char[] buf = new char[bufSize]; ;) {
                 var n = sr.ReadAsync(buf, 0, buf.Length);
                 if (!n.Wait(msTimeout)) { break; }
@@ -131,6 +131,11 @@ namespace AutoBenchmark {
             //        for (int c = 0; (c = sr.Read()) != -1; sb.Append((char)c)) { }
             //    } catch (Exception) { }
             //});
+        }
+        public static void appendAll(this StringBuilder sb, StreamReader sr) { // blocking version.
+            try {
+                for (int c = 0; (c = sr.Read()) != -1; sb.Append((char)c)) { }
+            } catch (Exception) { }
         }
 
         public static void saveCsv(string filename, string[,] table, string delim) {
@@ -258,9 +263,10 @@ namespace AutoBenchmark {
             psi.WindowStyle = ProcessWindowStyle.Hidden;
             psi.UseShellExecute = false;
             psi.RedirectStandardOutput = true;
-            Process p = Process.Start(psi);
-            p.WaitForExit();
-            return p.StandardOutput.ReadToEnd();
+            using (Process p = Process.Start(psi)) {
+                p.WaitForExit();
+                return p.StandardOutput.ReadToEnd();
+            }
         }
         // [NonBlocking][NoWindow]
         public static Process runAsync(string fileName, string arguments = "") {
@@ -271,9 +277,10 @@ namespace AutoBenchmark {
         }
         // [Blocking][NoWindow][GetExitCode]
         public static int run(string fileName, string arguments = "") {
-            Process p = runAsync(fileName, arguments);
-            p.WaitForExit();
-            return p.ExitCode;
+            using (Process p = runAsync(fileName, arguments)) {
+                p.WaitForExit();
+                return p.ExitCode;
+            }
         }
         // [Blocking][ShowWindow]
         public static Process runUI(string fileName, string arguments = "") {
@@ -284,6 +291,63 @@ namespace AutoBenchmark {
         // [NonBlocking][ShowWindow]
         public static Process runUIAsync(string fileName, string arguments = "") {
             return Process.Start(fileName, arguments);
+        }
+
+        public static class Signal {
+            public enum Type : uint {
+                Interrupt = CtrlTypes.CTRL_C_EVENT,
+                Break = CtrlTypes.CTRL_BREAK_EVENT,
+            }
+
+            public static void send(int pid) {
+                SetConsoleCtrlHandler(null, true);
+                run("SendSignal", $"{pid}");
+                SetConsoleCtrlHandler(null, false);
+            }
+            public static void send(int pid, Type signal) {
+                SetConsoleCtrlHandler(null, true);
+                run("SendSignal", $"{pid} {(uint)signal}");
+                SetConsoleCtrlHandler(null, false);
+            }
+
+
+            [Obsolete("NotWorking", true)]
+            public static void send(Process proc, int msTimeout = 0, Type signal = Type.Interrupt) {
+                FreeConsole();
+                if (AttachConsole((uint)proc.Id)) { // this does not require the console window to be visible.
+                    SetConsoleCtrlHandler(null, true); // disable Ctrl-C handling for ourselves.
+
+                    GenerateConsoleCtrlEvent((uint)signal, 0);
+                    FreeConsole(); // avoid terminating ourselves if `proc` is killed by others.
+                    proc.WaitForExit(msTimeout); // avoid terminating ourselves.
+
+                    SetConsoleCtrlHandler(null, false); // re-enable Ctrl-C handling or any subsequently started programs will inherit the disabled state.
+                }
+            }
+
+
+            private enum CtrlTypes : uint {
+                CTRL_C_EVENT = 0,
+                CTRL_BREAK_EVENT,
+                CTRL_CLOSE_EVENT,
+                CTRL_LOGOFF_EVENT = 5,
+                CTRL_SHUTDOWN_EVENT,
+            }
+
+            private delegate bool ConsoleCtrlDelegate(uint CtrlType);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            private static extern bool AttachConsole(uint dwProcessId);
+
+            [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+            private static extern bool FreeConsole();
+
+            [DllImport("kernel32.dll")]
+            private static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate HandlerRoutine, bool Add);
+
+            [DllImport("kernel32.dll")]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            private static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
         }
         #endregion Process
 
