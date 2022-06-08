@@ -200,9 +200,9 @@ namespace AutoBenchmark {
                                 && (sw.ElapsedMilliseconds < msTimeout)) { }
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString()); }
                         if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { sw.Stop(); }
-                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { Util.Signal.send(p.Id); }
-                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { Util.Signal.send(p.Id); }
-                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
+                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)
+                            && !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)
+                            && !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)) {
                             new Timer((o) => {
                                 try {
                                     Process tp = o as Process;

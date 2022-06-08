@@ -299,31 +299,35 @@ namespace AutoBenchmark {
                 Break = CtrlTypes.CTRL_BREAK_EVENT,
             }
 
-            public static void send(int pid) {
+            public static bool send(Process p, int msTimeout = 0) {
                 SetConsoleCtrlHandler(null, true);
-                run("SendSignal", $"{pid}");
+                run("SendSignal", $"{p.Id}");
+                bool r = p.WaitForExit(msTimeout);
                 SetConsoleCtrlHandler(null, false);
+                return r;
             }
-            public static void send(int pid, Type signal) {
+            public static bool send(Process p, int msTimeout, Type signal) {
                 SetConsoleCtrlHandler(null, true);
-                run("SendSignal", $"{pid} {(uint)signal}");
+                run("SendSignal", $"{p.Id} {(uint)signal}");
+                bool r = p.WaitForExit(msTimeout);
                 SetConsoleCtrlHandler(null, false);
+                return r;
             }
 
 
-            [Obsolete("NotWorking", true)]
-            public static void send(Process proc, int msTimeout = 0, Type signal = Type.Interrupt) {
-                FreeConsole();
-                if (AttachConsole((uint)proc.Id)) { // this does not require the console window to be visible.
-                    SetConsoleCtrlHandler(null, true); // disable Ctrl-C handling for ourselves.
+            //[Obsolete("NotWorking", true)]
+            //public static void send(Process proc, int msTimeout = 0, Type signal = Type.Interrupt) {
+            //    FreeConsole();
+            //    if (AttachConsole((uint)proc.Id)) { // this does not require the console window to be visible.
+            //        SetConsoleCtrlHandler(null, true); // disable Ctrl-C handling for ourselves.
 
-                    GenerateConsoleCtrlEvent((uint)signal, 0);
-                    FreeConsole(); // avoid terminating ourselves if `proc` is killed by others.
-                    proc.WaitForExit(msTimeout); // avoid terminating ourselves.
+            //        GenerateConsoleCtrlEvent((uint)signal, 0);
+            //        FreeConsole(); // avoid terminating ourselves if `proc` is killed by others.
+            //        proc.WaitForExit(msTimeout); // avoid terminating ourselves.
 
-                    SetConsoleCtrlHandler(null, false); // re-enable Ctrl-C handling or any subsequently started programs will inherit the disabled state.
-                }
-            }
+            //        SetConsoleCtrlHandler(null, false); // re-enable Ctrl-C handling or any subsequently started programs will inherit the disabled state.
+            //    }
+            //}
 
 
             private enum CtrlTypes : uint {
@@ -336,18 +340,18 @@ namespace AutoBenchmark {
 
             private delegate bool ConsoleCtrlDelegate(uint CtrlType);
 
-            [DllImport("kernel32.dll", SetLastError = true)]
-            private static extern bool AttachConsole(uint dwProcessId);
+            //[DllImport("kernel32.dll", SetLastError = true)]
+            //private static extern bool AttachConsole(uint dwProcessId);
 
-            [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-            private static extern bool FreeConsole();
+            //[DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+            //private static extern bool FreeConsole();
 
             [DllImport("kernel32.dll")]
             private static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate HandlerRoutine, bool Add);
 
-            [DllImport("kernel32.dll")]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
+            //[DllImport("kernel32.dll")]
+            //[return: MarshalAs(UnmanagedType.Bool)]
+            //private static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
         }
         #endregion Process
 
