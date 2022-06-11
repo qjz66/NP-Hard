@@ -77,6 +77,7 @@ namespace AutoBenchmark {
                         objs = Enumerable.Repeat(Problem.MaxObjValue, p.instanceNum).ToArray()
                     });
                     gitAdd(CommonCfg.rankCsvPath(pn));
+                    gitAdd(CommonCfg.bestCsvPath(pn));
                 }
             }
 
@@ -86,7 +87,6 @@ namespace AutoBenchmark {
                 Util.run("git", "add " + CommonCfg.QueuePath);
             }
 
-            //Util.run("git", "add " + CommonCfg.RankPath);
             //Util.run("git", "add " + CommonCfg.ReadMePath);
             //PageGenerator.gitSync();
         }

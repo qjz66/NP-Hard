@@ -34,20 +34,19 @@ namespace AutoBenchmark {
         public static void generateMarkdowns(Rank rank) {
             using (StreamWriter sw = File.CreateText(CommonCfg.ReadMePath)) {
                 sw.WriteLine("# NPBenchmark Results");
-                sw.WriteLine("| Problem | Rank | Leaderboard |");
-                sw.WriteLine("| ------- | ---- | ----------- |");
+                sw.WriteLine("| Problem | Rank | Leaderboard | Best |");
+                sw.WriteLine("| ------- | ---- | ----------- | ---- |");
                 foreach (var p in rank.problems) {
                     string r = CommonCfg.rankMarkdownPath(p.Key);
                     string c = CommonCfg.rankCsvPath(p.Key);
-                    sw.WriteLine($"| {p.Key} | [{r}]({r}) | [{c}]({c}) |");
-                    generateMarkdown(p.Key, p.Value);
+                    string b = CommonCfg.bestCsvPath(p.Key);
+                    sw.WriteLine($"| {p.Key} | [{r}]({r}) | [{c}]({c}) | [{b}]({b}) |");
                 }
             }
 
         }
 
-        public static void generateCsv(string problemName, Problem problem) {
-            Leaderboard lb = BenchmarkCfg.leaderboards[problemName];
+        public static void generateCsv(Leaderboard lb, Problem problem, string path) {
             lb.sort();
 
             string[,] table = new string[problem.instanceNum + BenchmarkCfg.LeaderboardHeaderRowNum, lb.records.Count + 1];
@@ -70,7 +69,27 @@ namespace AutoBenchmark {
                 ++s;
             }
 
-            Util.saveCsv($"{CommonCfg.rankCsvPath(problemName)}", table, BenchmarkCfg.LeaderboardDelim);
+            Util.saveCsv(path, table, BenchmarkCfg.LeaderboardDelim);
+        }
+        public static void generateCsv(string problemName, Problem problem) {
+            generateCsv(BenchmarkCfg.leaderboards[problemName], problem, CommonCfg.rankCsvPath(problemName));
+        }
+
+        public static void generateBestCsv(string problemName, Problem problem) {
+            Leaderboard lb = BenchmarkCfg.leaderboards[problemName];
+            Dictionary<string, Records> bestRecords = new Dictionary<string, Records>();
+            foreach (var r in lb.records) {
+                if (bestRecords.ContainsKey(r.author)) {
+                    Records br = bestRecords[r.author];
+                    for (int o = 0; o < r.objs.Length; ++o) {
+                        if (Util.updateMin(ref br.objs[o], r.objs[o])) { Util.updateMax(ref br.date, r.date); }
+                    }
+                } else {
+                    bestRecords.Add(r.author, new Records { author = r.author, date = r.date, objs = r.objs.ToArray() });
+                }
+            }
+
+            generateCsv(new Leaderboard { records = bestRecords.Values.ToList() }, problem, CommonCfg.bestCsvPath(problemName));
         }
 
         public static void appendQueue(Submission s, CommonCfg.QueueState state) {

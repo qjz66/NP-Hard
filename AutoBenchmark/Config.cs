@@ -16,6 +16,7 @@ namespace AutoBenchmark {
 
         public static string rankMarkdownPath(string problemName) { return $"{problemName}/ReadMe.md"; }
         public static string rankCsvPath(string problemName) { return $"{problemName}/Rank.csv"; }
+        public static string bestCsvPath(string problemName) { return $"{problemName}/Best.csv"; }
         public static string logPath(string problemName, string year) { return $"{problemName}/Log{year}.tsv"; }
 
         public enum QueueState { Pending, Running, Finished }

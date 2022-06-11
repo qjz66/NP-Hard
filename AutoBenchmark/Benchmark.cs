@@ -146,6 +146,7 @@ namespace AutoBenchmark {
                 score = 0, objs = objs
             });
             PageGenerator.generateCsv(s.problem, problem);
+            PageGenerator.generateBestCsv(s.problem, problem);
             PageGenerator.appendQueue(s, CommonCfg.QueueState.Finished);
             PageGenerator.gitSync();
 
@@ -200,9 +201,9 @@ namespace AutoBenchmark {
                                 && (sw.ElapsedMilliseconds < msTimeout)) { }
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString()); }
                         if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { sw.Stop(); }
-                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)
-                            && !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)
-                            && !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)) {
+                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
+                            //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)
+                            //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)) {
                             new Timer((o) => {
                                 try {
                                     Process tp = o as Process;

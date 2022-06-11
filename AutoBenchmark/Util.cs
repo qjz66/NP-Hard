@@ -458,6 +458,14 @@ namespace AutoBenchmark {
             if (newValue > maxValue) { maxValue = newValue; return true; }
             return false;
         }
+        public static bool updateMin(ref string minValue, string newValue) {
+            if (newValue.CompareTo(minValue) < 0) { minValue = newValue; return true; }
+            return false;
+        }
+        public static bool updateMax(ref string maxValue, string newValue) {
+            if (newValue.CompareTo(maxValue) > 0) { maxValue = newValue; return true; }
+            return false;
+        }
 
         public static int lowerBound(int[] arr, int value) {
             int i = Array.BinarySearch(arr, value);
