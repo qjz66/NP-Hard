@@ -80,7 +80,7 @@ namespace AutoBenchmark {
                         string inputPath = Path.Combine(s.problem, CommonCfg.InstanceSubDir, instance.Key);
                         if (i.data == null) {
                             i.data = File.ReadAllLines(inputPath);
-                            //i.data1 = string.Join(Environment.NewLine, i.data).ToCharArray();
+                            i.data1 = string.Join(Environment.NewLine, i.data).ToCharArray();
                         }
 
                         List<Statistic> statistics = testInstance(s.exePath, i, check, (output, obj) => {
@@ -186,14 +186,22 @@ namespace AutoBenchmark {
                     Stopwatch sw = new Stopwatch();
                     try {
                         p.Start();
+                        bool finishReadInput = false;
+                        new Thread(() => {
+                            Thread.Sleep(BenchmarkCfg.MsReadInputTime);
+                            if (finishReadInput) { return; }
+                            try { if ((p != null) && !p.HasExited) { p.Kill(true); } } catch (Exception) { }
+                        }).Start();
 #if ReadOutputAsync
                         p.BeginErrorReadLine();
                         p.BeginOutputReadLine();
 #endif
                         sw.Start();
-                        foreach (var line in instance.data) { p.StandardInput.WriteLine(line); } //p.StandardInput.Write(instance.data1);
+                        //foreach (var line in instance.data) { p.StandardInput.WriteLine(line); }
+                        p.StandardInput.WriteLine(instance.data1);
                         p.StandardInput.Flush();
                         p.StandardInput.Close(); // send EOF to the solver.
+                        finishReadInput = true;
                         try {
                             while (!p.HasExited
                                 && !p.WaitForExit(BenchmarkCfg.MsCheckInterval)
@@ -204,12 +212,10 @@ namespace AutoBenchmark {
                         if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
                             //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)
                             //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)) {
-                            new Timer((o) => {
-                                try {
-                                    Process tp = o as Process;
-                                    if ((tp != null) && !tp.HasExited) { tp.Kill(true); }
-                                } catch (Exception) { }
-                            }, p, BenchmarkCfg.MsMarginTime, Timeout.Infinite);
+                            new Thread(() => {
+                                Thread.Sleep(BenchmarkCfg.MsSaveOutputTime);
+                                try { if ((p != null) && !p.HasExited) { p.Kill(true); } } catch (Exception) { }
+                            }).Start();
                         }
 
                         try {

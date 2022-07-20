@@ -46,7 +46,7 @@ namespace AutoBenchmark {
         [DataMember] public long secTimeout = 999;
         [DataMember] public SortedSet<Result> results = new SortedSet<Result>();
         public string[] data; // load from file when necessary.
-        //public char[] data1; // single-line data.
+        public char[] data1; // single-line data.
     }
 
     [DataContract]

@@ -92,7 +92,8 @@ namespace AutoBenchmark {
 
     public class BenchmarkCfg {
         public const int MsCheckInterval = 1000;
-        public const int MsMarginTime = 2000;
+        public const int MsReadInputTime = 8000;
+        public const int MsSaveOutputTime = 2000;
         public const long ByteMemoryLimit = 16L * 1024 * 1024 * 1024;
 
         public static readonly int ParallelBenchmarkNum = Math.Min(16, Environment.ProcessorCount);
