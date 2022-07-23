@@ -14,7 +14,7 @@ namespace AutoBenchmark {
         }
 
         public static void generateMarkdown(string problemName, Problem problem) {
-            using (StreamWriter sw = File.CreateText(CommonCfg.rankCsvPath(problemName))) {
+            using (StreamWriter sw = File.CreateText(CommonCfg.rankMarkdownPath(problemName))) {
                 sw.WriteLine($"# {problemName} Results");
                 foreach (var dataset in problem.datasets) {
                     foreach (var instance in dataset.instances) {
