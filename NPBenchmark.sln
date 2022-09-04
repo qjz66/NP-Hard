@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK.PECCP", "SDK.PECCP\SDK.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutoBenchmark.Util", "AutoBenchmark.Util\AutoBenchmark.Util.vcxproj", "{BD49A985-BD46-4BBE-B4CC-5B239556DB7B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK.DARP2d", "SDK.DARP2d\SDK.DARP2d.vcxproj", "{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,16 @@ Global
 		{BD49A985-BD46-4BBE-B4CC-5B239556DB7B}.Release|x64.Build.0 = Release|x64
 		{BD49A985-BD46-4BBE-B4CC-5B239556DB7B}.Release|x86.ActiveCfg = Release|Win32
 		{BD49A985-BD46-4BBE-B4CC-5B239556DB7B}.Release|x86.Build.0 = Release|Win32
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Debug|x64.ActiveCfg = Debug|x64
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Debug|x64.Build.0 = Debug|x64
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Debug|x86.ActiveCfg = Debug|Win32
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Debug|x86.Build.0 = Debug|Win32
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|Any CPU.ActiveCfg = Release|Win32
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|x64.ActiveCfg = Release|x64
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|x64.Build.0 = Release|x64
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|x86.ActiveCfg = Release|Win32
+		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

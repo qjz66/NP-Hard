@@ -337,7 +337,8 @@ namespace AutoBenchmark {
 
 
         class Node2d {
-            public const int Amp = 10;
+            public const int Amp1 = 10;
+            public const int Amp3 = 1000;
 
             public double[] coords;
             public int demand;
@@ -345,12 +346,13 @@ namespace AutoBenchmark {
             public int timeWindowBegin;
             public int timeWindowEnd;
 
-            public static int t(Node2d src, Node2d dst) {
-                double[] delta = src.coords.Zip(dst.coords, (s, d) => s - d).ToArray();
-                return (int)(Math.Sqrt(delta.Aggregate((sum, x) => sum + x * x)) * Amp);
+            public static int t(Node2d src, Node2d dst, int amp) {
+                return (int)(Math.Sqrt(Util.powerSum(src.coords[0] - dst.coords[0], src.coords[1] - dst.coords[1])) * amp);
             }
         }
         public static void vrptw2d(string[] input, string output, Statistic statistic) {
+            const int Amp = Node2d.Amp1;
+
             List<Node2d> nodes = new List<Node2d>();
             int nodeNum = 0;
             int maxVehicleNum = 0;
@@ -364,8 +366,8 @@ namespace AutoBenchmark {
                 for (int n = 0; (n < nodeNum) && (l < input.Length); ++l, ++n) {
                     words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
                     nodes.Add(new Node2d { coords = new double[2] { double.Parse(words[0]), double.Parse(words[1]) },
-                        demand = int.Parse(words[2]), minStayTime = int.Parse(words[3]) * Node2d.Amp,
-                        timeWindowBegin = int.Parse(words[4]) * Node2d.Amp, timeWindowEnd = int.Parse(words[5]) * Node2d.Amp
+                        demand = int.Parse(words[2]), minStayTime = int.Parse(words[3]) * Amp,
+                        timeWindowBegin = int.Parse(words[4]) * Amp, timeWindowEnd = int.Parse(words[5]) * Amp
                     });
                 }
             } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
@@ -384,15 +386,16 @@ namespace AutoBenchmark {
                     int capacity = vehicleCapacity;
                     int t = 0;
                     int src = 0;
-                    for (int i = 0; i < words.Length; ++i) {
+                    for (int i = (words[0] == "0") ? 1 : 0; i < words.Length; ++i) {
                         int dst = int.Parse(words[i]);
+                        if (dst == 0) { break; }
                         if (visited[dst]++ <= 0) {
                             --uncoverNum; // check uncover.
                             capacity -= nodes[dst].demand;
                         } else {
                             ++conflictNum; // check conflict.
                         }
-                        int c = Node2d.t(nodes[src], nodes[dst]);
+                        int c = Node2d.t(nodes[src], nodes[dst], Amp);
                         t += c;
                         cost += c;
                         if (t < nodes[dst].timeWindowBegin) {
@@ -404,16 +407,17 @@ namespace AutoBenchmark {
                         src = dst;
                     }
 
-                    int rc = Node2d.t(nodes[src], nodes[0]);
+                    int rc = Node2d.t(nodes[src], nodes[0], Amp);
                     t += rc;
                     cost += rc;
                     if (t > nodes[0].timeWindowEnd) { delay += (t - nodes[0].timeWindowEnd); } // check delay.
 
+                    ++vehicleNum;
                     if (capacity < 0) { overload -= capacity; } // check overload.
                 }
             } catch (Exception e) { Util.log("[error] checker load output or check fail due to " + e.ToString()); }
 
-            bool feasible = (vehicleNum < maxVehicleNum) && (uncoverNum == 0) && (conflictNum == 0) && (overload == 0) && (delay == 0);
+            bool feasible = (vehicleNum <= maxVehicleNum) && (uncoverNum == 0) && (conflictNum == 0) && (overload == 0) && (delay == 0);
             statistic.obj = feasible ? cost : Problem.MaxObjValue;
             statistic.info = vehicleNum.ToString() + BenchmarkCfg.LogDelim + uncoverNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString() + BenchmarkCfg.LogDelim + overload.ToString() + BenchmarkCfg.LogDelim + delay.ToString();
         }
@@ -819,5 +823,120 @@ namespace AutoBenchmark {
             statistic.obj = feasible ? ratio : Problem.MaxObjValue;
             statistic.info = restCircleNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString();
         }
+
+
+        public static void darp2d(string[] input, string output, Statistic statistic) {
+            const int Amp = Node2d.Amp3;
+
+            List<Node2d> nodes = new List<Node2d>();
+            int requestNum = 0;
+            int nodeNum = 0;
+            int maxVehicleNum = 0;
+            int vehicleCapacity = 0;
+            int maxTravelTime = 0;
+            int maxRideTime = 0;
+            try { // load instance.
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                requestNum = int.Parse(words[0]);
+                nodeNum = 2 * requestNum + 1;
+                maxVehicleNum = int.Parse(words[1]);
+                vehicleCapacity = int.Parse(words[2]);
+                maxTravelTime = int.Parse(words[3]) * Amp;
+                maxRideTime = int.Parse(words[4]) * Amp;
+                int l = 1;
+                for (int n = 0; (n < nodeNum) && (l < input.Length); ++l, ++n) {
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    nodes.Add(new Node2d {
+                        coords = new double[2] { double.Parse(words[0]), double.Parse(words[1]) },
+                        demand = int.Parse(words[2]), minStayTime = int.Parse(words[3]) * Amp,
+                        timeWindowBegin = int.Parse(words[4]) * Amp, timeWindowEnd = int.Parse(words[5]) * Amp
+                    });
+                }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
+
+            int uncoverNum = nodeNum; // unvisited nodes.
+            int conflictNum = 0; // revisited nodes.
+            int vehicleNum = 0;
+            int overload = 0;
+            int delay = 0;
+            int cost = 0;
+            int overRide = 0;
+            int overTravel = 0;
+            int disorderNum = 0;
+            int[] visited = Enumerable.Repeat(-1, nodeNum).ToArray();
+            try { // load solution and check.
+                string[] lines = output.Split(LineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                for (int l = 0; l < lines.Length; ++l) {
+                    string[] words = lines[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    int capacity = vehicleCapacity;
+                    List<int> path = new List<int>();
+                    for (int i = (words[0] == "0") ? 1 : 0; i < words.Length; ++i) {
+                        int dst = int.Parse(words[i]);
+                        if (dst == 0) { break; }
+                        path.Add(dst);
+                    }
+                    path.Add(0);
+
+                    int src = 0;
+                    for (int d = 0; d < path.Count; ++d) {
+                        int dst = path[d];
+                        if (visited[dst] < 0) {
+                            visited[dst] = l;
+                            --uncoverNum; // check uncover.
+                            capacity -= nodes[dst].demand;
+                            if (capacity < 0) { overload -= capacity; } // check overload.
+                        } else if (dst != 0) {
+                            ++conflictNum; // check conflict.
+                        }
+                        if (dst > requestNum) {
+                            if (visited[dst - requestNum] != l) { ++disorderNum; } // check disorder.
+                        }
+                        cost += Node2d.t(nodes[src], nodes[dst], Amp);
+                        src = dst;
+                    }
+                    ++vehicleNum;
+
+                    int[] arrTimes = new int[nodeNum];
+                    int t = nodes[0].timeWindowBegin;
+                    Action<int, int, int, int> calcMinArrTimes = (t, src, d, stop) => {
+                        arrTimes[src] = t;
+                        t += nodes[src].minStayTime;
+                        for (; d < path.Count; ++d) {
+                            int dst = path[d];
+                            t += Node2d.t(nodes[src], nodes[dst], Amp);
+                            Util.updateMax(ref t, nodes[dst].timeWindowBegin);
+                            arrTimes[dst] = t;
+                            if (dst == stop) { break; }
+                            t += nodes[dst].minStayTime;
+                            src = dst;
+                        }
+                    };
+
+                    calcMinArrTimes(nodes[0].timeWindowBegin, 0, 0, 0);
+                    for (int p = path.Count - 2; p >= 0; --p) {
+                        int pickup = path[p];
+                        if (pickup > requestNum) { continue; }
+                        int delivery = pickup + requestNum;
+                        int minPickupTime = arrTimes[delivery] - maxRideTime - nodes[pickup].minStayTime;
+                        if (arrTimes[pickup] >= minPickupTime) { continue; }
+                        calcMinArrTimes(minPickupTime, pickup, p + 1, delivery);
+                        if (arrTimes[delivery] - arrTimes[pickup] - nodes[pickup].minStayTime <= maxRideTime) { continue; } // the delivery is also postponed.
+                        overRide += (arrTimes[delivery] - arrTimes[pickup] - maxRideTime); // check override.
+                    }
+                    for (int d = 0; d < path.Count; ++d) {
+                        int dst = path[d];
+                        if (arrTimes[dst] > nodes[dst].timeWindowEnd) { delay += (arrTimes[dst] - nodes[dst].timeWindowEnd); }
+                    }
+                    
+                    int travel = arrTimes[0] - arrTimes[path[0]] + Node2d.t(nodes[0], nodes[path[0]], Amp) - maxTravelTime;
+                    if (travel > 0) { overTravel += travel; } // check travel time.
+                }
+            } catch (Exception e) { Util.log("[error] checker load output or check fail due to " + e.ToString()); }
+
+            bool feasible = (vehicleNum <= maxVehicleNum) && (uncoverNum == 0) && (conflictNum == 0) && (overload == 0) && (delay == 0) && (overTravel == 0) && (overRide == 0) && (disorderNum == 0);
+            statistic.obj = feasible ? cost : Problem.MaxObjValue;
+            statistic.info = vehicleNum.ToString() + BenchmarkCfg.LogDelim + uncoverNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString() + BenchmarkCfg.LogDelim + overload.ToString() + BenchmarkCfg.LogDelim + delay.ToString();
+        }
+
     }
 }

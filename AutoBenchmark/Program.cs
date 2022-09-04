@@ -53,6 +53,7 @@ namespace AutoBenchmark {
                 { ProblemName.DFVSP.ToString(), generateDFVSP },
                 { ProblemName.MCDSP.ToString(), generateMCDSP },
                 { ProblemName.PECCP.ToString(), generatePECCP },
+                { ProblemName.DARP2d.ToString(), generateDARP2d },
             };
 
             Action<string> gitAdd = (string filename) => {
@@ -942,6 +943,10 @@ namespace AutoBenchmark {
             hardDataset.instances.Add("gsrc.b100a179501.txt", new Instance { repeat = 10, secTimeout = 900 });
             hardDataset.instances.Add("gsrc.b200a175696.txt", new Instance { repeat = 10, secTimeout = 900 });
             hardDataset.instances.Add("gsrc.b300a273170.txt", new Instance { repeat = 10, secTimeout = 900 });
+            hardDataset.instances.Add("rp.b100a205056.txt", new Instance { repeat = 10, secTimeout = 900 });
+            hardDataset.instances.Add("rp.b200a410112.txt", new Instance { repeat = 10, secTimeout = 900 });
+            hardDataset.instances.Add("pcb.b146a78663600.txt", new Instance { repeat = 10, secTimeout = 900 });
+            hardDataset.instances.Add("pcb.b500a1358165.txt", new Instance { repeat = 10, secTimeout = 900 });
             problem.datasets.Add(hardDataset);
 
             return problem;
@@ -2177,6 +2182,88 @@ namespace AutoBenchmark {
             hardDataset.instances.Add("n2047.txt", new Instance { repeat = 1, secTimeout = 20000 });
             hardDataset.instances.Add("n2048.txt", new Instance { repeat = 1, secTimeout = 20000 });
             hardDataset.instances.Add("n2049.txt", new Instance { repeat = 1, secTimeout = 20000 });
+            problem.datasets.Add(hardDataset);
+
+            return problem;
+        }
+        static Problem generateDARP2d() {
+            Problem problem = new Problem { minimize = true };
+
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.125, maxTimeoutRate = 1 };
+            problem.datasets.Add(easyDataset);
+            easyDataset.instances.Add("a2-16.r16v2c3t480l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a2-20.r20v2c3t600l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a2-24.r24v2c3t720l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a3-18.r18v3c3t360l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a3-24.r24v3c3t480l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a3-30.r30v3c3t600l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a3-36.r36v3c3t720l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a4-16.r16v4c3t240l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a4-24.r24v4c3t360l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a4-32.r32v4c3t480l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a4-40.r40v4c3t600l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("a4-48.r48v4c3t720l30.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b2-16.r16v2c6t480l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b2-20.r20v2c6t600l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b2-24.r24v2c6t720l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b3-18.r18v3c6t360l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b3-24.r24v3c6t480l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b3-30.r30v3c6t600l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b3-36.r36v3c6t720l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b4-16.r16v4c6t240l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b4-24.r24v4c6t360l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b4-32.r32v4c6t480l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b4-40.r40v4c6t600l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+            easyDataset.instances.Add("b4-48.r48v4c6t720l45.txt", new Instance { repeat = 5, secTimeout = 30 });
+
+            Dataset normDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
+            normDataset.instances.Add("a5-40.r40v5c3t480l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a5-50.r50v5c3t600l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a5-60.r60v5c3t720l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a6-48.r48v6c3t480l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a6-60.r60v6c3t600l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a6-72.r72v6c3t720l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a7-56.r56v7c3t480l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a7-70.r70v7c3t600l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a7-84.r84v7c3t720l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a8-64.r64v8c3t480l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a8-80.r80v8c3t600l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("a8-96.r96v8c3t720l30.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b5-40.r40v5c6t480l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b5-50.r50v5c6t600l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b5-60.r60v5c6t720l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b6-48.r48v6c6t480l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b6-60.r60v6c6t600l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b6-72.r72v6c6t720l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b7-56.r56v7c6t480l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b7-70.r70v7c6t600l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b7-84.r84v7c6t720l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b8-64.r64v8c6t480l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b8-80.r80v8c6t600l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            normDataset.instances.Add("b8-96.r96v8c6t720l45.txt", new Instance { repeat = 5, secTimeout = 60 });
+            easyDataset.instances.Add("pr01.r24v3c6t480l90.txt", new Instance { repeat = 5, secTimeout = 60 });
+            easyDataset.instances.Add("pr02.r48v5c6t480l90.txt", new Instance { repeat = 5, secTimeout = 120 });
+            easyDataset.instances.Add("pr07.r36v4c6t480l90.txt", new Instance { repeat = 5, secTimeout = 120 });
+            easyDataset.instances.Add("pr11.r24v3c6t480l90.txt", new Instance { repeat = 5, secTimeout = 60 });
+            easyDataset.instances.Add("pr12.r48v5c6t480l90.txt", new Instance { repeat = 5, secTimeout = 120 });
+            easyDataset.instances.Add("pr17.r36v4c6t480l90.txt", new Instance { repeat = 5, secTimeout = 120 });
+            problem.datasets.Add(normDataset);
+
+            Dataset hardDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0, maxTimeoutRate = 1 };
+            easyDataset.instances.Add("pr03.r72v7c6t480l90.txt", new Instance { repeat = 5, secTimeout = 180 });
+            easyDataset.instances.Add("pr04.r96v9c6t480l90.txt", new Instance { repeat = 5, secTimeout = 240 });
+            easyDataset.instances.Add("pr05.r120v11c6t480l90.txt", new Instance { repeat = 5, secTimeout = 300 });
+            easyDataset.instances.Add("pr06.r144v13c6t480l90.txt", new Instance { repeat = 5, secTimeout = 360 });
+            easyDataset.instances.Add("pr08.r72v6c6t480l90.txt", new Instance { repeat = 5, secTimeout = 180 });
+            easyDataset.instances.Add("pr09.r108v8c6t480l90.txt", new Instance { repeat = 5, secTimeout = 240 });
+            easyDataset.instances.Add("pr10.r144v10c6t480l90.txt", new Instance { repeat = 5, secTimeout = 300 });
+            easyDataset.instances.Add("pr13.r72v7c6t480l90.txt", new Instance { repeat = 5, secTimeout = 180 });
+            easyDataset.instances.Add("pr14.r96v9c6t480l90.txt", new Instance { repeat = 5, secTimeout = 240 });
+            easyDataset.instances.Add("pr15.r120v11c6t480l90.txt", new Instance { repeat = 5, secTimeout = 300 });
+            easyDataset.instances.Add("pr16.r144v13c6t480l90.txt", new Instance { repeat = 5, secTimeout = 360 });
+            easyDataset.instances.Add("pr18.r72v6c6t480l90.txt", new Instance { repeat = 5, secTimeout = 180 });
+            easyDataset.instances.Add("pr19.r108v8c6t480l90.txt", new Instance { repeat = 5, secTimeout = 240 });
+            easyDataset.instances.Add("pr20.r144v10c6t480l90.txt", new Instance { repeat = 5, secTimeout = 300 });
             problem.datasets.Add(hardDataset);
 
             return problem;

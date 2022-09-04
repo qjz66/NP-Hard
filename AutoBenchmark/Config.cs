@@ -88,6 +88,7 @@ namespace AutoBenchmark {
         DFVSP,
         MCDSP,
         PECCP,
+        DARP2d,
     }
 
     public class BenchmarkCfg {
@@ -117,6 +118,7 @@ namespace AutoBenchmark {
             { ProblemName.DFVSP.ToString(), LogCommonHeader + LogDelim + "UnsortNode" },
             { ProblemName.MCDSP.ToString(), LogCommonHeader + LogDelim + "UncoveredNode" + LogDelim + "SubGraph" },
             { ProblemName.PECCP.ToString(), LogCommonHeader + LogDelim + "RestCircle" + LogDelim + "Conflict" },
+            { ProblemName.DARP2d.ToString(), LogCommonHeader + LogDelim + "Vehicle" + LogDelim + "UncoveredNode" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
         };
 
         public const string LeaderboardDelim = ",";
@@ -133,6 +135,7 @@ namespace AutoBenchmark {
             { ProblemName.DFVSP.ToString(), Checker.dfvsp },
             { ProblemName.MCDSP.ToString(), Checker.mcdsp },
             { ProblemName.PECCP.ToString(), Checker.peccp },
+            { ProblemName.DARP2d.ToString(), Checker.darp2d },
         };
 
         public static Rank rank;

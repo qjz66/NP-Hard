@@ -4164,5 +4164,134 @@ namespace AutoBenchmark {
                 for (int n = 1950; n < 2050; ++n) { File.WriteAllText($"n{n}.txt", $"{n} {bks[n]} 1e-15"); }
             }
         }
+
+        public class DARP2d {
+            public static void convertAll() {
+                convertPR("DARP/Instance/pr01");
+                convertPR("DARP/Instance/pr02");
+                convertPR("DARP/Instance/pr03");
+                convertPR("DARP/Instance/pr04");
+                convertPR("DARP/Instance/pr05");
+                convertPR("DARP/Instance/pr06");
+                convertPR("DARP/Instance/pr07");
+                convertPR("DARP/Instance/pr08");
+                convertPR("DARP/Instance/pr09");
+                convertPR("DARP/Instance/pr10");
+                convertPR("DARP/Instance/pr11");
+                convertPR("DARP/Instance/pr12");
+                convertPR("DARP/Instance/pr13");
+                convertPR("DARP/Instance/pr14");
+                convertPR("DARP/Instance/pr15");
+                convertPR("DARP/Instance/pr16");
+                convertPR("DARP/Instance/pr17");
+                convertPR("DARP/Instance/pr18");
+                convertPR("DARP/Instance/pr19");
+                convertPR("DARP/Instance/pr20");
+                convertAB("DARP/Instance/a2-16");
+                convertAB("DARP/Instance/a2-20");
+                convertAB("DARP/Instance/a2-24");
+                convertAB("DARP/Instance/a3-18");
+                convertAB("DARP/Instance/a3-24");
+                convertAB("DARP/Instance/a3-30");
+                convertAB("DARP/Instance/a3-36");
+                convertAB("DARP/Instance/a4-16");
+                convertAB("DARP/Instance/a4-24");
+                convertAB("DARP/Instance/a4-32");
+                convertAB("DARP/Instance/a4-40");
+                convertAB("DARP/Instance/a4-48");
+                convertAB("DARP/Instance/a5-40");
+                convertAB("DARP/Instance/a5-50");
+                convertAB("DARP/Instance/a5-60");
+                convertAB("DARP/Instance/a6-48");
+                convertAB("DARP/Instance/a6-60");
+                convertAB("DARP/Instance/a6-72");
+                convertAB("DARP/Instance/a7-56");
+                convertAB("DARP/Instance/a7-70");
+                convertAB("DARP/Instance/a7-84");
+                convertAB("DARP/Instance/a8-64");
+                convertAB("DARP/Instance/a8-80");
+                convertAB("DARP/Instance/a8-96");
+                convertAB("DARP/Instance/b2-16");
+                convertAB("DARP/Instance/b2-20");
+                convertAB("DARP/Instance/b2-24");
+                convertAB("DARP/Instance/b3-18");
+                convertAB("DARP/Instance/b3-24");
+                convertAB("DARP/Instance/b3-30");
+                convertAB("DARP/Instance/b3-36");
+                convertAB("DARP/Instance/b4-16");
+                convertAB("DARP/Instance/b4-24");
+                convertAB("DARP/Instance/b4-32");
+                convertAB("DARP/Instance/b4-40");
+                convertAB("DARP/Instance/b4-48");
+                convertAB("DARP/Instance/b5-40");
+                convertAB("DARP/Instance/b5-50");
+                convertAB("DARP/Instance/b5-60");
+                convertAB("DARP/Instance/b6-48");
+                convertAB("DARP/Instance/b6-60");
+                convertAB("DARP/Instance/b6-72");
+                convertAB("DARP/Instance/b7-56");
+                convertAB("DARP/Instance/b7-70");
+                convertAB("DARP/Instance/b7-84");
+                convertAB("DARP/Instance/b8-64");
+                convertAB("DARP/Instance/b8-80");
+                convertAB("DARP/Instance/b8-96");
+            }
+
+            static void convertPR(string oldPath) {
+                string[] lines = File.ReadAllLines(oldPath + ".txt");
+
+                string[] words = lines[0].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                int requestNum = int.Parse(words[1]) / 2;
+                string vehicleNum = words[0];
+                string vehicleCapacity = words[3];
+                string maxTravelTime = words[2];
+                string maxRideTime = words[4];
+
+                StringBuilder sb = new StringBuilder();
+                for (int l = 1; l < lines.Length; ++l) {
+                    words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 7) { continue; }
+                    sb.Append(words[1]).Append('\t').Append(words[2]).Append('\t')
+                        .Append(words[4]).Append('\t').Append(words[3]).Append('\t')
+                        .Append(words[5]).Append('\t').AppendLine(words[6]);
+                }
+
+                StringBuilder header = new StringBuilder();
+                header.Append(requestNum).Append(' ').Append(vehicleNum).Append(' ').Append(vehicleCapacity).Append(' ').Append(maxTravelTime).Append(' ').AppendLine(maxRideTime);
+                StringBuilder fn = new StringBuilder();
+                fn.Append(".r").Append(requestNum).Append('v').Append(vehicleNum).Append('c').Append(vehicleCapacity).Append('t').Append(maxTravelTime).Append('l').Append(maxRideTime).Append(".txt");
+                File.WriteAllText(oldPath + fn.ToString(), header.ToString() + sb.ToString());
+            }
+            static void convertAB(string oldPath) {
+                string[] lines = File.ReadAllLines(oldPath + ".txt");
+
+                string[] words = lines[0].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                int requestNum = int.Parse(words[1]);
+                string vehicleNum = words[0];
+                string vehicleCapacity = words[3];
+                string maxTravelTime = words[2];
+                string maxRideTime = words[4];
+
+                StringBuilder sb = new StringBuilder();
+                for (int l = 1, i = 2 * requestNum + 1; (l < lines.Length) && (i-- > 0); ++l) {
+                    words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if (words.Length < 7) { continue; }
+                    sb.Append(words[1]).Append('\t').Append(words[2]).Append('\t')
+                        .Append(words[4]).Append('\t').Append(words[3]).Append('\t')
+                        .Append(words[5]).Append('\t').AppendLine(words[6]);
+                }
+                string[] depot0 = lines[1].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                string[] depot1 = lines[lines.Length - 1].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 1; i < depot0.Length; ++i) {
+                    if (depot0[i] != depot1[i]) { Console.WriteLine("two depots not matched"); break; }
+                }
+
+                StringBuilder header = new StringBuilder();
+                header.Append(requestNum).Append(' ').Append(vehicleNum).Append(' ').Append(vehicleCapacity).Append(' ').Append(maxTravelTime).Append(' ').AppendLine(maxRideTime);
+                StringBuilder fn = new StringBuilder();
+                fn.Append(".r").Append(requestNum).Append('v').Append(vehicleNum).Append('c').Append(vehicleCapacity).Append('t').Append(maxTravelTime).Append('l').Append(maxRideTime).Append(".txt");
+                File.WriteAllText(oldPath + fn.ToString(), header.ToString() + sb.ToString());
+            }
+        }
     }
 }
