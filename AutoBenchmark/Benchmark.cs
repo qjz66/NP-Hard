@@ -169,11 +169,12 @@ namespace AutoBenchmark {
 
             int seed = 0;
             long msTimeout = instance.secTimeout * 1000;
-            List<Statistic> statistics = new List<Statistic>(instance.repeat);
-            for (int i = instance.repeat; i > 0; --i) {
+            int repeat = exePath.Contains("gurobi") ? 1 : instance.repeat;
+            List<Statistic> statistics = new List<Statistic>(repeat);
+            for (int i = repeat; i > 0; --i) {
                 Statistic statistic = new Statistic();
                 statistic.seed = (seed = nextSeed(seed));
-                long secTimeout = instance.secTimeout - instance.secTimeout * i / (instance.repeat * 4);
+                long secTimeout = instance.secTimeout - instance.secTimeout * i / (repeat * 4);
                 psi.Arguments = secTimeout.ToString() + " " + statistic.seed.ToString();
 
                 StringBuilder output = new StringBuilder();
