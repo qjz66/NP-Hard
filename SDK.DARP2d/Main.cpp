@@ -47,19 +47,16 @@ void test(istream& inputStream, ostream& outputStream, long long secTimeout) {
 	return test(inputStream, outputStream, secTimeout, static_cast<int>(time(nullptr) + clock()));
 }
 
-#include <fstream>
 int main(int argc, char* argv[]) {
-	ifstream ifs("D:/Workspace/mixed/Training/DARP/Instance/pr01.r24v3c6t480l90.txt");
-	ofstream ofs("D:/Workspace/mixed/Training/DARP/Instance/sln.txt");
-	test(ifs, ofs, 100); // for self-test.
-	//cerr << "load environment." << endl;
-	//long long secTimeout = atoll(argv[1]);
-	//int randSeed = atoi(argv[2]);
-
-	//ifstream ifs("path/to/instance.txt");
-	//ofstream ofs("path/to/solution.txt");
-	//test(ifs, ofs, secTimeout); // for self-test.
-
-	//test(cin, cout, secTimeout, randSeed);
+	cerr << "load environment." << endl;
+	if (argc > 2) {
+		long long secTimeout = atoll(argv[1]);
+		int randSeed = atoi(argv[2]);
+		test(cin, cout, secTimeout, randSeed);
+	} else {
+		//ifstream ifs("path/to/instance.txt");
+		//ofstream ofs("path/to/solution.txt");
+		//test(ifs, ofs, 10); // for self-test.
+	}
 	return 0;
 }

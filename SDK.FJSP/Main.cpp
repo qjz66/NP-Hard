@@ -57,13 +57,14 @@ void test(istream& inputStream, ostream& outputStream, long long secTimeout) {
 
 int main(int argc, char* argv[]) {
 	cerr << "load environment." << endl;
-	long long secTimeout = atoll(argv[1]);
-	int randSeed = atoi(argv[2]);
-
-	//ifstream ifs("path/to/instance.txt");
-	//ofstream ofs("path/to/solution.txt");
-	//test(ifs, ofs, secTimeout); // for self-test.
-
-	test(cin, cout, secTimeout, randSeed);
+	if (argc > 2) {
+		long long secTimeout = atoll(argv[1]);
+		int randSeed = atoi(argv[2]);
+		test(cin, cout, secTimeout, randSeed);
+	} else {
+		//ifstream ifs("path/to/instance.txt");
+		//ofstream ofs("path/to/solution.txt");
+		//test(ifs, ofs, 10); // for self-test.
+	}
 	return 0;
 }

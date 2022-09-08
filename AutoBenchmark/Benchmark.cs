@@ -123,6 +123,7 @@ namespace AutoBenchmark {
                 Util.log($"[info] feasibleCount={feasibleCount} optCount={optCount} timeoutCount={timeoutCount}");
                 // stop testing next dataset if the results are poor.
                 int runCount = dataset.instances.Sum(o => o.Value.repeat);
+                if (baselineSolver(s.exePath)) { continue; }
                 if (feasibleCount < (int)(runCount * dataset.minFeasibleRate)) { break; }
                 if (optCount < (int)(runCount * dataset.minOptRate)) { break; }
                 if (timeoutCount > (int)(runCount * dataset.maxTimeoutRate)) { break; }
@@ -169,7 +170,7 @@ namespace AutoBenchmark {
 
             int seed = 0;
             long msTimeout = instance.secTimeout * 1000;
-            int repeat = exePath.Contains("gurobi") ? 1 : instance.repeat;
+            int repeat = baselineSolver(exePath) ? 1 : instance.repeat;
             List<Statistic> statistics = new List<Statistic>(repeat);
             for (int i = repeat; i > 0; --i) {
                 Statistic statistic = new Statistic();
@@ -249,6 +250,11 @@ namespace AutoBenchmark {
 
         static int nextSeed(int seed) {
             return ((seed * BenchmarkCfg.RandSeedMul) + BenchmarkCfg.RandSeedInc) & 0xffff;
+        }
+
+        // test only once and allow to solve harder instance even if under threshold.
+        static bool baselineSolver(string exePath) {
+            return exePath.Contains("gurobi");
         }
     }
 }

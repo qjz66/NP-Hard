@@ -58,13 +58,14 @@ public:
 			Coord w = !output[r].rotated ? input.rects[r][0] : input.rects[r][1];
 			Coord h = output[r].rotated ? input.rects[r][0] : input.rects[r][1];
 			if (output[r].pos[0] < minX) { minX = output[r].pos[0]; }
-			if ((output[r].pos[0] + w) > maxX) { maxX = output[r].pos[0]; }
+			if ((output[r].pos[0] + w) > maxX) { maxX = output[r].pos[0] + w; }
 			if (output[r].pos[1] < minY) { minY = output[r].pos[1]; }
-			if ((output[r].pos[1] + h) > maxY) { maxY = output[r].pos[1]; }
+			if ((output[r].pos[1] + h) > maxY) { maxY = output[r].pos[1] + h; }
 			sd.rect(output[r].pos[0], output[r].pos[1], w, h);
 		}
 		ofstream ofs(filePath);
-		ofs << sd.toStr(minX - 10, minY - 10, maxX - minX + 20, maxY - minY + 20, 1920, 1080, "", "",
+		double aspectRatio = static_cast<double>(maxX - minX) / static_cast<double>(maxY - minY);
+		ofs << sd.toStr(minX - 10, minY - 10, maxX - minX + 20, maxY - minY + 20, 960 * aspectRatio, 960 / aspectRatio, "", "",
 			"<style>rect { stroke:black; stroke-width: 1px; fill:transparent; }</style>") << endl;
 	}
 };
