@@ -8,6 +8,7 @@ namespace AutoBenchmark {
     class Program {
         static void Main(string[] args) {
             loadRank();
+            //PageGenerator.generateStatistics();
 
             if (args.Length == 3) { check(args[0], args[1], args[2]); return; }
             if (args.Length > 0) { help(); return; }

@@ -43,7 +43,6 @@ namespace AutoBenchmark {
                     sw.WriteLine($"| {p.Key} | [{r}]({r}) | [{c}]({c}) | [{b}]({b}) |");
                 }
             }
-
         }
 
         public static void generateCsv(Leaderboard lb, Problem problem, string path) {
@@ -128,6 +127,16 @@ namespace AutoBenchmark {
                 sw.WriteLine("</body>");
                 sw.WriteLine("</html>");
             }
+        }
+
+        public static void generateStatistics() {
+            StringBuilder sb = new StringBuilder();
+            foreach (var pn in Enum.GetNames(typeof(ProblemName))) {
+                sb.Append(pn);
+                foreach (var r in BenchmarkCfg.leaderboards[pn].records) { sb.Append(',').Append(Util.subStr(r.author, 0, '-')); }
+                sb.AppendLine();
+            }
+            Util.writeText(CommonCfg.StatisticsPath, sb.ToString());
         }
     }
 }

@@ -12,9 +12,10 @@ using namespace szx;
 
 void loadInput(istream& is, DFeedbackVertexSet& dfvs) {
 	is >> dfvs.nodeNum >> dfvs.arcNum;
+	string s;
+	getline(is, s);
 	dfvs.adjList.resize(dfvs.nodeNum);
 	for (NodeId src = 0; src < dfvs.nodeNum; ++src) {
-		string s;
 		getline(is, s);
 		istringstream iss(s);
 		for (NodeId dst; iss >> dst; dfvs.adjList[src].push_back(dst)) {}

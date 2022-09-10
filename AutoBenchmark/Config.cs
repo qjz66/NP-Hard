@@ -13,6 +13,7 @@ namespace AutoBenchmark {
         public const string ReadMePath = "ReadMe.md";
         public const string QueuePath = "Queue.md";
         public const string RankPagePath = "index.html";
+        public const string StatisticsPath = "Statistics.csv";
 
         public static string rankMarkdownPath(string problemName) { return $"{problemName}/ReadMe.md"; }
         public static string rankCsvPath(string problemName) { return $"{problemName}/Rank.csv"; }
