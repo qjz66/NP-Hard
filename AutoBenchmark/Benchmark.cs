@@ -169,13 +169,14 @@ namespace AutoBenchmark {
             psi.RedirectStandardError = true;
 
             int seed = 0;
-            long msTimeout = instance.secTimeout * 1000;
+            long stdSecTimeout = baselineSolver(exePath) ? (instance.secTimeout * 4) : instance.secTimeout;
+            long msTimeout = stdSecTimeout * 1000;
             int repeat = baselineSolver(exePath) ? 1 : instance.repeat;
             List<Statistic> statistics = new List<Statistic>(repeat);
             for (int i = repeat; i > 0; --i) {
                 Statistic statistic = new Statistic();
                 statistic.seed = (seed = nextSeed(seed));
-                long secTimeout = instance.secTimeout - instance.secTimeout * i / (repeat * 4);
+                long secTimeout = stdSecTimeout - stdSecTimeout * i / (repeat * 4);
                 psi.Arguments = secTimeout.ToString() + " " + statistic.seed.ToString();
 
                 StringBuilder output = new StringBuilder();

@@ -918,6 +918,10 @@ namespace AutoBenchmark {
                         if (pickup > requestNum) { continue; }
                         int delivery = pickup + requestNum;
                         int minPickupTime = arrTimes[delivery] - maxRideTime - nodes[pickup].minStayTime;
+
+                        // the min pickup time of the first cusomter should also respect the max travel time.
+                        if (p == 0) { Util.updateMax(ref minPickupTime, arrTimes[0] - maxTravelTime + Node2d.t(nodes[0], nodes[pickup], Amp)); }
+
                         if (arrTimes[pickup] >= minPickupTime) { continue; }
                         calcMinArrTimes(minPickupTime, pickup, p + 1, delivery);
                         if (arrTimes[delivery] - arrTimes[pickup] - nodes[pickup].minStayTime <= maxRideTime) { continue; } // the delivery is also postponed.
