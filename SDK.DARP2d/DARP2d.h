@@ -34,6 +34,8 @@ struct Node2d {
 struct DARP2d {
 	static constexpr Time Precision = 1000;
 
+	static constexpr NodeId DepotId = 0;
+
 	NodeId requestNum;
 	VehicleId maxVehicleNum;
 	Capacity vehicleCapacity;

@@ -34,6 +34,8 @@ struct Node2d {
 struct VRPTW2d {
 	static constexpr Time Precision = 10;
 
+	static constexpr NodeId DepotId = 0;
+
 	NodeId nodeNum;
 	VehicleId maxVehicleNum;
 	Capacity vehicleCapacity;
