@@ -14,11 +14,6 @@ void loadInput(istream& is, VRPTW2d& vrp) {
 	vrp.nodes.resize(vrp.nodeNum);
 	for (auto n = vrp.nodes.begin(); n != vrp.nodes.end(); ++n) {
 		is >> n->coords[0] >> n->coords[1] >> n->demand >> n->minStayTime >> n->windowBegin >> n->windowEnd;
-		n->coords[0] *= VRPTW2d::Precision;
-		n->coords[1] *= VRPTW2d::Precision;
-		n->minStayTime *= VRPTW2d::Precision;
-		n->windowBegin *= VRPTW2d::Precision;
-		n->windowEnd *= VRPTW2d::Precision;
 	}
 }
 

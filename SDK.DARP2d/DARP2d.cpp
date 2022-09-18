@@ -22,7 +22,7 @@ class Solver {
 
 public:
 	static Time travelTime(const Coord2d& src, const Coord2d& dst) {
-		return static_cast<Time>(hypot(src[0] - dst[0], src[1] - dst[1]));
+		return static_cast<Time>(hypot(src[0] - dst[0], src[1] - dst[1]) * DARP2d::Precision);
 	}
 
 	void solve(Routes& output, DARP2d& input, std::function<bool()> isTimeout, int seed) {

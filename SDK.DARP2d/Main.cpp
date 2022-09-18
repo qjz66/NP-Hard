@@ -14,11 +14,6 @@ void loadInput(istream& is, DARP2d& darp) {
 	darp.nodes.resize(darp.nodeNum());
 	for (auto n = darp.nodes.begin(); n != darp.nodes.end(); ++n) {
 		is >> n->coords[0] >> n->coords[1] >> n->demand >> n->minStayTime >> n->windowBegin >> n->windowEnd;
-		n->coords[0] *= DARP2d::Precision;
-		n->coords[1] *= DARP2d::Precision;
-		n->minStayTime *= DARP2d::Precision;
-		n->windowBegin *= DARP2d::Precision;
-		n->windowEnd *= DARP2d::Precision;
 	}
 }
 
