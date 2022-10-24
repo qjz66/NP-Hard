@@ -491,7 +491,7 @@ namespace AutoBenchmark {
                     if (ys[yMax] > o[3]) { --yMax; }
                     for (int xMin = Util.lowerBound(xs, o[0]); xMin <= xMax; ++xMin) {
                         for (int yMin = Util.lowerBound(ys, o[1]); yMin <= yMax; ++yMin) {
-                            grid[xMin, xMax] = NodeState.Obstacle;
+                            grid[xMin, yMin] = NodeState.Obstacle;
                         }
                     }
                 }

@@ -520,7 +520,7 @@ namespace AutoBenchmark {
             /// check if a rectilinear segments and a box (hollow rectangle) is intersected or overlapped.
             /// </summary>
             public static bool segmentBoxInterfering(int[][] segment, int[] box) {
-                int dx0 = segment[0][1] - segment[0][0];
+                int dx0 = segment[1][0] - segment[0][0];
                 if (dx0 == 0) { // vertical.
                     return between(segment[0][0], box[0], box[2]) && segmentsInterfering(segment[0][1], segment[1][1], box[1], box[3]);
                 } else { // horizontal.
