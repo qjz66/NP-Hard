@@ -1349,7 +1349,7 @@ namespace AutoBenchmark {
         static Problem generateOARSMT() {
             Problem problem = new Problem { minimize = true };
 
-            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 1 };
+            Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 0.75, maxTimeoutRate = 1 };
             easyDataset.instances.Add("ind1.n10o32.txt", new Instance { repeat = 5, secTimeout = 5 });
             easyDataset.instances.Add("ind2.n10o43.txt", new Instance { repeat = 5, secTimeout = 5 });
             easyDataset.instances.Add("ind3.n10o50.txt", new Instance { repeat = 5, secTimeout = 5 });

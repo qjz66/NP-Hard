@@ -626,16 +626,16 @@ namespace AutoBenchmark {
                         included[s] = true;
                         while (q.Count > 0) {
                             int s0 = q.Dequeue();
-                            int xMin = Array.BinarySearch(xs, segments[s0][0][0]);
-                            int xMax = Array.BinarySearch(xs, segments[s0][1][0]);
+                            int xMin = Util.lowerBound(xs, segments[s0][0][0]);
+                            int xMax = Util.lowerBound(xs, segments[s0][1][0]);
                             if (xMin > xMax) { Util.swap(ref xMin, ref xMax); }
                             if (xMax < xs.Length) {
                                 for (; xMin <= xMax; ++xMin) {
                                     foreach (var s1 in segmentsAtX[xs[xMin]]) { adj(s0, s1); }
                                 }
                             }
-                            int yMin = Array.BinarySearch(ys, segments[s0][0][1]);
-                            int yMax = Array.BinarySearch(ys, segments[s0][1][1]);
+                            int yMin = Util.lowerBound(ys, segments[s0][0][1]);
+                            int yMax = Util.lowerBound(ys, segments[s0][1][1]);
                             if (yMin > yMax) { Util.swap(ref yMin, ref yMax); }
                             if (yMax < ys.Length) {
                                 for (; yMin <= yMax; ++yMin) {
@@ -646,7 +646,6 @@ namespace AutoBenchmark {
                     }
                 }
             } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
-
             bool feasible = (invasionNum == 0) && (subgraphNum == 1);
             statistic.obj = feasible ? wireLen : Problem.MaxObjValue;
             statistic.info = invasionNum.ToString() + BenchmarkCfg.LogDelim + subgraphNum.ToString() + BenchmarkCfg.LogDelim;
