@@ -152,6 +152,7 @@ namespace AutoBenchmark {
         public static string[][] loadCsv(string filename, string delim) {
             if (!File.Exists(filename)) { return null; }
             string[] lines = readLines(filename);
+            if (lines.Length == 0) { return null; }
             string[][] table = new string[lines.Length][];
             for (int i = 0; i < lines.Length; ++i) { table[i] = lines[i].Split(delim); }
             return table;

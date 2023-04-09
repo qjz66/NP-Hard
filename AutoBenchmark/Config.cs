@@ -90,6 +90,7 @@ namespace AutoBenchmark {
         MCDSP,
         PECCP,
         DARP2d,
+        LSP,
     }
 
     public class BenchmarkCfg {
@@ -98,7 +99,7 @@ namespace AutoBenchmark {
         public const int MsSaveOutputTime = 2000;
         public const long ByteMemoryLimit = 16L * 1024 * 1024 * 1024;
 
-        public static readonly int ParallelBenchmarkNum = Math.Min(16, Environment.ProcessorCount);
+        public static readonly int ParallelBenchmarkNum = Math.Min(32, Environment.ProcessorCount);
 
         public const string UserName = PrivateCfg.UserName;
         public const string Password = PrivateCfg.Password;
@@ -120,6 +121,7 @@ namespace AutoBenchmark {
             { ProblemName.MCDSP.ToString(), LogCommonHeader + LogDelim + "UncoveredNode" + LogDelim + "SubGraph" },
             { ProblemName.PECCP.ToString(), LogCommonHeader + LogDelim + "RestCircle" + LogDelim + "Conflict" },
             { ProblemName.DARP2d.ToString(), LogCommonHeader + LogDelim + "Vehicle" + LogDelim + "UncoveredNode" + LogDelim + "Conflict" + LogDelim + "Overload" + LogDelim + "Delay" },
+            { ProblemName.LSP.ToString(), LogCommonHeader + LogDelim + "Conflict" },
         };
 
         public const string LeaderboardDelim = ",";
@@ -137,6 +139,7 @@ namespace AutoBenchmark {
             { ProblemName.MCDSP.ToString(), Checker.mcdsp },
             { ProblemName.PECCP.ToString(), Checker.peccp },
             { ProblemName.DARP2d.ToString(), Checker.darp2d },
+            { ProblemName.LSP.ToString(), Checker.latinSquare },
         };
 
         public static Rank rank;

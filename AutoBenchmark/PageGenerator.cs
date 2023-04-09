@@ -133,7 +133,8 @@ namespace AutoBenchmark {
             StringBuilder sb = new StringBuilder();
             foreach (var pn in Enum.GetNames(typeof(ProblemName))) {
                 sb.Append(pn);
-                foreach (var r in BenchmarkCfg.leaderboards[pn].records) { sb.Append(',').Append(Util.subStr(r.author, 0, '-')); }
+                string[] lines = Util.readLines(CommonCfg.bestCsvPath(pn));
+                foreach (var r in lines[0].Split(BenchmarkCfg.LeaderboardDelim)) { sb.Append(',').Append(Util.subStr(r, 0, '-')); }
                 sb.AppendLine();
             }
             Util.writeText(CommonCfg.StatisticsPath, sb.ToString());

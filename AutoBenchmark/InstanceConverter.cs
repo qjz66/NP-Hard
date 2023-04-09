@@ -4293,5 +4293,44 @@ namespace AutoBenchmark {
                 File.WriteAllText(oldPath + fn.ToString(), header.ToString() + sb.ToString());
             }
         }
+
+        public class LSP {
+            public static void convertAll() {
+                for (int n = 50; n <= 70; n += 10) {
+                    for (int f = 30; f <= 80; f += 10) {
+                        for (int i = 1; i <= 100; ++i) {
+                            convertLSC("D:/Workspace/mixed/Training/LSP/Instance", n, f, i);
+                        }
+                    }
+                }
+            }
+
+            static void convertLSC(string oldDir, int n, int fixedRatio, int index) {
+                string[] lines = File.ReadAllLines($"{oldDir}/LSC_{n}/LSC_{n}_{fixedRatio}/QWH-{n}-{fixedRatio}-{index}.txt");
+
+                string[] words = lines[0].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                int nodeNum = int.Parse(words[2]);
+                int edgeNum = int.Parse(words[3]);
+                if (((n * n) != nodeNum) || ((n - 1) * nodeNum != edgeNum)) { Console.WriteLine("not valid latin square!"); }
+
+                int fixedNum = 0;
+                StringBuilder sb = new StringBuilder();
+                sb.Append(n).AppendLine();
+                for (int l = 1; l < lines.Length; ++l) {
+                    words = lines[l].Split(Checker.InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    if ((words.Length <= 2) || (words[0] != "f")) { continue; }
+                    if (words.Length == (n + 2)) { continue; }
+                    int id = int.Parse(words[1]) - 1;
+                    sb.Append(id / n).Append(' ').Append(id % n).Append('\t');
+                    for (int i = 2; i < words.Length; ++i) { sb.Append(int.Parse(words[i]) - 1).Append(' '); }
+                    sb.Remove(sb.Length -1, 1);
+                    sb.AppendLine();
+                    ++fixedNum;
+                }
+
+                StringBuilder fn = new StringBuilder();
+                File.WriteAllText($"{oldDir}/LSC.n{n}f{fixedNum}.{index - 1:D2}.txt", sb.ToString());
+            }
+        }
     }
 }

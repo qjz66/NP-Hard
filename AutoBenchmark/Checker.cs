@@ -941,5 +941,98 @@ namespace AutoBenchmark {
             statistic.info = vehicleNum.ToString() + BenchmarkCfg.LogDelim + uncoverNum.ToString() + BenchmarkCfg.LogDelim + conflictNum.ToString() + BenchmarkCfg.LogDelim + overload.ToString() + BenchmarkCfg.LogDelim + delay.ToString();
         }
 
+
+        public static void latinSquare(string[] input, string output, Statistic statistic) {
+            int n = 0;
+            int[,] fixedColors = null;
+            try { // load instance.
+                string[] words = input[0].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                n = int.Parse(words[0]);
+                fixedColors = new int[n, n];
+                for (int i = 0; i < n; ++i) {
+                    for (int j = 0; j < n; ++j) { fixedColors[i, j] = -1; }
+                }
+                for (int l = 1; l < input.Length; ++l) {
+                    words = input[l].Split(InlineDelimiters, StringSplitOptions.RemoveEmptyEntries);
+                    fixedColors[int.Parse(words[0]), int.Parse(words[1])] = int.Parse(words[2]);
+                }
+            } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
+
+            List<int[]>[] fixedPos = new List<int[]>[n];
+            for (int c = 0; c < n; ++c) { fixedPos[c] = new List<int[]>(); }
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    if (fixedColors[i, j] == -1) { continue; }
+                    fixedPos[fixedColors[i, j]].Add(new int[2] { i, j });
+                }
+            }
+            int[] freeDegrees = Enumerable.Repeat(0, n).ToArray();
+            for (int c = 0; c < n; ++c) {
+                bool[] xFree = Enumerable.Repeat(true, n).ToArray();
+                bool[] yFree = Enumerable.Repeat(true, n).ToArray();
+                List<int> freeX = new List<int>();
+                List<int> freeY = new List<int>();
+                foreach (var fp in fixedPos[c]) { xFree[fp[0]] = yFree[fp[1]] = false; }
+                for (int x = 0; x < n; ++x) { if (xFree[x]) { freeX.Add(x); } }
+                for (int y = 0; y < n; ++y) { if (yFree[y]) { freeY.Add(y); } }
+                foreach (var x in freeX) {
+                    foreach (var y in freeY) {
+                        if (fixedColors[x, y] == -1) { ++freeDegrees[c]; }
+                    }
+                }
+                Console.WriteLine(freeDegrees[c]);
+            }
+
+            HashSet<string> colors = new HashSet<string>();
+            bool correctFormat = false;
+            int[,] nodeColors = new int[n, n];
+            try { // load solution.
+                string[] words = output.Split(WhiteSpaceChars, StringSplitOptions.RemoveEmptyEntries);
+                if (words.Length == n * n) {
+                    correctFormat = true;
+                    int w = 0;
+                    for (int i = 0; i < n; ++i) {
+                        for (int j = 0; j < n; ++j) {
+                            nodeColors[i, j] = int.Parse(words[w]);
+                            if ((nodeColors[i, j] < 0) || (nodeColors[i, j] >= n)) { correctFormat = false; }
+                            if ((fixedColors[i, j] != -1 ) && (fixedColors[i, j] != nodeColors[i, j])) { correctFormat = false; }
+                        }
+                    }
+                }
+            } catch (Exception e) { Util.log("[error] checker load output fail due to " + e.ToString()); }
+
+            int conflictNum = 0;
+            try { // check.
+                if (correctFormat) {
+                    bool[] hasColor = Enumerable.Repeat(false, n).ToArray();
+                    bool marked = true;
+                    for (int i = 0; i < n; ++i) {
+                        int markedColorNum = 0;
+                        for (int j = 0; j < n; ++j) {
+                            if (hasColor[nodeColors[i, j]] != marked) {
+                                ++markedColorNum;
+                                hasColor[nodeColors[i, j]] = marked;
+                            }
+                        }
+                        if (markedColorNum != n) { ++conflictNum; break; }
+                        marked = !marked;
+
+                        markedColorNum = 0;
+                        for (int j = 0; j < n; ++j) {
+                            if (hasColor[nodeColors[j, i]] != marked) {
+                                ++markedColorNum;
+                                hasColor[nodeColors[j, i]] = marked;
+                            }
+                        }
+                        if (markedColorNum != n) { ++conflictNum; break; }
+                        marked = !marked;
+                    }
+                }
+            } catch (Exception e) { Util.log("[error] checker check fail due to " + e.ToString()); }
+
+            bool feasible = (conflictNum == 0) && (correctFormat);
+            statistic.obj = feasible ? colors.Count : Problem.MaxObjValue;
+            statistic.info = conflictNum.ToString();
+        }
     }
 }
