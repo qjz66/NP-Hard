@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define ReadOutputAsync
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -98,14 +100,6 @@ namespace AutoBenchmark {
                                 + instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
                                 + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
                         }
-                        lock (logPath) {
-                            if (!File.Exists(logPath)) { Util.appendLine(logPath, BenchmarkCfg.LogHeaders[s.problem]); }
-                            Util.appendLines(logPath, lines);
-                            foreach (var line in statistics) {
-                                reply.AppendLine(instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
-                                    + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
-                            }
-                        }
 
                         Result bestResult = new Result { obj = Problem.MaxObjValue, author = s.author, date = s.date };
                         foreach (var statistic in statistics) {
@@ -113,8 +107,17 @@ namespace AutoBenchmark {
                             bestResult.obj = statistic.obj;
                             bestResult.duration = statistic.duration;
                         }
-                        r.Add(instance.Key, bestResult.obj);
                         i.results.Add(bestResult);
+
+                        lock (logPath) {
+                            if (!File.Exists(logPath)) { Util.appendLine(logPath, BenchmarkCfg.LogHeaders[s.problem]); }
+                            Util.appendLines(logPath, lines);
+                            foreach (var line in statistics) {
+                                reply.AppendLine(instance.Key + BenchmarkCfg.LogDelim + line.obj + BenchmarkCfg.LogDelim
+                                    + line.duration.ToString() + BenchmarkCfg.LogDelim + line.info);
+                            }
+                            r.Add(instance.Key, bestResult.obj);
+                        }
 
                         if (i.results.Count <= CommonCfg.MaxResultsCountPerInstance) { continue; }
                         i.results.Remove(i.results.Max); // drop the worst one if the limit is exceeded.
@@ -224,6 +227,7 @@ namespace AutoBenchmark {
                         try {
 #if ReadOutputAsync
                             p.WaitForExit(BenchmarkCfg.MsCheckInterval);
+                            Thread.Sleep(BenchmarkCfg.MsCollectOutputTime); // wait collecting async output.
 #else
                             if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
                                 output.Append(p.StandardOutput.ReadToEnd());

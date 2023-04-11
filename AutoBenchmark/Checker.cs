@@ -372,13 +372,14 @@ namespace AutoBenchmark {
                 }
             } catch (Exception e) { Util.log("[error] checker load input fail due to " + e.ToString()); }
 
-            int uncoverNum = nodeNum; // unvisited nodes.
+            int uncoverNum = nodeNum - 1; // unvisited nodes.
             int conflictNum = 0; // revisited nodes.
             int vehicleNum = 0;
             int overload = 0;
             int delay = 0;
             int cost = 0;
             int[] visited = new int[nodeNum];
+            visited[0] = 1;
             try { // load solution and check.
                 string[] lines = output.Split(LineDelimiters, StringSplitOptions.RemoveEmptyEntries);
                 for (int l = 0; l < lines.Length; ++l) {
@@ -893,7 +894,6 @@ namespace AutoBenchmark {
                         cost += Node2d.t(nodes[src], nodes[dst], Amp);
                         src = dst;
                     }
-                    ++vehicleNum;
 
                     int[] arrTimes = new int[nodeNum];
                     int t = nodes[0].timeWindowBegin;
@@ -930,7 +930,8 @@ namespace AutoBenchmark {
                         int dst = path[d];
                         if (arrTimes[dst] > nodes[dst].timeWindowEnd) { delay += (arrTimes[dst] - nodes[dst].timeWindowEnd); }
                     }
-                    
+
+                    ++vehicleNum;
                     int travel = arrTimes[0] - arrTimes[path[0]] + Node2d.t(nodes[0], nodes[path[0]], Amp) - maxTravelTime;
                     if (travel > 0) { overTravel += travel; } // check travel time.
                 }
