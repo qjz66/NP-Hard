@@ -33,7 +33,7 @@ using Path = std::vector<Coord2D>;
 using Paths = std::vector<Path>;
 
 
-void solveOARSteinerMinTree(Paths& output, OARSteinerMinTree& input, std::function<bool()> isTimeout, int seed);
+void solveOARSteinerMinTree(Paths& output, OARSteinerMinTree& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

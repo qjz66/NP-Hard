@@ -19,7 +19,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(NodeColors& output, GraphColoring& input, std::function<bool()> isTimeout, int seed) {
+	void solve(NodeColors& output, GraphColoring& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -27,21 +27,21 @@ public:
 
 		//                      +----[ exit before timeout ]
 		//                      |
-		for (NodeId n = 0; !isTimeout() && (n < input.nodeNum); ++n) { output[n] = rand(input.colorNum); }
-		//                                                                           |
-		//      [ use the random number generator initialized by the given seed ]----+
+		for (NodeId n = 0; (restMilliSec() > 0) && (n < input.nodeNum); ++n) { output[n] = rand(input.colorNum); }
+		//                                                                                  |
+		//             [ use the random number generator initialized by the given seed ]----+
 
 		// TODO: the following code in this function is for illustration only and can be deleted.
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.colorNum << endl;
 		cerr << "node\tcolor" << endl;
-		for (NodeId n = 0; !isTimeout() && (n < input.nodeNum); ++n) { cerr << n << '\t' << output[n] << endl; }
+		for (NodeId n = 0; (restMilliSec() > 0) && (n < input.nodeNum); ++n) { cerr << n << '\t' << output[n] << endl; }
 	}
 };
 
 // solver.
-void solveGraphColoring(NodeColors& output, GraphColoring& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solveGraphColoring(NodeColors& output, GraphColoring& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

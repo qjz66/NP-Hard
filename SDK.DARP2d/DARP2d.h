@@ -53,7 +53,7 @@ struct Route {
 using Routes = std::vector<Route>; // `Routes[v]` is the route for vehicle `v`.
 
 
-void solveDARP2d(Routes& output, DARP2d& input, std::function<bool()> isTimeout, int seed);
+void solveDARP2d(Routes& output, DARP2d& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

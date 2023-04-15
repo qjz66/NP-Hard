@@ -31,7 +31,7 @@ struct GraphColoring {
 using NodeColors = std::vector<ColorId>; // `NodeColors[n]` is the color of node `n`.
 
 
-void solveGraphColoring(NodeColors& output, GraphColoring& input, std::function<bool()> isTimeout, int seed);
+void solveGraphColoring(NodeColors& output, GraphColoring& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

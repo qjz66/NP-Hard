@@ -22,7 +22,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(Paths& output, OARSteinerMinTree& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Paths& output, OARSteinerMinTree& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -31,7 +31,7 @@ public:
 		Path path = { input.nodes[0] };
 		//                      +----[ exit before timeout ]
 		//                      |
-		for (NodeId n = 1; !isTimeout() && (n < input.nodeNum); ++n) {
+		for (NodeId n = 1; (restMilliSec() > 0) && (n < input.nodeNum); ++n) {
 			if (input.nodes[n] == path.back()) { continue; }
 			//    +----[ use the random number generator initialized by the given seed ]
 			//    |
@@ -48,7 +48,7 @@ public:
 		draw(input, output);
 		// print some information for debugging.
 		NodeId maxDebugLineNum = 32;
-		for (auto path = output.begin(); !isTimeout() && (path != output.end()); ++path) {
+		for (auto path = output.begin(); (restMilliSec() > 0) && (path != output.end()); ++path) {
 			for (auto p = path->begin(); p != path->end(); ++p) {
 				cerr << (*p)[0] << '\t' << (*p)[1] << endl;
 				if (maxDebugLineNum-- < 0) { return; }
@@ -82,8 +82,8 @@ public:
 };
 
 // solver.
-void solveOARSteinerMinTree(Paths& output, OARSteinerMinTree& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solveOARSteinerMinTree(Paths& output, OARSteinerMinTree& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

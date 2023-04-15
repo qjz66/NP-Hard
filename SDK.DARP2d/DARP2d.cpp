@@ -25,7 +25,7 @@ public:
 		return static_cast<Time>(hypot(src[0] - dst[0], src[1] - dst[1]) * DARP2d::Precision);
 	}
 
-	void solve(Routes& output, DARP2d& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Routes& output, DARP2d& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// use fix-point real number as time unit.
@@ -52,7 +52,7 @@ public:
 		//                       +----[ use the random number generator initialized by the given seed ]
 		//                      +----[ exit before timeout ]
 		//                      |
-		for (NodeId n = 1; !isTimeout() && (n < input.nodeNum()); ++n) {
+		for (NodeId n = 1; (restMilliSec() > 0) && (n < input.nodeNum()); ++n) {
 			VehicleId v = rand(vehicleNum);
 			output[v].nodes.push_back(n);
 		}
@@ -61,13 +61,13 @@ public:
 		// print some information for debugging.
 		cerr << input.nodeNum() << '\t' << input.maxVehicleNum << '\t' << input.vehicleCapacity << endl;
 		cerr << "vehicle\tnodes" << endl;
-		for (VehicleId v = 0; !isTimeout() && (v < vehicleNum); ++v) { cerr << v << '\t' << output[v].nodes.size() << endl; }
+		for (VehicleId v = 0; (restMilliSec() > 0) && (v < vehicleNum); ++v) { cerr << v << '\t' << output[v].nodes.size() << endl; }
 	}
 };
 
 // solver.
-void solveDARP2d(Routes& output, DARP2d& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solveDARP2d(Routes& output, DARP2d& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

@@ -24,7 +24,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(Layout& output, PackingEqCircleInCircle& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Layout& output, PackingEqCircleInCircle& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -33,7 +33,7 @@ public:
 		Coord x = 0;
 		//                        +----[ exit before timeout ]
 		//                        |
-		for (CircleId c = 0; !isTimeout() && (c < input.circleNum); ++c) {
+		for (CircleId c = 0; (restMilliSec() > 0) && (c < input.circleNum); ++c) {
 			//               +----[ use the random number generator initialized by the given seed ]
 			//               |
 			output[c][0] = rand(-9, 10);
@@ -45,7 +45,7 @@ public:
 		// print some information for debugging.
 		cerr << input.circleNum << endl;
 		cerr << "x\ty" << endl;
-		for (CircleId c = 0; !isTimeout() && (c < input.circleNum); ++c) { cerr << output[c][0] << '\t' << output[c][1] << endl; }
+		for (CircleId c = 0; (restMilliSec() > 0) && (c < input.circleNum); ++c) { cerr << output[c][0] << '\t' << output[c][1] << endl; }
 	}
 
 	static void draw(const PackingEqCircleInCircle& input, const Layout& output, const std::string filePath = "peccp.visualization.html") {
@@ -65,8 +65,8 @@ public:
 };
 
 // solver.
-void solvePackingEqCircleInCircle(Layout& output, PackingEqCircleInCircle& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solvePackingEqCircleInCircle(Layout& output, PackingEqCircleInCircle& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

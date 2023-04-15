@@ -19,7 +19,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(Routes& output, RWA& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Routes& output, RWA& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -27,14 +27,14 @@ public:
 
 		//                        +----[ exit before timeout ]
 		//                        |
-		for (TrafficId t = 0; !isTimeout() && (t < input.trafficNum); ++t) { output[t].wavelen = rand(input.trafficNum); }
-		//                                                                                        |
-		//                   [ use the random number generator initialized by the given seed ]----+
+		for (TrafficId t = 0; (restMilliSec() > 0) && (t < input.trafficNum); ++t) { output[t].wavelen = rand(input.trafficNum); }
 
-		for (TrafficId t = 0; !isTimeout() && (t < input.trafficNum); ++t) {
+		for (TrafficId t = 0; (restMilliSec() > 0) && (t < input.trafficNum); ++t) {
 			output[t].nodes.resize(rand(input.nodeNum));
 			for (auto n = output[t].nodes.begin(); n != output[t].nodes.end(); ++n) {
 				*n = rand(input.trafficNum);
+				//    |
+				//    +----[ use the random number generator initialized by the given seed ]
 			}
 		}
 
@@ -42,13 +42,13 @@ public:
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.arcNum << '\t' << input.trafficNum << endl;
 		cerr << "traffic\twavelen" << endl;
-		for (TrafficId t = 0; !isTimeout() && (t < input.trafficNum); ++t) { cerr << t << '\t' << output[t].wavelen << endl; }
+		for (TrafficId t = 0; (restMilliSec() > 0) && (t < input.trafficNum); ++t) { cerr << t << '\t' << output[t].wavelen << endl; }
 	}
 };
 
 // solver.
-void solveRWA(Routes& output, RWA& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solveRWA(Routes& output, RWA& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

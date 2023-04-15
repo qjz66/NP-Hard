@@ -6,6 +6,7 @@
 
 
 using namespace std;
+using namespace std::chrono;
 using namespace szx;
 
 
@@ -25,9 +26,9 @@ void test(istream& inputStream, ostream& outputStream, long long secTimeout, int
 	loadInput(inputStream, gc);
 
 	cerr << "solve." << endl;
-	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	steady_clock::time_point endTime = steady_clock::now() + seconds(secTimeout);
 	NodeColors nodeColors(gc.nodeNum);
-	solveGraphColoring(nodeColors, gc, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
+	solveGraphColoring(nodeColors, gc, [&]() { return duration_cast<milliseconds>(endTime - steady_clock::now()).count(); }, randSeed);
 
 	cerr << "save output." << endl;
 	saveOutput(outputStream, nodeColors);

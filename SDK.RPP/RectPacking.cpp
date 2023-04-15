@@ -22,7 +22,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(Layout& output, RectPacking& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Layout& output, RectPacking& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -31,7 +31,7 @@ public:
 		Coord x = 0;
 		//                      +----[ exit before timeout ]
 		//                      |
-		for (RectId r = 0; !isTimeout() && (r < input.rectNum); ++r) {
+		for (RectId r = 0; (restMilliSec() > 0) && (r < input.rectNum); ++r) {
 			//                    +----[ use the random number generator initialized by the given seed ]
 			//                    |
 			output[r].rotated = rand(2) & 1;
@@ -45,7 +45,7 @@ public:
 		// print some information for debugging.
 		cerr << input.rectNum << endl;
 		cerr << "x\ty\trotated" << endl;
-		for (RectId r = 0; !isTimeout() && (r < input.rectNum); ++r) { cerr << output[r].pos[0] << '\t' << output[r].pos[1] << '\t' << output[r].rotated << endl; }
+		for (RectId r = 0; (restMilliSec() > 0) && (r < input.rectNum); ++r) { cerr << output[r].pos[0] << '\t' << output[r].pos[1] << '\t' << output[r].rotated << endl; }
 	}
 
 	static void draw(const RectPacking& input, const Layout& output, const std::string filePath = "rpp.visualization.html") {
@@ -71,8 +71,8 @@ public:
 };
 
 // solver.
-void solveRectPacking(Layout& output, RectPacking& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solveRectPacking(Layout& output, RectPacking& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

@@ -19,7 +19,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(Schedule& output, FJSP& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Schedule& output, FJSP& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -27,12 +27,12 @@ public:
 
 		//                      +----[ exit before timeout ]
 		//                      |
-		for (JobId j = 0; !isTimeout() && (j < input.jobNum); ++j) {
+		for (JobId j = 0; (restMilliSec() > 0) && (j < input.jobNum); ++j) {
 			OperationId opNum = static_cast<OperationId>(input.jobs[j].size());
 			for (OperationId o = 0; o < opNum; ++o) {
 				WorkerId candidateNum = static_cast<WorkerId>(input.jobs[j][o].size());
-				//                                   +----[ use the random number generator initialized by the given seed ]
-				//                                   |
+				//                                +----[ use the random number generator initialized by the given seed ]
+				//                                |
 				WorkerId w = input.jobs[j][o][rand(candidateNum)].worker;
 				output[w].push_back({ j, o });
 			}
@@ -42,7 +42,7 @@ public:
 		// print some information for debugging.
 		cerr << input.jobNum << '\t' << input.workerNum << '\t' << input.maxCandidateNum << endl;
 		cerr << "job\toperation\tworker" << endl;
-		for (WorkerId w = 0; !isTimeout() && (w < input.workerNum); ++w) {
+		for (WorkerId w = 0; (restMilliSec() > 0) && (w < input.workerNum); ++w) {
 			for (auto t = output[w].begin(); t != output[w].end(); ++t) {
 				cerr << t->job << '\t' << t->operation << '\t' << w << endl;
 			}
@@ -51,8 +51,8 @@ public:
 };
 
 // solver.
-void solveFJSP(Schedule& output, FJSP& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solveFJSP(Schedule& output, FJSP& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

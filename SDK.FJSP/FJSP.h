@@ -44,7 +44,7 @@ using Tasks = std::vector<Task>;
 using Schedule = std::vector<Tasks>; // `Schedule[w][t]` is the `t`th task assigned to worker `w`.
 
 
-void solveFJSP(Schedule& output, FJSP& input, std::function<bool()> isTimeout, int seed);
+void solveFJSP(Schedule& output, FJSP& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

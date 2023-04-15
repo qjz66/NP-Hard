@@ -29,7 +29,7 @@ struct PackingEqCircleInCircle {
 using Layout = std::vector<Coords>; // `Layout[c]` is the coordinates of the center of circle `c`.
 
 
-void solvePackingEqCircleInCircle(Layout& output, PackingEqCircleInCircle& input, std::function<bool()> isTimeout, int seed);
+void solvePackingEqCircleInCircle(Layout& output, PackingEqCircleInCircle& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

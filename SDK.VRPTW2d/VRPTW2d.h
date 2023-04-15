@@ -49,7 +49,7 @@ struct Route {
 using Routes = std::vector<Route>; // `Routes[v]` is the route for vehicle `v`.
 
 
-void solveVRPTW2d(Routes& output, VRPTW2d& input, std::function<bool()> isTimeout, int seed);
+void solveVRPTW2d(Routes& output, VRPTW2d& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

@@ -28,7 +28,7 @@ struct PCenter {
 using Centers = Nodes; // `Centers[k]` is the `k`th picked center.
 
 
-void solvePCenter(Centers& output, PCenter& input, std::function<bool()> isTimeout, int seed);
+void solvePCenter(Centers& output, PCenter& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

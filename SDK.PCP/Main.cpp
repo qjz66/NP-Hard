@@ -6,6 +6,7 @@
 
 
 using namespace std;
+using namespace std::chrono;
 using namespace szx;
 
 
@@ -41,9 +42,9 @@ void test(istream& inputStream, ostream& outputStream, long long secTimeout, int
 	loadInput(inputStream, pc);
 
 	cerr << "solve." << endl;
-	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	steady_clock::time_point endTime = steady_clock::now() + seconds(secTimeout);
 	Centers centers(pc.centerNum);
-	solvePCenter(centers, pc, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
+	solvePCenter(centers, pc, [&]() { return duration_cast<milliseconds>(endTime - steady_clock::now()).count(); }, randSeed);
 
 	cerr << "save output." << endl;
 	saveOutput(outputStream, centers);

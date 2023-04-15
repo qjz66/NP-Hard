@@ -30,7 +30,7 @@ struct DFeedbackVertexSet {
 using Nodes = std::vector<NodeId>;
 
 
-void solveDFeedbackVertexSet(Nodes& output, DFeedbackVertexSet& input, std::function<bool()> isTimeout, int seed);
+void solveDFeedbackVertexSet(Nodes& output, DFeedbackVertexSet& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

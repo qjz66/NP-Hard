@@ -6,6 +6,7 @@
 
 
 using namespace std;
+using namespace std::chrono;
 using namespace szx;
 
 
@@ -31,9 +32,9 @@ void test(istream& inputStream, ostream& outputStream, long long secTimeout, int
 	loadInput(inputStream, vrp);
 
 	cerr << "solve." << endl;
-	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	steady_clock::time_point endTime = steady_clock::now() + seconds(secTimeout);
 	Routes routes(vrp.maxVehicleNum);
-	solveVRPTW2d(routes, vrp, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
+	solveVRPTW2d(routes, vrp, [&]() { return duration_cast<milliseconds>(endTime - steady_clock::now()).count(); }, randSeed);
 
 	cerr << "save output." << endl;
 	saveOutput(outputStream, routes);

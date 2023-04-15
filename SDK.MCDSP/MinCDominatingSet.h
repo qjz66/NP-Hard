@@ -29,7 +29,7 @@ struct MinCDominatingSet {
 using Nodes = std::vector<NodeId>;
 
 
-void solveMinCDominatingSet(Nodes& output, MinCDominatingSet& input, std::function<bool()> isTimeout, int seed);
+void solveMinCDominatingSet(Nodes& output, MinCDominatingSet& input, std::function<long long()> restMilliSec, int seed);
 
 }
 

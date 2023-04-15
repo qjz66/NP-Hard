@@ -8,6 +8,7 @@
 
 
 using namespace std;
+using namespace std::chrono;
 using namespace szx;
 
 
@@ -28,9 +29,9 @@ void test(istream& inputStream, ostream& outputStream, long long secTimeout, int
 	loadInput(inputStream, rp);
 
 	cerr << "solve." << endl;
-	chrono::steady_clock::time_point endTime = chrono::steady_clock::now() + chrono::seconds(secTimeout);
+	steady_clock::time_point endTime = steady_clock::now() + seconds(secTimeout);
 	Layout layout(rp.circleNum);
-	solvePackingEqCircleInCircle(layout, rp, [&]() -> bool { return endTime < chrono::steady_clock::now(); }, randSeed);
+	solvePackingEqCircleInCircle(layout, rp, [&]() { return duration_cast<milliseconds>(endTime - steady_clock::now()).count(); }, randSeed);
 
 	cerr << "save output." << endl;
 	saveOutput(outputStream, layout);

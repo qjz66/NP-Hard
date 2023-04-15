@@ -21,7 +21,7 @@ class Solver {
 	int rand(int ub) { return uniform_int_distribution<int>(0, ub - 1)(pseudoRandNumGen); }
 
 public:
-	void solve(Nodes& output, DFeedbackVertexSet& input, std::function<bool()> isTimeout, int seed) {
+	void solve(Nodes& output, DFeedbackVertexSet& input, function<long long()> restMilliSec, int seed) {
 		initRand(seed);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
@@ -29,20 +29,20 @@ public:
 
 		//                      +----[ exit before timeout ]
 		//                      |
-		for (NodeId n = 0; !isTimeout() && (n < 100); ++n) { output.push_back(rand(input.nodeNum)); }
-		//                                                                      |
-		// [ use the random number generator initialized by the given seed ]----+
+		for (NodeId n = 0; (restMilliSec() > 0) && (n < 100); ++n) { output.push_back(rand(input.nodeNum)); }
+		//                                                                             |
+		//        [ use the random number generator initialized by the given seed ]----+
 
 		// TODO: the following code in this function is for illustration only and can be deleted.
 		// print some information for debugging.
 		cerr << input.nodeNum << '\t' << input.arcNum << endl;
-		for (auto n = output.begin(); !isTimeout() && (n != output.end()); ++n) { cerr << *n << endl; }
+		for (auto n = output.begin(); (restMilliSec() > 0) && (n != output.end()); ++n) { cerr << *n << endl; }
 	}
 };
 
 // solver.
-void solveDFeedbackVertexSet(Nodes& output, DFeedbackVertexSet& input, std::function<bool()> isTimeout, int seed) {
-	Solver().solve(output, input, isTimeout, seed);
+void solveDFeedbackVertexSet(Nodes& output, DFeedbackVertexSet& input, function<long long()> restMilliSec, int seed) {
+	Solver().solve(output, input, restMilliSec, seed);
 }
 
 }

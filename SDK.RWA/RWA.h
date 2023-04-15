@@ -39,7 +39,7 @@ struct Route {
 using Routes = std::vector<Route>; // `Routes[t]` is the route for traffic `t`.
 
 
-void solveRWA(Routes& output, RWA& input, std::function<bool()> isTimeout, int seed);
+void solveRWA(Routes& output, RWA& input, std::function<long long()> restMilliSec, int seed);
 
 }
 
