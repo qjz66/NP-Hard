@@ -65,6 +65,7 @@ namespace AutoBenchmark {
             }
 
             s.author = msg.Subject.Substring(msg.Subject.IndexOf(EmailCfg.SubjectDelim) + 1);
+            foreach (var c in Path.GetInvalidPathChars()) { s.author.Replace(c.ToString(), ""); }
             s.email = msg.Sender?.Address ?? msg.From.Mailboxes.First().Address;
             s.date = Util.friendlyDateTime(now);
 

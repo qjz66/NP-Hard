@@ -9,7 +9,7 @@ namespace AutoBenchmark {
         static void Main(string[] args) {
             loadRank();
             //PageGenerator.generateStatistics();
-            //check("LSP", "LSP/Instance/LSC.n70f3430.99.txt", "LSP/Instance/LSC.n70f3430.99.txt");
+            //check("LSC", "LSC/Instance/LSC.n50f1750.00.txt", "LSC/0.LSC.n50f1750.00.txt");
 
             if (args.Length == 3) { check(args[0], args[1], args[2]); return; }
             if (args.Length > 0) { help(); return; }
@@ -56,7 +56,7 @@ namespace AutoBenchmark {
                 { ProblemName.MCDSP.ToString(), generateMCDSP },
                 { ProblemName.PECCP.ToString(), generatePECCP },
                 { ProblemName.DARP2d.ToString(), generateDARP2d },
-                { ProblemName.LSP.ToString(), generateLSP },
+                { ProblemName.LSC.ToString(), generateLSC },
             };
 
             Action<string> gitAdd = (string filename) => {
@@ -2295,7 +2295,7 @@ namespace AutoBenchmark {
 
             return problem;
         }
-        static Problem generateLSP() {
+        static Problem generateLSC() {
             Problem problem = new Problem { minimize = true };
 
             Dataset easyDataset = new Dataset { minFeasibleRate = 1, minOptRate = 1, maxTimeoutRate = 1 };

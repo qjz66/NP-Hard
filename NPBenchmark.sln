@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutoBenchmark.Util", "AutoB
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK.DARP2d", "SDK.DARP2d\SDK.DARP2d.vcxproj", "{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDK.LSC", "SDK.LSC\SDK.LSC.vcxproj", "{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +173,16 @@ Global
 		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|x64.Build.0 = Release|x64
 		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|x86.ActiveCfg = Release|Win32
 		{CDDFB4D1-AD7E-4511-9D48-A5FD16E8F2FF}.Release|x86.Build.0 = Release|Win32
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Debug|x64.ActiveCfg = Debug|x64
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Debug|x64.Build.0 = Debug|x64
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Debug|x86.ActiveCfg = Debug|Win32
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Debug|x86.Build.0 = Debug|Win32
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Release|Any CPU.ActiveCfg = Release|Win32
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Release|x64.ActiveCfg = Release|x64
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Release|x64.Build.0 = Release|x64
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Release|x86.ActiveCfg = Release|Win32
+		{BDD9B18E-BF74-4950-A2AA-B8DFBE4AE74E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

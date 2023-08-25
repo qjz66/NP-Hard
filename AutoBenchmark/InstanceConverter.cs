@@ -4294,7 +4294,7 @@ namespace AutoBenchmark {
             }
         }
 
-        public class LSP {
+        public class LSC {
             public static void convertAll() {
                 for (int n = 50; n <= 70; n += 10) {
                     for (int f = 30; f <= 80; f += 10) {
