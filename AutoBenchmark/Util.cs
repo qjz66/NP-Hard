@@ -83,7 +83,7 @@ namespace AutoBenchmark {
 
         public static string toSafeCsvStr(this string s) {
             if (s.Length <= 0) { return "?"; }
-            return s.Replace(",", "").Replace("\"", "").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+            return s.Replace(",", "").Replace(";", "").Replace("\"", "").Replace("\t", "").Replace("\n", "").Replace("\r", "");
         }
         #endregion String
 

@@ -91,7 +91,7 @@ namespace AutoBenchmark {
             foreach (Records r in records) {
                 r.score = 0;
                 for (int i = 0; i < r.objs.Length; ++i) {
-                    r.score += ((r.objs[i] - records[0].objs[i]) / Math.Abs(records[0].objs[i]));
+                    r.score += ((r.objs[i] - records[0].objs[i]) / (Math.Abs(records[0].objs[i])) + 1);
                 }
             }
             records.Sort();

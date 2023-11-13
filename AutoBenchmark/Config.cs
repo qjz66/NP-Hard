@@ -14,6 +14,7 @@ namespace AutoBenchmark {
         public const string QueuePath = "Queue.md";
         public const string RankPagePath = "index.html";
         public const string StatisticsPath = "Statistics.csv";
+        public const string ExeName = "a.exe";
 
         public static string rankMarkdownPath(string problemName) { return $"{problemName}/ReadMe.md"; }
         public static string rankCsvPath(string problemName) { return $"{problemName}/Rank.csv"; }
@@ -27,6 +28,7 @@ namespace AutoBenchmark {
         public const int PollIntervalInMillisecond = 15 * 60 * 1000; // 15 minutes.
 
         public static readonly HashSet<string> ZipFileExts = new HashSet<string> { ".7z", ".gz", ".tar", ".rar", ".zip", ".bz2", ".iso", ".xz" };
+        public static readonly HashSet<string> srcFileExts = new HashSet<string> { ".c", ".cc", ".cpp" };
 
         public static readonly Encoding DefaultEncoding = Util.getEncoding(936);
     }
