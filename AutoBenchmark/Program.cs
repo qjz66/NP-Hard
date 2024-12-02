@@ -7,6 +7,7 @@ using System.Linq;
 namespace AutoBenchmark {
     class Program {
         static void Main(string[] args) {
+            //InstanceConverter.GCP.convertAll();
             loadRank();
             //PageGenerator.generateStatistics();
             //check("LSC", "LSC/Instance/LSC.n50f1750.00.txt", "LSC/0.LSC.n50f1750.00.txt");
@@ -117,6 +118,9 @@ namespace AutoBenchmark {
             hardDataset.instances.Add("DSJC1000.1.txt", new Instance { repeat = 10, secTimeout = 3000 });
             hardDataset.instances.Add("DSJC1000.5.txt", new Instance { repeat = 10, secTimeout = 4000 });
             hardDataset.instances.Add("DSJC1000.9.txt", new Instance { repeat = 10, secTimeout = 3000 });
+            hardDataset.instances.Add("C2000.5.txt", new Instance { repeat = 10, secTimeout = 6000 });
+            hardDataset.instances.Add("C2000.9.txt", new Instance { repeat = 10, secTimeout = 8000 });
+            hardDataset.instances.Add("C4000.5.txt", new Instance { repeat = 10, secTimeout = 10000 });
             problem.datasets.Add(hardDataset);
 
             return problem;

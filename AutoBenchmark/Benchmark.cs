@@ -21,6 +21,8 @@ namespace AutoBenchmark {
 
 
         public static void run() {
+            //testSubmission(new Submission { author = "s", date = "2022", email = "s", exePath = "PCP/pcenter.exe", problem = "PCP" });
+
             Util.OS.disableWindowsErrorReportingDialog();
             try {
                 foreach (var problem in BenchmarkCfg.rank.problems) {
@@ -215,19 +217,10 @@ namespace AutoBenchmark {
                                 && (sw.ElapsedMilliseconds < msTimeout)) { }
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " run exe fail due to " + e.ToString()); }
                         if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { sw.Stop(); }
-                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
-                            //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)
-                            //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)) {
-                            new Thread(() => {
-                                Thread.Sleep(BenchmarkCfg.MsSaveOutputTime);
-                                try { if ((p != null) && !p.HasExited) { p.Kill(true); } } catch (Exception) { }
-                            }).Start();
-                        }
 
                         try {
 #if ReadOutputAsync
-                            p.WaitForExit(BenchmarkCfg.MsCheckInterval);
-                            Thread.Sleep(BenchmarkCfg.MsCollectOutputTime); // wait collecting async output.
+                            Thread.Sleep(BenchmarkCfg.MsSaveOutputTime); // wait collecting async output.
 #else
                             if (p.WaitForExit(BenchmarkCfg.MsCheckInterval)) {
                                 output.Append(p.StandardOutput.ReadToEnd());
@@ -237,7 +230,13 @@ namespace AutoBenchmark {
 #endif
                         } catch (Exception e) { Util.log("[warning] " + instance.data[0] + " wait exe fail due to " + e.ToString()); }
 
+                        if (!p.WaitForExit(BenchmarkCfg.MsCheckInterval)) { // force exit.
+                            //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)
+                            //&& !Util.Signal.send(p, BenchmarkCfg.MsCheckInterval)) {
+                            try { if ((p != null) && !p.HasExited) { p.Kill(true); } } catch (Exception) { }
+                        }
                         sw.Stop();
+
                         check(instance.data, output.ToString(), statistic);
                         saveOutput(output.ToString(), statistic.obj = normalizeObj(statistic.obj));
                     } catch (Exception e) {

@@ -21,6 +21,10 @@ namespace AutoBenchmark {
                 convertDimacs(@"DSJC1000.1.col", @"DSJC1000.1.txt", 20);
                 convertDimacs(@"DSJC1000.5.col", @"DSJC1000.5.txt", 83);
                 convertDimacs(@"DSJC1000.9.col", @"DSJC1000.9.txt", 224);
+                convertDimacs(@"DSJC1000.9.col", @"DSJC1000.9.txt", 224);
+                convertDimacs(@"C2000.5.col", @"C2000.5.txt", 146);
+                convertDimacs(@"C2000.9.col", @"C2000.9.txt", 409);
+                convertDimacs(@"C4000.5.col", @"C4000.5.txt", 260);
             }
 
             class Arc {
