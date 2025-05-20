@@ -221,6 +221,7 @@ public:
 		if(changeV == -1 || changeC == -1){
 			return 0;
 		}
+		cout << "changeV : " << changeV << "changeC : " << changeC << endl;
 		
 		int row = changeV/n, col = changeV%n;
 		int color = sol[row][col];
@@ -247,39 +248,17 @@ public:
 		//change cScore
 		for(int i = 0;i < n;i++){
 			for(int j = 0;j < n;j++){
-				int color1 = sol[i][j];
-				// change cScore of the same row
-				for(int col1 = 0;col1 < n;col1++){
-					if(col1 == j){
-						continue;
-					}
-					if(sol[i][col1] == sol[i][j]){
-						cScore[i][col1]++;
-						cScore[i][j]++;
-						
-					}
-				}
+				int color1 = sol[i][j], tmpV = i*n + j;
+				cScore[i][j] += nbColor[tmpV][color1];
 				// change cScore of the same col
-				for(int row1 = 0;row1 < n;row1++){
-					if(row1 == i){
-						continue;
-					}
-					if(sol[row1][j] == sol[i][j]){
-						cScore[row1][j]++;
-						cScore[i][j]++;
-						
-					}
-				}
 			}
 		}
 		cScore[row][col] = 0;
 		for(int i = 0;i < n;i++){
-			int v1 = row*n + i;
-			int v2 = i*n + col;
-			if(!nbColor[v1][color] && sol[row][i] == color){
+			if(sol[row][i] == color){
 				cScore[row][i] = 0;
 			}
-			if(!nbColor[v2][color] && sol[i][col] == color){
+			if(sol[i][col] == color){
 				cScore[i][col] = 0;
 			}
 		}
@@ -322,10 +301,17 @@ public:
 		states.erase(states.begin());
 	}
 
-	minMax getBound(){
+	minMax getBound(const vector<vector<int>>& state){
 		minMax item;
 		item.min = INT32_MAX;
 		item.max = INT32_MIN;
+		int n = state.size();
+		for(int i = 0;i < n;i++){
+			for(int j = 0;j < n;j++){
+				item.min = item.min < state[i][j] ? item.min : state[i][j];
+				item.max = item.max > state[i][j] ? item.max : state[i][j];
+			}
+		}
 		return item;
 	}
 
@@ -343,6 +329,7 @@ public:
 			//remove all solutions in pool and add sol to pool
 			clearPool();
 			addSol(sol, CL, state);
+			minCL = CL;
 		}else{
 			if((solIndex = isSimilar(sol)) != -1){
 			//copy state from pool
@@ -366,7 +353,7 @@ public:
 		}
 			
 		}
-		minMax s = getBound();
+		minMax s = getBound(cState);
 		int min = s.min, max = s.max;
 		float RCL = (max - min) * theta + min;
 		unordered_set<int> C;
@@ -452,22 +439,26 @@ public:
 	}
 
 	// calCL calculate CL of solution
-	int calCL(const vector<vector<int>>& sol){
+	int calCL(const vector<vector<int>>& sol, const vector<vector<int>>& nbColor){
 		int CL = 0, len = sol.size();
 		for(int i = 0;i < len;i++){
 			for(int j = 0;j < len;j++){
-				for(int k = 0;k < len;k++){
-					
-					if(sol[i][j] == sol[i][k] && j != k){
-						CL++;
-					}
-					if(sol[i][j] == sol[k][j] && i!= k){
-						CL++;
-					}
-				}
+				//for(int k = 0;k < len;k++){
+				//	
+				//	if(sol[i][j] == sol[i][k] && j != k){
+				//		CL++;
+				//	}
+				//	if(sol[i][j] == sol[k][j] && i!= k){
+				//		CL++;
+				//	}
+				//}
+				int color = sol[i][j];
+				CL +=  nbColor[i*len+j][color];
+				cout << nbColor[i*len+j][color] << " " ;
 			}
+			cout << endl;
 		}
-		return CL;
+		return CL/2;
 	}
 
 	//printSol print solution
@@ -495,22 +486,23 @@ public:
 			int row = i / n, col = i % n;
 			int color = cSol[row][col];
 			
-			for(int j = 0;j < n;j++){
-				if(j == col){
-					continue;
-				}
-				int tmpV = row*n + j;
-				nbColor[tmpV][color]++;
-				if(j == row){
-					continue;
-				}
-				tmpV = j*n + col;
-				nbColor[tmpV][color]++;
+			// 遍历同一行的其他列
+			for (int j_col = 0; j_col < n; j_col++) {
+			    if (j_col == col) continue; // 跳过当前列
+			    int tmpV = row * n + j_col;
+			    nbColor[tmpV][color]++; 
+			}
+
+			// 遍历同一列的其他行
+			for (int k_row = 0; k_row < n; k_row++) {
+			    if (k_row == row) continue; // 跳过当前行
+			    int tmpV = k_row * n + col;
+			    nbColor[tmpV][color]++;
 			}
 		}
 
 		//calculate CL of b and c
-		CLC = CLB = calCL(cSol);
+		CLC = CLB = calCL(cSol, nbColor);
 
 		// TODO: implement your own solver which fills the `output` to replace the following trivial solver.
 		// sample solver: assign colors randomly (the solution can be infeasible).
@@ -518,11 +510,18 @@ public:
 		//                      +----[ exit before timeout ]
 		//					    |
 		while(restMilliSec() > 0){
-			int depth = 0, cCL = INT32_MAX;
+			int depth = 0;
 			while(depth < alpha){
 				//TODO: select move by pscore and cscore
+				//cout << "f : " << calCL(cSol, nbColor) << endl;
 				int delta = move(cSol, cScore, cState, nbColor, tabuList, n, iter, CLC);//TODO: change move function,get CL of c, return delta
 				//printSol(cSol);
+				//cout << "depth : " << depth << endl;
+				//cout << "delta : " << delta << endl;
+				//cout << "CLC : " << CLC << endl;
+				int f = calCL(cSol, nbColor);
+				cout << "f : " << f << endl;
+				cout << "delta : " << delta << endl;
 				CLC -= delta;
 				if(CLC < CLB){
 					//copy cSol to bSol
@@ -532,15 +531,20 @@ public:
 					CLB = CLC;
 				}
 			
-				if(!CLB){
-					copySol(output, cSol);
+				
+				if(!f){
+					copySol(cSol, output);
 					return;
 				}
 				//TODO: implement Perturb
 				depth++;
+				//iter++;
 			}
-			perturb(bSol, CLB, bState, cSol, cCL, cState);
-			printSol(cSol);
+			//cout << "conflict : " << CLC;
+			//printSol(cSol);
+			perturb(bSol, CLB, bState, cSol, CLC, cState);
+			//cout << "conflict : " << CLC;
+			//printSol(cSol);
 		}//                     |
 		//                    	+----[ use the random number generator initialized by the given seed ]
 		//for (auto k = input.fixedNums.begin(); k != input.fixedNums.end(); ++k) {
